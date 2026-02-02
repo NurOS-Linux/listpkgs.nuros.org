@@ -45,9 +45,20 @@ jobs:
         run: |
           if git diff --quiet packages.json 2>/dev/null; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No changes detected"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Changes detected"
           fi
+
+      - name: Commit to main
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add packages.json
+          git commit -m "chore: update package list (${{ steps.generate.outputs.package_count }} packages)"
+          git push
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -63,7 +74,8 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
           publish_branch: gh-pages
-          commit_message: "chore: update package list (${{ steps.generate.outputs.package_count }} packages)"
+          exclude_assets: '.github,.ci,README.md,UNLICENSE,.git,.gitignore'
+          commit_message: "chore: deploy package list (${{ steps.generate.outputs.package_count }} packages)"
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
 
