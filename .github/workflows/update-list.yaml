@@ -1,0 +1,78 @@
+name: Update NurOS Package List
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: package-list-update
+  cancel-in-progress: true
+
+env:
+  ORG_NAME: NurOS-Packages
+
+jobs:
+  aggregate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Generate packages.json
+        id: generate
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python .ci/main.py
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet packages.json 2>/dev/null; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages-json
+          path: packages.json
+          retention-days: 7
+
+      - name: Deploy to GitHub Pages
+        if: steps.changes.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+          publish_branch: gh-pages
+          commit_message: "chore: update package list (${{ steps.generate.outputs.package_count }} packages)"
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Create job summary
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" << EOF
+          ## Package List Update
+          
+          - **Packages aggregated:** ${{ steps.generate.outputs.package_count }}
+          - **Changes detected:** ${{ steps.changes.outputs.changed }}
+          - **Triggered by:** \`${{ github.event_name }}\`
+          EOF
