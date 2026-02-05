@@ -1,115 +1,33 @@
-# NurOS Package List
+# NurOS Packages Aggregator
 
-Automated package registry for NurOS. This repository aggregates metadata from all packages in the [NurOS-Packages](https://github.com/NurOS-Packages) organization and publishes a unified `packages.json` to GitHub Pages.
+Этот репозиторий содержит инструменты для агрегации метаданных пакетов из организации [NurOS-Packages](https://github.com/NurOS-Packages).
 
-## How It Works
+## Архитектура
 
-A GitHub Actions workflow runs every 6 hours (or on manual trigger) and:
+- `.ci/main.py` - точка входа для CI/CD
+- `.ci/listpkgs_aggregator/aggregator.py` - основная логика агрегации
+- `.ci/pyproject.toml` - управление зависимостями и сборка
+- `.github/workflows/update-list.yaml` - GitHub Actions workflow
 
-1. Fetches all repositories from the NurOS-Packages organization
-2. Retrieves `metadata.json` from each repository
-3. Validates required fields (`name`, `version`)
-4. Aggregates everything into a single `packages.json`
-5. Deploys to GitHub Pages
+## Как это работает
 
-## Package Registry
+1. Скрипт агрегации извлекает все репозитории из организации NurOS-Packages
+2. Для каждого репозитория пытается получить `metadata.json` из ветки `main`
+3. Валидирует обязательные поля (`name`, `version`)
+4. Генерирует уникальные ключи пакетов и создает `packages.json`
+5. Результат публикуется на GitHub Pages в ветке `gh-pages`
 
-The package list is available at:
+## Запуск локально
 
-```
-https://listpkgs.nuros.org/packages.json
-```
+```bash
+# Установка зависимостей
+pip install .ci/
 
-### Response Format
-
-```json
-{
-  "package-name": {
-    "name": "package-name",
-    "version": "1.0.0",
-    "description": "Package description",
-    "license": "MIT",
-    "_source_repo": "https://github.com/NurOS-Packages/package-name",
-    "_last_updated": "2025-02-01T12:00:00Z"
-  }
-}
+# Запуск агрегации
+listpkgs-aggregate
 ```
 
-## Adding a New Package
+## CI/CD
 
-1. Create a repository in the [NurOS-Packages](https://github.com/NurOS-Packages) organization
-2. Add a `metadata.json` file to the root of the repository (see below)
-3. The package will appear in the registry within 6 hours (or trigger the workflow manually)
-
-### metadata.json Schema
-
-Required fields:
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `name` | string | Package name (must be unique) |
-| `version` | string | Package version (semver recommended) |
-
-Optional fields:
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `description` | string | Short package description |
-| `license` | string | License identifier (e.g., MIT, GPL-3.0) |
-| `homepage` | string | Project homepage URL |
-| `maintainers` | array | List of maintainer names or emails |
-| `dependencies` | object | Runtime dependencies |
-| `build_dependencies` | object | Build-time dependencies |
-
-Example:
-
-```json
-{
-  "name": "example-package",
-  "version": "1.2.3",
-  "description": "An example package for NurOS",
-  "license": "MIT",
-  "homepage": "https://example.com",
-  "maintainers": [
-    "maintainer@example.com"
-  ],
-  "dependencies": {
-    "glibc": ">=2.17"
-  }
-}
-```
-
-## Repository Structure
-
-```
-.
-├── .ci/
-│   └── main.py           # Package aggregation script
-├── .github/
-│   └── workflows/
-│       └── update-packages.yml
-├── packages.json         # Generated package list (do not edit)
-└── README.md
-```
-
-## Manual Trigger
-
-To manually update the package list:
-
-1. Go to **Actions** tab
-2. Select **Update NurOS Package List**
-3. Click **Run workflow**
-
-## Ignored Repositories
-
-The following repositories are excluded from aggregation:
-
-- Repositories starting with `.`
-- `status`
-- `.github`
-- `template`
-- `docs`
-
-## License
-
-This is free and unencumbered software released into the public domain. See [UNLICENSE](UNLICENSE) for details.
+GitHub Actions автоматически запускает агрегацию каждые 6 часов и при ручном вызове.
+Результаты публикуются на GitHub Pages.

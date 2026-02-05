@@ -34,13 +34,15 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: pip install requests
+        run: |
+          python -m pip install --upgrade pip
+          pip install .ci/.
 
       - name: Generate packages.json
         id: generate
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python .ci/main.py
+        run: listpkgs-aggregate
 
       - name: Check for changes
         id: changes
@@ -71,25 +73,13 @@ jobs:
 
       - name: Deploy to GitHub Pages
         if: steps.changes.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
-        run: |
-          mkdir -p /tmp/gh-pages
-          cp packages.json /tmp/gh-pages/
-          
-          git fetch origin gh-pages 2>/dev/null || true
-          
-          if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
-            git checkout gh-pages
-          else
-            git checkout --orphan gh-pages
-          fi
-          
-          cp /tmp/gh-pages/packages.json .
-          git add packages.json
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git commit -m "chore: deploy package list (${{ steps.generate.outputs.package_count }} packages)" || echo "No changes to deploy"
-          git push origin gh-pages
-          git checkout main
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          publish_branch: gh-pages
+          allow_empty_commit: false
+          force_orphan: true
 
       - name: Create job summary
         run: |
