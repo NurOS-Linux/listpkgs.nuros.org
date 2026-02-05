@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NurOS Packages</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            line-height: 1.6;
+        }
+        .package {
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .package h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .package-meta {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+        .error {
+            color: red;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>NurOS Packages</h1>
+    <p>This page displays the aggregated metadata of packages from the <a href="https://github.com/NurOS-Packages">NurOS-Packages</a> organization.</p>
+    
+    <div id="loading" class="loading">Loading packages...</div>
+    <div id="error" class="error" style="display: none;"></div>
+    <div id="packages-container"></div>
+
+    <script>
+        async function loadPackages() {
+            try {
+                const response = await fetch('packages.json');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const packages = await response.json();
+                displayPackages(packages);
+                
+                document.getElementById('loading').style.display = 'none';
+            } catch (error) {
+                console.error('Error loading packages:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = 'Error loading packages: ' + error.message;
+            }
+        }
+
+        function displayPackages(packages) {
+            const container = document.getElementById('packages-container');
+            
+            // Convert object to array of packages
+            const packageArray = Object.entries(packages).map(([key, pkg]) => ({
+                key,
+                ...pkg
+            }));
+            
+            // Sort packages by name
+            packageArray.sort((a, b) => a.key.localeCompare(b.key));
+            
+            // Generate HTML for each package
+            const packagesHtml = packageArray.map(pkg => `
+                <div class="package">
+                    <h3>${pkg.name} <small>v${pkg.version}</small></h3>
+                    <div class="package-meta">
+                        Architecture: ${pkg.architecture || 'N/A'} | 
+                        Last Updated: ${pkg._last_updated ? new Date(pkg._last_updated).toLocaleDateString() : 'N/A'}
+                    </div>
+                    <p><a href="${pkg._source_repo}" target="_blank">Repository</a></p>
+                    ${pkg.description ? `<p>Description: ${pkg.description}</p>` : ''}
+                    ${pkg.license ? `<p>License: ${pkg.license}</p>` : ''}
+                </div>
+            `).join('');
+            
+            container.innerHTML = packagesHtml;
+        }
+
+        // Load packages when page loads
+        document.addEventListener('DOMContentLoaded', loadPackages);
+    </script>
+</body>
+</html>
