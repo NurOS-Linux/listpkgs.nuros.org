@@ -1,0 +1,2 @@
+[console_scripts]
+listpkgs-aggregate = listpkgs_aggregator.aggregator:main

@@ -1,0 +1,9 @@
+pyproject.toml
+listpkgs_aggregator/__init__.py
+listpkgs_aggregator/aggregator.py
+listpkgs_aggregator.egg-info/PKG-INFO
+listpkgs_aggregator.egg-info/SOURCES.txt
+listpkgs_aggregator.egg-info/dependency_links.txt
+listpkgs_aggregator.egg-info/entry_points.txt
+listpkgs_aggregator.egg-info/requires.txt
+listpkgs_aggregator.egg-info/top_level.txt
