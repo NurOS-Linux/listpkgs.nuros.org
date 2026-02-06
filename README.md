@@ -1,33 +1,33 @@
 # NurOS Packages Aggregator
 
-Этот репозиторий содержит инструменты для агрегации метаданных пакетов из организации [NurOS-Packages](https://github.com/NurOS-Packages).
+This repository contains tools for aggregating package metadata from the [NurOS-Packages](https://github.com/NurOS-Packages) organization.
 
-## Архитектура
+## Architecture
 
-- `.ci/main.py` - точка входа для CI/CD
-- `.ci/listpkgs_aggregator/aggregator.py` - основная логика агрегации
-- `.ci/pyproject.toml` - управление зависимостями и сборка
+- `.ci/main.py` - entry point for CI/CD
+- `.ci/listpkgs_aggregator/aggregator.py` - main aggregation logic
+- `.ci/pyproject.toml` - dependency management and building
 - `.github/workflows/update-list.yaml` - GitHub Actions workflow
 
-## Как это работает
+## How it works
 
-1. Скрипт агрегации извлекает все репозитории из организации NurOS-Packages
-2. Для каждого репозитория пытается получить `metadata.json` из ветки `main`
-3. Валидирует обязательные поля (`name`, `version`)
-4. Генерирует уникальные ключи пакетов и создает `packages.json`
-5. Результат публикуется на GitHub Pages в ветке `gh-pages`
+1. The aggregation script retrieves all repositories from the NurOS-Packages organization
+2. For each repository, it attempts to get `metadata.json` from the `main` branch
+3. Validates required fields (`name`, `version`)
+4. Generates unique package keys and creates `packages.json`
+5. Results are published to GitHub Pages in the `gh-pages` branch
 
-## Запуск локально
+## Running locally
 
 ```bash
-# Установка зависимостей
+# Install dependencies
 pip install .ci/
 
-# Запуск агрегации
+# Run aggregation
 listpkgs-aggregate
 ```
 
 ## CI/CD
 
-GitHub Actions автоматически запускает агрегацию каждые 6 часов и при ручном вызове.
-Результаты публикуются на GitHub Pages.
+GitHub Actions automatically runs aggregation every 6 hours and on manual trigger.
+Results are published to GitHub Pages.

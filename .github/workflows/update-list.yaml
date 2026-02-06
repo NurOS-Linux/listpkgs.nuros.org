@@ -79,7 +79,7 @@ jobs:
           publish_dir: ./
           publish_branch: gh-pages
           allow_empty_commit: false
-          force_orphan: true
+          force_orphan: false
 
       - name: Create job summary
         run: |
