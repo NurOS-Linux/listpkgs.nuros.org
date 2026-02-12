@@ -101,21 +101,25 @@ def get_all_repos() -> list[dict[str, Any]]:
 
 def fetch_metadata(repo_name: str) -> dict[str, Any] | None:
     """Fetch metadata.json from a repository."""
-    url = f"https://raw.githubusercontent.com/{ORG_NAME}/{repo_name}/main/metadata.json"
-    logger.debug(f"Attempting to fetch metadata from {url}")
+    # Пробуем разные возможные ветки
+    branches = ['main', 'master']
     
-    response = api_request(url, retries=2)
+    for branch in branches:
+        url = f"https://raw.githubusercontent.com/{ORG_NAME}/{repo_name}/{branch}/metadata.json"
+        logger.debug(f"Attempting to fetch metadata from {url}")
+        
+        response = api_request(url, retries=2)
 
-    if response and response.status_code == 200:
-        try:
-            metadata = response.json()
-            logger.debug(f"Successfully fetched metadata for {repo_name}")
-            return metadata
-        except json.JSONDecodeError as e:
-            logger.error(f"Invalid JSON in {repo_name}: {e}")
-            return None
-
-    logger.debug(f"No metadata found for {repo_name} (status: {response.status_code if response else 'None'})")
+        if response and response.status_code == 200:
+            try:
+                metadata = response.json()
+                logger.info(f"Successfully fetched metadata for {repo_name} from {branch} branch")
+                return metadata
+            except json.JSONDecodeError as e:
+                logger.error(f"Invalid JSON in {repo_name} from {branch} branch: {e}")
+                continue  # Пробуем следующую ветку
+    
+    logger.warning(f"No metadata.json found for {repo_name} in any of the checked branches: {branches}")
     return None
 
 
