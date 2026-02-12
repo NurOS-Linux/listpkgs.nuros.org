@@ -5,7 +5,7 @@
  * @version 1.0
  */
 
-import { createSignal, createEffect } from 'solid-js';
+import { createSignal, createEffect, Switch, Match } from 'solid-js';
 import SearchBar from './components/SearchBar';
 import PackageList from './components/PackageList';
 import Sidebar from './components/Sidebar';
@@ -84,8 +84,8 @@ function App() {
   };
 
   return (
-    <>
-      {loading() ? (
+    <Switch>
+      <Match when={loading()}>
         <div class="loading-screen">
           <img src="/assets/nuros_logo.svg" alt="NurOS Logo" class="loading-logo" />
           <div class="loading-text">
@@ -95,9 +95,11 @@ function App() {
             Found {packages().length} packages
           </div>
         </div>
-      ) : error() ? (
+      </Match>
+      <Match when={error()}>
         <div class="error">Error: {error()}</div>
-      ) : (
+      </Match>
+      <Match when={!loading() && !error()}>
         <div class="app">
           <header class="app-header">
             <a href="https://www.nuros.org/" target="_blank" rel="noopener noreferrer">
@@ -106,10 +108,10 @@ function App() {
             <h1>NurOS Search</h1>
             <p>Search and browse NurOS packages</p>
           </header>
-          
+
           <div class="app-layout">
-            <Sidebar 
-              packages={packages()} 
+            <Sidebar
+              packages={packages()}
               onFilterChange={(filters: { architectures: string[]; categories: string[] }) => {
                 // Обновляем фильтры
                 setFilters(prev => ({
@@ -119,24 +121,24 @@ function App() {
                 }));
               }}
             />
-            
+
             <main class="app-main">
-              <SearchBar 
-                onSearch={handleSearch} 
-                onFilterChange={handleFilterChange} 
-                onViewModeChange={handleViewModeChange} 
+              <SearchBar
+                onSearch={handleSearch}
+                onFilterChange={handleFilterChange}
+                onViewModeChange={handleViewModeChange}
               />
-              <PackageList 
-                packages={packages()} 
-                searchTerm={searchTerm()} 
-                filters={filters()} 
+              <PackageList
+                packages={packages()}
+                searchTerm={searchTerm()}
+                filters={filters()}
                 grouped={viewMode() === 'grouped'}
               />
             </main>
           </div>
         </div>
-      )}
-    </>
+      </Match>
+    </Switch>
   );
 }
 

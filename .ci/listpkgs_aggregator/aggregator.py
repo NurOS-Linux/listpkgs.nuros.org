@@ -1,4 +1,10 @@
-"""Aggregate package metadata from NurOS-Packages organization."""
+"""
+@file aggregator.py
+@brief Скрипт для агрегации метаданных пакетов из организации NurOS-Packages
+
+Этот модуль отвечает за сбор метаданных пакетов из репозиториев
+организации NurOS-Packages на GitHub.
+"""
 
 import json
 import logging
@@ -17,12 +23,28 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+## @var ORG_NAME
+# Имя организации на GitHub, из которой собираются пакеты
 ORG_NAME = os.getenv("ORG_NAME", "NurOS-Packages")
+
+## @var GITHUB_TOKEN
+# Токен для аутентификации с API GitHub
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+
+## @var MAX_RETRIES
+# Максимальное количество попыток для запросов к API
 MAX_RETRIES = 3
+
+## @var RETRY_DELAY
+# Задержка между попытками в секундах
 RETRY_DELAY = 5
 
+## @var IGNORED_REPOS
+# Множество репозиториев, которые следует игнорировать
 IGNORED_REPOS = {"status", ".github", "template", "docs"}
+
+## @var REQUIRED_FIELDS
+# Список обязательных полей в метаданных пакета
 REQUIRED_FIELDS = ["name", "version"]
 
 session = requests.Session()
@@ -34,7 +56,12 @@ session.headers.update({
 
 
 def api_request(url: str, retries: int = MAX_RETRIES) -> requests.Response | None:
-    """Make API request with retry logic."""
+    """
+    @brief Выполняет HTTP-запрос к API с логикой повторных попыток
+    @param url URL для запроса
+    @param retries Количество попыток (по умолчанию MAX_RETRIES)
+    @return Объект Response в случае успеха, None в случае ошибки
+    """
     for attempt in range(retries):
         try:
             response = session.get(url, timeout=30)
@@ -65,7 +92,10 @@ def api_request(url: str, retries: int = MAX_RETRIES) -> requests.Response | Non
 
 
 def get_all_repos() -> list[dict[str, Any]]:
-    """Fetch all repositories with pagination support."""
+    """
+    @brief Получает все репозитории из организации с поддержкой пагинации
+    @return Список словарей, представляющих репозитории
+    """
     repos = []
     page = 1
     per_page = 100
@@ -75,7 +105,7 @@ def get_all_repos() -> list[dict[str, Any]]:
     while True:
         url = f"https://api.github.com/orgs/{ORG_NAME}/repos?per_page={per_page}&page={page}"
         logger.debug(f"Fetching page {page} of repositories")
-        
+
         response = api_request(url)
 
         if not response:
@@ -100,7 +130,11 @@ def get_all_repos() -> list[dict[str, Any]]:
 
 
 def fetch_metadata(repo_name: str) -> dict[str, Any] | None:
-    """Fetch metadata.json from a repository."""
+    """
+    @brief Получает файл metadata.json из репозитория
+    @param repo_name Имя репозитория
+    @return Словарь с метаданными в случае успеха, None в случае ошибки
+    """
     # Пробуем разные возможные ветки
     branches = ['main', 'master']
     
@@ -124,7 +158,12 @@ def fetch_metadata(repo_name: str) -> dict[str, Any] | None:
 
 
 def validate_metadata(metadata: dict[str, Any], repo_name: str) -> bool:
-    """Validate required fields in metadata."""
+    """
+    @brief Проверяет наличие обязательных полей в метаданных
+    @param metadata Словарь с метаданными
+    @param repo_name Имя репозитория
+    @return True если все обязательные поля присутствуют, иначе False
+    """
     missing = [f for f in REQUIRED_FIELDS if f not in metadata]
 
     if missing:
@@ -136,7 +175,12 @@ def validate_metadata(metadata: dict[str, Any], repo_name: str) -> bool:
 
 
 def generate_package_key(metadata: dict[str, Any], repo_name: str) -> str:
-    """Generate unique package key from name and architecture."""
+    """
+    @brief Генерирует уникальный ключ пакета на основе имени и архитектуры
+    @param metadata Словарь с метаданными
+    @param repo_name Имя репозитория
+    @return Строка с уникальным ключом пакета
+    """
     pkg_name = metadata.get("name", repo_name)
     architecture = metadata.get("architecture", "")
 
@@ -148,7 +192,11 @@ def generate_package_key(metadata: dict[str, Any], repo_name: str) -> str:
 
 
 def main() -> None:
-    """Main entry point."""
+    """
+    @brief Главная точка входа в программу
+    @details Выполняет полный цикл агрегации пакетов: получение списка репозиториев,
+             извлечение метаданных, валидацию и сохранение результата
+    """
     logger.info(f"Starting package aggregation from {ORG_NAME}...")
     repos = get_all_repos()
     logger.info(f"Found {len(repos)} repositories to process")
@@ -213,6 +261,24 @@ def main() -> None:
     if not aggregated:
         logger.critical("No packages were aggregated!")
         sys.exit(1)
+
+def get_status_message(status_code: int) -> str:
+    """
+    @brief Возвращает описание статус-кода
+    @param status_code Код статуса HTTP
+    @return Строка с описанием статуса
+    """
+    match status_code:
+        case 200:
+            return "Success"
+        case 403:
+            return "Forbidden"
+        case 404:
+            return "Not Found"
+        case 500:
+            return "Internal Server Error"
+        case _:
+            return f"Unknown Status Code: {status_code}"
 
 
 if __name__ == "__main__":
