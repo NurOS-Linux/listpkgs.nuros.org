@@ -40,7 +40,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          uv pip install .ci/.
+          uv pip install --system .ci/.
 
       - name: Generate packages.json
         id: generate
