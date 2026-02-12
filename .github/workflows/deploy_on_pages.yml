@@ -39,13 +39,13 @@ jobs:
         run: |
           echo "Checking artifact contents:"
           ls -la ./frontend-dist/
-          
+
           # Проверяем, что в артефакте есть необходимые файлы
           if [ ! -f "./frontend-dist/index.html" ]; then
             echo "ERROR: index.html not found in artifact"
             exit 1
           fi
-          
+
           echo "Artifact contains required files"
 
       - name: Setup Pages

@@ -1,3 +1,9 @@
+# Это файл конфигурации для pnpm workspace
+# Он указывает pnpm, какие пакеты включать в workspace
+
+packages:
+  - '.'
+
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - esbuild
