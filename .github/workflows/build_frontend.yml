@@ -46,10 +46,16 @@ jobs:
           cd listpkgs.nuros.front-end
           pnpm build
 
+      - name: Download packages.json artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: packages-json
+          path: listpkgs.nuros.front-end/public
+
       - name: Prepare distribution
         run: |
           mkdir -p listpkgs.nuros.front-end/dist
-          cp packages.json listpkgs.nuros.front-end/dist/
+          cp listpkgs.nuros.front-end/public/packages.json listpkgs.nuros.front-end/dist/
           cd listpkgs.nuros.front-end/dist
           cp -r ../dist/* .
 

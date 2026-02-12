@@ -1,5 +1,29 @@
+/**
+ * @file usePackageData.ts
+ * @brief Хук для загрузки и управления данными пакетов
+ * @author NurOS Team
+ * @version 1.0
+ */
+
 import { createSignal, onMount } from 'solid-js';
 
+/**
+ * @interface Package
+ * @brief Интерфейс данных пакета
+ * @property {string} key - Уникальный ключ пакета
+ * @property {string} name - Название пакета
+ * @property {string} version - Версия пакета
+ * @property {string} [type] - Тип пакета
+ * @property {string | null} [architecture] - Архитектура пакета
+ * @property {string} [description] - Описание пакета
+ * @property {string} [maintainer] - Мейнтейнер пакета
+ * @property {string | null} [license] - Лицензия пакета
+ * @property {string} [homepage] - Домашняя страница пакета
+ * @property {string[]} dependencies - Зависимости пакета
+ * @property {string[]} conflicts - Конфликты пакета
+ * @property {string} _source_repo - Репозиторий источника
+ * @property {string} [_last_updated] - Дата последнего обновления
+ */
 interface Package {
   key: string;
   name: string;
@@ -17,15 +41,32 @@ interface Package {
   [key: string]: any;
 }
 
+/**
+ * @interface PackageData
+ * @brief Интерфейс данных пакетов
+ * @property {any} [key: string] - Произвольные данные пакета
+ */
 interface PackageData {
   [key: string]: any;
 }
 
+/**
+ * @brief Хук для загрузки и управления данными пакетов
+ * @details Загружает данные пакетов из JSON файла и управляет состоянием загрузки и ошибок
+ * @returns {Object} - Объект с состояниями пакетов, загрузки и ошибки
+ * @returns {Package[]} return.packages - Массив пакетов
+ * @returns {boolean} return.loading - Состояние загрузки
+ * @returns {string | null} return.error - Сообщение об ошибке
+ */
 const usePackageData = () => {
   const [packages, setPackages] = createSignal<Package[]>([]);
   const [loading, setLoading] = createSignal(true);
   const [error, setError] = createSignal<string | null>(null);
 
+  /**
+   * @brief Эффект монтирования для загрузки данных
+   * @details Выполняет загрузку данных пакетов при монтировании компонента
+   */
   onMount(async () => {
     try {
       console.log('Starting to fetch packages.json');
@@ -75,4 +116,8 @@ const usePackageData = () => {
   return { packages, loading, error };
 };
 
+/**
+ * @brief Экспорт хука usePackageData
+ * @details Экспортирует хук по умолчанию
+ */
 export default usePackageData;

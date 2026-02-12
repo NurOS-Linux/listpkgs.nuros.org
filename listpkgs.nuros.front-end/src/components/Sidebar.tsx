@@ -1,6 +1,21 @@
+/**
+ * @file Sidebar.tsx
+ * @brief Компонент боковой панели с фильтрами и навигацией
+ * @author NurOS Team
+ * @version 1.0
+ */
+
 import { createSignal, createEffect } from 'solid-js';
 import TreeNavigation from './TreeNavigation';
 
+/**
+ * @interface TreeNode
+ * @brief Интерфейс узла дерева навигации
+ * @property {string} id - Уникальный идентификатор узла
+ * @property {string} label - Текстовое представление узла
+ * @property {TreeNode[]} [children] - Дочерние узлы
+ * @property {number} [count] - Количество элементов в узле
+ */
 interface TreeNode {
   id: string;
   label: string;
@@ -8,20 +23,35 @@ interface TreeNode {
   count?: number;
 }
 
+/**
+ * @interface SidebarProps
+ * @brief Интерфейс свойств компонента Sidebar
+ * @property {any[]} packages - Массив пакетов для фильтрации
+ * @property {Function} onFilterChange - Функция для обработки изменения фильтров
+ */
 interface SidebarProps {
   packages: any[];
   onFilterChange: (filters: { architectures: string[]; categories: string[] }) => void;
 }
 
+/**
+ * @brief Компонент боковой панели
+ * @details Отображает фильтры и навигационное дерево для группировки пакетов
+ * @param {SidebarProps} props - Свойства компонента
+ * @returns JSX.Element - Компонент боковой панели
+ */
 const Sidebar = (props: SidebarProps) => {
   const [selectedArchitectures, setSelectedArchitectures] = createSignal<string[]>([]);
   const [selectedCategories, setSelectedCategories] = createSignal<string[]>([]);
   const [treeNodes, setTreeNodes] = createSignal<TreeNode[]>([]);
 
-  // Обновляем дерево при изменении пакетов
+  /**
+   * @brief Эффект для обновления дерева при изменении пакетов
+   * @details Группирует пакеты по архитектуре и категории, создает узлы дерева
+   */
   createEffect(() => {
     const packages = props.packages;
-    
+
     // Группируем пакеты по архитектуре
     const archMap = new Map<string, number>();
     packages.forEach(pkg => {
@@ -73,6 +103,11 @@ const Sidebar = (props: SidebarProps) => {
     setTreeNodes(nodes);
   });
 
+  /**
+   * @brief Обработчик выбора узла в дереве
+   * @details Обновляет выбранные архитектуры или категории в зависимости от типа узла
+   * @param {string} nodeId - Идентификатор выбранного узла
+   */
   const handleNodeSelect = (nodeId: string) => {
     if (nodeId.startsWith('arch-')) {
       const arch = nodeId.substring(5); // убираем 'arch-'
@@ -95,7 +130,10 @@ const Sidebar = (props: SidebarProps) => {
     }
   };
 
-  // Отправляем фильтры при изменении
+  /**
+   * @brief Эффект для отправки фильтров при изменении
+   * @details Вызывает функцию onFilterChange при изменении выбранных фильтров
+   */
   createEffect(() => {
     props.onFilterChange({
       architectures: selectedArchitectures(),
@@ -103,15 +141,23 @@ const Sidebar = (props: SidebarProps) => {
     });
   });
 
+  /**
+   * @brief Рендеринг компонента
+   * @details Возвращает JSX элемент боковой панели с фильтрами
+   */
   return (
     <aside class="sidebar">
       <h3>Filters</h3>
-      <TreeNavigation 
-        nodes={treeNodes()} 
+      <TreeNavigation
+        nodes={treeNodes()}
         onSelect={handleNodeSelect}
       />
     </aside>
   );
 };
 
+/**
+ * @brief Экспорт компонента Sidebar
+ * @details Экспортирует компонент по умолчанию
+ */
 export default Sidebar;
