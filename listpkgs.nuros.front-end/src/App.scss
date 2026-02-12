@@ -1,0 +1,43 @@
+// Основные переменные стилей
+$primary-color: #2563eb;
+$secondary-color: #f8fafc;
+$text-color: #1e293b;
+$border-color: #cbd5e1;
+$hover-color: #1d4ed8;
+
+// Стили для корневого контейнера
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+// Стили для логотипов
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+
+  &:hover {
+    filter: drop-shadow(0 0 2em rgba(100, 108, 255, 0.66));
+    
+    &.solid {
+      filter: drop-shadow(0 0 2em rgba(97, 218, 251, 0.66));
+    }
+  }
+}
+
+// Стили для карточки
+.card {
+  padding: 2em;
+  border: 1px solid $border-color;
+  border-radius: 8px;
+  background-color: $secondary-color;
+}
+
+// Стили для текста документации
+.read-the-docs {
+  color: #888;
+}

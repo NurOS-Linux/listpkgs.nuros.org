@@ -1,0 +1,61 @@
+name: Build Frontend
+
+on:
+  workflow_run:
+    workflows: ["Update NurOS Package List"]
+    types:
+      - completed
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Убедимся, что билд запускается только если update-list успешно завершился
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9.x
+
+      - name: Install dependencies
+        run: |
+          cd listpkgs.nuros.front-end
+          pnpm install
+
+      - name: Build frontend
+        run: |
+          cd listpkgs.nuros.front-end
+          pnpm build
+
+      - name: Prepare distribution
+        run: |
+          mkdir -p listpkgs.nuros.front-end/dist
+          cp packages.json listpkgs.nuros.front-end/dist/
+          cd listpkgs.nuros.front-end/dist
+          cp -r ../dist/* .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: listpkgs.nuros.front-end/dist/
+          retention-days: 7

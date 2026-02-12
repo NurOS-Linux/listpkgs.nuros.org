@@ -1,33 +1,55 @@
-# NurOS Packages Aggregator
+# NurOS Package Search System
 
-This repository contains tools for aggregating package metadata from the [NurOS-Packages](https://github.com/NurOS-Packages) organization.
+Это репозиторий для системы поиска и каталогизации пакетов в экосистеме NurOS.
 
-## Architecture
+## Структура проекта
 
-- `.ci/main.py` - entry point for CI/CD
-- `.ci/listpkgs_aggregator/aggregator.py` - main aggregation logic
-- `.ci/pyproject.toml` - dependency management and building
-- `.github/workflows/update-list.yaml` - GitHub Actions workflow
+- `.github/workflows/` - файлы автоматизации для GitHub Actions
+  - `update-list.yaml` - обновляет список пакетов каждые 6 часов
+  - `build_frontend.yaml` - собирает фронтенд после обновления списка пакетов
+  - `deploy_on_pages.yaml` - размещает собранный фронтенд на GitHub Pages
+- `listpkgs.nuros.front-end/` - исходный код фронтенд-приложения
+- `packages.json` - файл с метаданными всех пакетов NurOS (генерируется автоматически)
 
-## How it works
+## Как это работает
 
-1. The aggregation script retrieves all repositories from the NurOS-Packages organization
-2. For each repository, it attempts to get `metadata.json` from the `main` branch
-3. Validates required fields (`name`, `version`)
-4. Generates unique package keys and creates `packages.json`
-5. Results are published to GitHub Pages in the `gh-pages` branch
+1. Каждые 6 часов запускается `update-list.yaml`, который:
+   - Обходит все репозитории в организации NurOS-Packages
+   - Собирает метаданные из файлов `metadata.json`
+   - Создает единый `packages.json` файл
 
-## Running locally
+2. После успешного обновления списка запускается `build_frontend.yaml`, который:
+   - Устанавливает зависимости фронтенда
+   - Собирает фронтенд с помощью Vite
+   - Подключает актуальные данные из `packages.json`
+   - Загружает результат как артефакт
 
-```bash
-# Install dependencies
-pip install .ci/
+3. После успешной сборки запускается `deploy_on_pages.yaml`, который:
+   - Загружает артефакт с собранным фронтендом
+   - Размещает его на GitHub Pages
 
-# Run aggregation
-listpkgs-aggregate
-```
+## Фронтенд
 
-## CI/CD
+Фронтенд реализован с использованием SolidJS и предоставляет:
 
-GitHub Actions automatically runs aggregation every 6 hours and on manual trigger.
-Results are published to GitHub Pages.
+- Поиск пакетов по названию и описанию
+- Фильтрацию по различным критериям
+- Группировку пакетов
+- Отображение детальной информации
+- Возможность просмотра полного JSON-представления
+
+См. [README](listpkgs.nuros.front-end/README.md) в папке фронтенда для более подробной информации.
+
+## Вклад в развитие
+
+Чтобы внести свой вклад:
+
+1. Сделайте форк репозитория
+2. Создайте ветку для новой функции
+3. Сделайте коммит изменений
+4. Отправьте изменения в удаленную ветку
+5. Создайте pull request
+
+## Лицензия
+
+MIT
