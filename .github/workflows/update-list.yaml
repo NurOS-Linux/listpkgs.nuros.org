@@ -60,10 +60,14 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git pull --rebase origin main
+          # Получаем последние изменения и обновляем локальный репозиторий
+          git fetch origin
+          git reset --hard origin/main
+          # Добавляем обновленный файл и делаем коммит
           git add packages.json
-          git commit -m "chore: update package list (${{ steps.generate.outputs.package_count }} packages)"
-          git push
+          git commit -m "chore: update package list (${{ steps.generate.outputs.package_count }} packages)" || exit 0
+          # Пушим изменения в ветку main
+          git push origin main || echo "No changes to push"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

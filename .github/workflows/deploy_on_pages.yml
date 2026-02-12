@@ -33,29 +33,20 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: frontend-dist
-          path: ./temp-dist
+          path: ./frontend-dist
 
-      - name: Prepare GitHub Pages branch
+      - name: Verify artifact contents
         run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git fetch origin gh-pages || git checkout -b gh-pages
-          git checkout gh-pages || git checkout -b gh-pages
+          echo "Checking artifact contents:"
+          ls -la ./frontend-dist/
           
-      - name: Copy files to pages directory
-        run: |
-          rm -rf ./*
-          cp -r ./temp-dist/* .
-          
-      - name: Commit and push to gh-pages
-        run: |
-          git add .
-          if ! git diff --cached --quiet; then
-            git commit -m "Deploy website: $(date)"
-            git push origin gh-pages
-          else
-            echo "No changes to commit"
+          # Проверяем, что в артефакте есть необходимые файлы
+          if [ ! -f "./frontend-dist/index.html" ]; then
+            echo "ERROR: index.html not found in artifact"
+            exit 1
           fi
+          
+          echo "Artifact contains required files"
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -63,7 +54,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: ./frontend-dist
 
       - name: Deploy to GitHub Pages
         id: deployment

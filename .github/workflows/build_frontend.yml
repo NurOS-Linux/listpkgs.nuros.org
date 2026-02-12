@@ -41,25 +41,18 @@ jobs:
           cd listpkgs.nuros.front-end
           pnpm install
 
-      - name: Build frontend
-        run: |
-          cd listpkgs.nuros.front-end
-          pnpm build
-
       - name: Download packages.json artifact
         uses: actions/download-artifact@v4
         with:
           name: packages-json
           path: .
 
-      - name: Prepare distribution
+      - name: Build frontend
         run: |
+          # Копируем packages.json в директорию фронтенда перед сборкой
+          cp packages.json listpkgs.nuros.front-end/
           cd listpkgs.nuros.front-end
           pnpm build
-          mkdir -p dist
-          cp ../packages.json dist/
-          cd dist
-          cp -r ../dist/* .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
