@@ -60,6 +60,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git pull --rebase origin main
           git add packages.json
           git commit -m "chore: update package list (${{ steps.generate.outputs.package_count }} packages)"
           git push

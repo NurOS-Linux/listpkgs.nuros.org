@@ -50,13 +50,15 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: packages-json
-          path: listpkgs.nuros.front-end/public
+          path: .
 
       - name: Prepare distribution
         run: |
-          mkdir -p listpkgs.nuros.front-end/dist
-          cp listpkgs.nuros.front-end/public/packages.json listpkgs.nuros.front-end/dist/
-          cd listpkgs.nuros.front-end/dist
+          cd listpkgs.nuros.front-end
+          pnpm build
+          mkdir -p dist
+          cp ../packages.json dist/
+          cd dist
           cp -r ../dist/* .
 
       - name: Upload artifact
