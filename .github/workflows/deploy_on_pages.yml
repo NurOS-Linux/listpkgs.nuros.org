@@ -33,7 +33,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: frontend-dist
-          path: ./frontend-dist
+          path: ./temp-frontend-dist
+
+      - name: Copy packages.json to dist directory
+        run: |
+          mkdir -p ./frontend-dist
+          cp ./temp-frontend-dist/* ./frontend-dist/
+          cp packages.json ./frontend-dist/
 
       - name: Verify artifact contents
         run: |
@@ -43,6 +49,11 @@ jobs:
           # Проверяем, что в артефакте есть необходимые файлы
           if [ ! -f "./frontend-dist/index.html" ]; then
             echo "ERROR: index.html not found in artifact"
+            exit 1
+          fi
+          
+          if [ ! -f "./frontend-dist/packages.json" ]; then
+            echo "ERROR: packages.json not found in artifact"
             exit 1
           fi
 
