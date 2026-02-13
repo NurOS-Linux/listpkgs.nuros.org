@@ -24,7 +24,8 @@ interface Filters {
   architecture: string;
   channel: string;
   packageType: string;
-  versions: string[];
+  maintainers: string[];
+  licenses: string[];
 }
 
 /**
@@ -40,7 +41,8 @@ function App() {
     architecture: 'all',
     channel: 'all',
     packageType: 'all',
-    versions: []
+    maintainers: [],
+    licenses: []
   });
   const [viewMode, setViewMode] = createSignal<'list' | 'grouped'>('list');
   const [dots, setDots] = createSignal('.');
@@ -115,13 +117,14 @@ function App() {
           <div class="app-layout">
             <Sidebar
               packages={packages()}
-              onFilterChange={(filters: { architectures: string[]; categories: string[]; versions: string[] }) => {
+              onFilterChange={(filters) => {
                 // Обновляем фильтры
                 setFilters(prev => ({
                   ...prev,
                   architecture: filters.architectures.length > 0 ? filters.architectures.join(',') : 'all',
                   packageType: filters.categories.length > 0 ? filters.categories.join(',') : 'all',
-                  versions: filters.versions
+                  maintainers: filters.maintainers,
+                  licenses: filters.licenses
                 }));
               }}
             />
@@ -129,14 +132,20 @@ function App() {
             <main class="app-main">
               <SearchBar
                 onSearch={handleSearch}
-                onFilterChange={handleFilterChange}
+                onFilterChange={(newFilters) => {
+                  setFilters(prev => ({
+                    ...prev,
+                    channel: newFilters.channel || prev.channel,
+                    architecture: newFilters.architecture || prev.architecture,
+                    packageType: newFilters.packageType || prev.packageType
+                  }));
+                }}
                 onViewModeChange={handleViewModeChange}
               />
               <PackageList
                 packages={packages()}
                 searchTerm={searchTerm()}
                 filters={filters()}
-                selectedVersions={filters().versions}
                 grouped={viewMode() === 'grouped'}
               />
             </main>

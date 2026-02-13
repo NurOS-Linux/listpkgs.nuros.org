@@ -31,7 +31,7 @@ interface TreeNode {
  */
 interface SidebarProps {
   packages: any[];
-  onFilterChange: (filters: { architectures: string[]; categories: string[]; versions: string[] }) => void;
+  onFilterChange: (filters: { architectures: string[]; categories: string[]; maintainers: string[]; licenses: string[] }) => void;
 }
 
 /**
@@ -43,7 +43,8 @@ interface SidebarProps {
 const Sidebar = (props: SidebarProps) => {
   const [selectedArchitectures, setSelectedArchitectures] = createSignal<string[]>([]);
   const [selectedCategories, setSelectedCategories] = createSignal<string[]>([]);
-  const [selectedVersions, setSelectedVersions] = createSignal<string[]>([]);
+  const [selectedMaintainers, setSelectedMaintainers] = createSignal<string[]>([]);
+  const [selectedLicenses, setSelectedLicenses] = createSignal<string[]>([]);
   const [treeNodes, setTreeNodes] = createSignal<TreeNode[]>([]);
 
   /**
@@ -79,11 +80,18 @@ const Sidebar = (props: SidebarProps) => {
       categoryMap.set(category, (categoryMap.get(category) || 0) + 1);
     });
 
-    // Группируем пакеты по версии
-    const versionMap = new Map<string, number>();
+    // Группируем пакеты по мейнтейнерам
+    const maintainerMap = new Map<string, number>();
     packages.forEach(pkg => {
-      const version = pkg.version || 'unknown';
-      versionMap.set(version, (versionMap.get(version) || 0) + 1);
+      const maintainer = pkg.maintainer || 'unknown';
+      maintainerMap.set(maintainer, (maintainerMap.get(maintainer) || 0) + 1);
+    });
+
+    // Группируем пакеты по лицензиям
+    const licenseMap = new Map<string, number>();
+    packages.forEach(pkg => {
+      const license = pkg.license || 'unknown';
+      licenseMap.set(license, (licenseMap.get(license) || 0) + 1);
     });
 
     // Создаем узлы дерева
@@ -109,12 +117,22 @@ const Sidebar = (props: SidebarProps) => {
         }))
       },
       {
-        id: 'versions',
-        label: 'Versions',
-        sortField: 'label', // Сортировка по версиям
-        children: Array.from(versionMap.entries()).map(([version, count]) => ({
-          id: `ver-${version}`,
-          label: version,
+        id: 'maintainers',
+        label: 'Maintainers',
+        sortField: 'label', // Сортировка по алфавиту
+        children: Array.from(maintainerMap.entries()).map(([maintainer, count]) => ({
+          id: `maintainer-${maintainer}`,
+          label: maintainer,
+          count: count
+        }))
+      },
+      {
+        id: 'licenses',
+        label: 'Licenses',
+        sortField: 'label', // Сортировка по алфавиту
+        children: Array.from(licenseMap.entries()).map(([license, count]) => ({
+          id: `license-${license}`,
+          label: license,
           count: count
         }))
       }
@@ -125,7 +143,7 @@ const Sidebar = (props: SidebarProps) => {
 
   /**
    * @brief Обработчик выбора узла в дереве
-   * @details Обновляет выбранные архитектуры или категории в зависимости от типа узла
+   * @details Обновляет выбранные архитектуры, категории, мейнтейнеров или лицензии в зависимости от типа узла
    * @param {string} nodeId - Идентификатор выбранного узла
    */
   const handleNodeSelect = (nodeId: string) => {
@@ -147,13 +165,22 @@ const Sidebar = (props: SidebarProps) => {
           return [...prev, category];
         }
       });
-    } else if (nodeId.startsWith('ver-')) {
-      const version = nodeId.substring(4); // убираем 'ver-'
-      setSelectedVersions(prev => {
-        if (prev.includes(version)) {
-          return prev.filter(c => c !== version);
+    } else if (nodeId.startsWith('maintainer-')) {
+      const maintainer = nodeId.substring(11); // убираем 'maintainer-'
+      setSelectedMaintainers(prev => {
+        if (prev.includes(maintainer)) {
+          return prev.filter(c => c !== maintainer);
         } else {
-          return [...prev, version];
+          return [...prev, maintainer];
+        }
+      });
+    } else if (nodeId.startsWith('license-')) {
+      const license = nodeId.substring(8); // убираем 'license-'
+      setSelectedLicenses(prev => {
+        if (prev.includes(license)) {
+          return prev.filter(c => c !== license);
+        } else {
+          return [...prev, license];
         }
       });
     }
@@ -167,7 +194,8 @@ const Sidebar = (props: SidebarProps) => {
     props.onFilterChange({
       architectures: selectedArchitectures(),
       categories: selectedCategories(),
-      versions: selectedVersions()
+      maintainers: selectedMaintainers(),
+      licenses: selectedLicenses()
     });
   });
 

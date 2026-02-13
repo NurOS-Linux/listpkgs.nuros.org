@@ -11,6 +11,8 @@ interface Filters {
   architecture: string;
   channel: string;
   packageType: string;
+  maintainers: string[];
+  licenses: string[];
 }
 
 interface GroupedPackageListProps {
@@ -25,16 +27,16 @@ const GroupedPackageList = (props: GroupedPackageListProps) => {
 
   createEffect(() => {
     let result = [...props.packages];
-    
+
     // Фильтрация по поисковому запросу
     if (props.searchTerm) {
       const term = props.searchTerm.toLowerCase();
-      result = result.filter(pkg => 
+      result = result.filter(pkg =>
         pkg.name.toLowerCase().includes(term) ||
         (pkg.description && pkg.description.toLowerCase().includes(term))
       );
     }
-    
+
     // Применение других фильтров
     if (props.filters.architecture && props.filters.architecture !== 'all') {
       const architectures = props.filters.architecture.split(',');
@@ -44,40 +46,95 @@ const GroupedPackageList = (props: GroupedPackageListProps) => {
       });
     }
 
-    // Группировка пакетов по категории (умная группировка)
+    if (props.filters.channel && props.filters.channel !== 'all') {
+      // Фильтрация по репозиторию (берем из _source_repo)
+      result = result.filter(pkg => {
+        if (pkg._source_repo) {
+          return pkg._source_repo.includes(props.filters.channel);
+        }
+        return true;
+      });
+    }
+
+    // Фильтрация по типу пакета
+    if (props.filters.packageType && props.filters.packageType !== 'all') {
+      const categories = props.filters.packageType.split(',');
+      result = result.filter(pkg => {
+        if (categories.includes('all')) return true;
+        // Определяем категорию пакета и проверяем соответствие
+        let pkgCategory = 'other';
+        if (pkg.type === 'system' || pkg.name.includes('kernel') || pkg.name.includes('core')) {
+          pkgCategory = 'system';
+        } else if (pkg.type === 'application' || pkg.type === 'desktop') {
+          pkgCategory = 'application';
+        } else if (pkg.type === 'library') {
+          pkgCategory = 'library';
+        } else if (pkg.type === 'development') {
+          pkgCategory = 'development';
+        } else if (pkg.type === 'misc') {
+          pkgCategory = 'misc';
+        }
+        return categories.some(cat => pkgCategory.includes(cat) || cat.includes(pkgCategory));
+      });
+    }
+
+    // Фильтрация по мейнтейнерам
+    if (props.filters.maintainers && props.filters.maintainers.length > 0) {
+      result = result.filter(pkg => {
+        const pkgMaintainer = pkg.maintainer || 'unknown';
+        return props.filters.maintainers.includes(pkgMaintainer);
+      });
+    }
+
+    // Фильтрация по лицензиям
+    if (props.filters.licenses && props.filters.licenses.length > 0) {
+      result = result.filter(pkg => {
+        const pkgLicense = pkg.license || 'unknown';
+        return props.filters.licenses.includes(pkgLicense);
+      });
+    }
+
+    // Группировка пакетов по типу (умная группировка)
     const groupsMap = new Map<string, Package[]>();
+    
+    // Сначала попробуем сгруппировать по типу пакета
     result.forEach(pkg => {
-      // Определяем категорию пакета на основе различных признаков
       let category = 'Other';
-      if (pkg.type === 'system' || pkg.name.includes('kernel') || pkg.name.includes('core')) {
-        category = 'System Packages';
-      } else if (pkg.type === 'application' || pkg.type === 'desktop') {
-        category = 'Applications';
-      } else if (pkg.type === 'library') {
-        category = 'Libraries';
-      } else if (pkg.type === 'development') {
-        category = 'Development Tools';
-      } else if (pkg.type === 'shell' || pkg.name.includes('shell')) {
-        category = 'Shells';
-      } else if (pkg.type === 'misc') {
-        category = 'Utilities';
+      
+      // Определяем категорию на основе типа пакета
+      if (pkg.type) {
+        switch(pkg.type) {
+          case 'system':
+            category = 'System';
+            break;
+          case 'application':
+          case 'desktop':
+            category = 'Applications';
+            break;
+          case 'library':
+            category = 'Libraries';
+            break;
+          case 'development':
+            category = 'Development';
+            break;
+          case 'shell':
+            category = 'Shells';
+            break;
+          case 'misc':
+            category = 'Miscellaneous';
+            break;
+          default:
+            category = pkg.type.charAt(0).toUpperCase() + pkg.type.slice(1);
+        }
       } else {
-        // Дополнительная эвристика: определение категории по названию
+        // Если тип не указан, определяем на основе названия
         const nameLower = pkg.name.toLowerCase();
-        if (nameLower.includes('driver') || nameLower.includes('firmware')) {
-          category = 'Drivers & Firmware';
-        } else if (nameLower.includes('tool') || nameLower.includes('util')) {
-          category = 'Utilities';
-        } else if (nameLower.includes('game')) {
-          category = 'Games';
-        } else if (nameLower.includes('theme') || nameLower.includes('icon') || nameLower.includes('font')) {
-          category = 'Themes & Fonts';
-        } else if (nameLower.includes('security') || nameLower.includes('crypto')) {
-          category = 'Security Tools';
-        } else if (nameLower.includes('network') || nameLower.includes('net')) {
-          category = 'Network Tools';
-        } else if (nameLower.includes('media')) {
-          category = 'Media Tools';
+        if (nameLower.includes('kernel') || nameLower.includes('core') || nameLower.includes('system')) {
+          category = 'System';
+        } else if (nameLower.includes('lib')) {
+          category = 'Libraries';
+        } else if (nameLower.includes('dev') || nameLower.includes('devel') || nameLower.includes('sdk')) {
+          category = 'Development';
         } else {
           category = 'Other';
         }
@@ -89,13 +146,72 @@ const GroupedPackageList = (props: GroupedPackageListProps) => {
       groupsMap.get(category)?.push(pkg);
     });
 
-    // Сортировка групп
+    // Умная сортировка групп на основе примененных фильтров
     const sortedGroups = Array.from(groupsMap.entries())
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([name, packages]) => ({
-        name,
-        packages: packages.sort((a, b) => a.name.localeCompare(b.name))
-      }));
+      .sort(([a], [b]) => {
+        // Если применен фильтр по архитектуре, сортируем по архитектуре
+        if (props.filters.architecture && props.filters.architecture !== 'all') {
+          return a.localeCompare(b);
+        }
+        // Если применен фильтр по мейнтейнерам, сортируем по мейнтейнерам
+        else if (props.filters.maintainers && props.filters.maintainers.length > 0) {
+          return a.localeCompare(b);
+        }
+        // Если применен фильтр по лицензиям, сортируем по лицензиям
+        else if (props.filters.licenses && props.filters.licenses.length > 0) {
+          return a.localeCompare(b);
+        }
+        // Если применен фильтр по типу пакета, сортируем по типу
+        else if (props.filters.packageType && props.filters.packageType !== 'all') {
+          return a.localeCompare(b);
+        }
+        // В противном случае, сортируем по алфавиту
+        else {
+          return a.localeCompare(b);
+        }
+      })
+      .map(([name, packages]) => {
+        // Умная сортировка пакетов внутри групп на основе примененных фильтров
+        let sortedPackages = packages;
+        
+        // Если применен фильтр по архитектуре, сортируем пакеты по архитектуре
+        if (props.filters.architecture && props.filters.architecture !== 'all') {
+          sortedPackages = packages.sort((a, b) => {
+            const aArch = a.architecture || 'unknown';
+            const bArch = b.architecture || 'unknown';
+            return aArch.localeCompare(bArch);
+          });
+        }
+        // Если применен фильтр по мейнтейнерам, сортируем по мейнтейнерам
+        else if (props.filters.maintainers && props.filters.maintainers.length > 0) {
+          sortedPackages = packages.sort((a, b) => {
+            const aMaintainer = a.maintainer || 'unknown';
+            const bMaintainer = b.maintainer || 'unknown';
+            return aMaintainer.localeCompare(bMaintainer);
+          });
+        }
+        // Если применен фильтр по лицензиям, сортируем по лицензиям
+        else if (props.filters.licenses && props.filters.licenses.length > 0) {
+          sortedPackages = packages.sort((a, b) => {
+            const aLicense = a.license || 'unknown';
+            const bLicense = b.license || 'unknown';
+            return aLicense.localeCompare(bLicense);
+          });
+        }
+        // Если применен фильтр по типу пакета, сортируем по имени
+        else if (props.filters.packageType && props.filters.packageType !== 'all') {
+          sortedPackages = packages.sort((a, b) => a.name.localeCompare(b.name));
+        }
+        // В противном случае, сортируем по имени
+        else {
+          sortedPackages = packages.sort((a, b) => a.name.localeCompare(b.name));
+        }
+        
+        return {
+          name,
+          packages: sortedPackages
+        };
+      });
 
     setGroupedPackages(sortedGroups);
   });
@@ -116,13 +232,14 @@ const GroupedPackageList = (props: GroupedPackageListProps) => {
         <div class="package-group">
           <div class="group-header" onClick={() => toggleGroup(group.name)}>
             <h2 class="group-name">
-              {group.name} ({group.packages.length})
+              <span>{group.name}</span>
               <span class="expand-icon">
                 {expandedGroups().has(group.name) ? '▼' : '▶'}
               </span>
             </h2>
+            <div class="package-count">{group.packages.length} packages</div>
           </div>
-          
+
           {expandedGroups().has(group.name) && (
             <div class="group-packages">
               {group.packages.map(pkg => (
@@ -132,7 +249,7 @@ const GroupedPackageList = (props: GroupedPackageListProps) => {
           )}
         </div>
       ))}
-      
+
       {groupedPackages().length === 0 && (
         <div class="no-results">No packages found</div>
       )}

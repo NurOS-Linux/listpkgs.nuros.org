@@ -7,15 +7,15 @@ interface Filters {
   architecture: string;
   channel: string;
   packageType: string;
-  versions: string[];
+  maintainers: string[];
+  licenses: string[];
 }
 
 interface PackageListProps {
   packages: Package[];
   searchTerm: string;
   filters: Filters;
-  grouped?: boolean;
-  selectedVersions?: string[];
+  grouped: boolean;
 }
 
 const PackageList = (props: PackageListProps) => {
@@ -55,7 +55,13 @@ const PackageList = (props: PackageListProps) => {
     }
 
     if (props.filters.channel && props.filters.channel !== 'all') {
-      // Временно пропускаем фильтр канала, так как в данных нет этой информации
+      // Фильтрация по репозиторию (берем из _source_repo)
+      result = result.filter(pkg => {
+        if (pkg._source_repo) {
+          return pkg._source_repo.includes(props.filters.channel);
+        }
+        return true;
+      });
     }
 
     if (props.filters.packageType && props.filters.packageType !== 'all') {
@@ -79,11 +85,19 @@ const PackageList = (props: PackageListProps) => {
       });
     }
 
-    // Фильтрация по версиям
-    if (props.selectedVersions && props.selectedVersions.length > 0) {
+    // Фильтрация по мейнтейнерам
+    if (props.filters.maintainers && props.filters.maintainers.length > 0) {
       result = result.filter(pkg => {
-        const pkgVersion = pkg.version || 'unknown';
-        return props.selectedVersions.includes(pkgVersion);
+        const pkgMaintainer = pkg.maintainer || 'unknown';
+        return props.filters.maintainers.includes(pkgMaintainer);
+      });
+    }
+
+    // Фильтрация по лицензиям
+    if (props.filters.licenses && props.filters.licenses.length > 0) {
+      result = result.filter(pkg => {
+        const pkgLicense = pkg.license || 'unknown';
+        return props.filters.licenses.includes(pkgLicense);
       });
     }
 
