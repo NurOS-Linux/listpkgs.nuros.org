@@ -72,6 +72,8 @@
   flex-grow: 1;
   border-radius: 4px;
   font-size: 0.9rem;
+  display: flex;
+  align-items: center;
 }
 
 .tree-node-label:hover {
@@ -82,6 +84,66 @@
   background-color: #dbeafe;
   color: #1d4ed8;
   font-weight: 500;
+}
+
+/* Стили для чекбоксов с закругленными углами */
+.checkbox-wrapper {
+  display: inline-block;
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.25rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-wrapper input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0.25rem;
+  left: 0;
+  height: 1rem;
+  width: 1rem;
+  background-color: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.25rem; /* Закругленные углы */
+  transition: all 0.2s ease;
+}
+
+.checkbox-wrapper:hover input ~ .checkmark {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.checkbox-wrapper input:checked ~ .checkmark {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.checkbox-wrapper input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.checkbox-wrapper .checkmark:after {
+  left: 0.25rem;
+  top: 0.125rem;
+  width: 0.25rem;
+  height: 0.5rem;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
 
 .node-count {

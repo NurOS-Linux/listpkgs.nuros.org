@@ -42,16 +42,26 @@ jobs:
         run: |
           uv pip install --system .ci/.
 
-      - name: Generate packages.json
+      - name: Generate repodata.json
         id: generate
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: listpkgs-aggregate
 
+      - name: Move repodata.json to public directory
+        run: |
+          mkdir -p listpkgs.nuros.front-end/public/
+          mv repodata.json listpkgs.nuros.front-end/public/
+
+      - name: Generate SHA256 checksum
+        run: |
+          cd listpkgs.nuros.front-end/public/
+          sha256sum repodata.json > repodata.json.sha256
+
       - name: Check for changes
         id: changes
         run: |
-          if git diff --quiet packages.json 2>/dev/null; then
+          if git diff --quiet listpkgs.nuros.front-end/public/repodata.json 2>/dev/null; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "No changes detected"
           else
@@ -67,17 +77,20 @@ jobs:
           # Получаем последние изменения и обновляем локальный репозиторий
           git fetch origin
           git reset --hard origin/main
-          # Добавляем обновленный файл и делаем коммит
-          git add packages.json
-          git commit -m "chore: update package list (${{ steps.generate.outputs.package_count }} packages)" || exit 0
+          # Добавляем обновленные файлы и делаем коммит
+          git add listpkgs.nuros.front-end/public/repodata.json
+          git add listpkgs.nuros.front-end/public/repodata.json.sha256
+          git commit -m "chore: update repodata (${{ steps.generate.outputs.package_count }} packages)" || exit 0
           # Пушим изменения в ветку main
           git push origin main || echo "No changes to push"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: packages-json
-          path: packages.json
+          name: repodata-json
+          path: |
+            listpkgs.nuros.front-end/public/repodata.json
+            listpkgs.nuros.front-end/public/repodata.json.sha256
           retention-days: 7
 
 

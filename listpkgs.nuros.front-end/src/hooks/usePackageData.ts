@@ -69,9 +69,9 @@ const usePackageData = () => {
    */
   onMount(async () => {
     try {
-      console.log('Starting to fetch packages.json');
+      console.log('Starting to fetch repodata.json');
       // Используем относительный путь к файлу в публичной папке
-      const response = await fetch('/packages.json');
+      const response = await fetch('/repodata.json');
       console.log('Response received:', response.status);
 
       if (!response.ok) {
@@ -88,6 +88,7 @@ const usePackageData = () => {
           key,
           name: pkg.name || key,
           version: pkg.version || 'unknown',
+          type: pkg.type || 'unknown',
           architecture: pkg.architecture || 'N/A',
           description: pkg.description || 'No description available',
           maintainer: pkg.maintainer || 'Unknown',
@@ -95,6 +96,10 @@ const usePackageData = () => {
           homepage: pkg.homepage || '#',
           dependencies: pkg.dependencies || [],
           conflicts: pkg.conflicts || [],
+          tags: pkg.tags || [],
+          provides: pkg.provides || [],
+          replaces: pkg.replaces || [],
+          conf: pkg.conf || [],
           _source_repo: pkg._source_repo || '#',
           _last_updated: pkg._last_updated || null,
           ...pkg
@@ -106,7 +111,7 @@ const usePackageData = () => {
       setLoading(false);
       console.log('Loading state updated to false');
     } catch (err) {
-      console.error('Error loading packages:', err);
+      console.error('Error loading repodata:', err);
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
       setLoading(false);
       console.log('Loading state updated to false due to error');

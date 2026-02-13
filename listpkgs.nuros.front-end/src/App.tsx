@@ -18,11 +18,13 @@ import './App.scss';
  * @property {string} architecture - Архитектура пакета
  * @property {string} channel - Канал обновлений
  * @property {string} packageType - Тип пакета
+ * @property {string[]} versions - Версии пакетов
  */
 interface Filters {
   architecture: string;
   channel: string;
   packageType: string;
+  versions: string[];
 }
 
 /**
@@ -37,7 +39,8 @@ function App() {
   const [filters, setFilters] = createSignal<Filters>({
     architecture: 'all',
     channel: 'all',
-    packageType: 'all'
+    packageType: 'all',
+    versions: []
   });
   const [viewMode, setViewMode] = createSignal<'list' | 'grouped'>('list');
   const [dots, setDots] = createSignal('.');
@@ -112,12 +115,13 @@ function App() {
           <div class="app-layout">
             <Sidebar
               packages={packages()}
-              onFilterChange={(filters: { architectures: string[]; categories: string[] }) => {
+              onFilterChange={(filters: { architectures: string[]; categories: string[]; versions: string[] }) => {
                 // Обновляем фильтры
                 setFilters(prev => ({
                   ...prev,
                   architecture: filters.architectures.length > 0 ? filters.architectures.join(',') : 'all',
-                  packageType: filters.categories.length > 0 ? filters.categories.join(',') : 'all'
+                  packageType: filters.categories.length > 0 ? filters.categories.join(',') : 'all',
+                  versions: filters.versions
                 }));
               }}
             />
@@ -132,6 +136,7 @@ function App() {
                 packages={packages()}
                 searchTerm={searchTerm()}
                 filters={filters()}
+                selectedVersions={filters().versions}
                 grouped={viewMode() === 'grouped'}
               />
             </main>

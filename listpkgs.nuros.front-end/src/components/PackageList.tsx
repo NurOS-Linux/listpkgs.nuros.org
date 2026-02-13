@@ -7,6 +7,7 @@ interface Filters {
   architecture: string;
   channel: string;
   packageType: string;
+  versions: string[];
 }
 
 interface PackageListProps {
@@ -14,16 +15,17 @@ interface PackageListProps {
   searchTerm: string;
   filters: Filters;
   grouped?: boolean;
+  selectedVersions?: string[];
 }
 
 const PackageList = (props: PackageListProps) => {
   // Если включена группировка, используем GroupedPackageList
   if (props.grouped) {
     return (
-      <GroupedPackageList 
-        packages={props.packages} 
-        searchTerm={props.searchTerm} 
-        filters={props.filters} 
+      <GroupedPackageList
+        packages={props.packages}
+        searchTerm={props.searchTerm}
+        filters={props.filters}
       />
     );
   }
@@ -33,16 +35,16 @@ const PackageList = (props: PackageListProps) => {
 
   createEffect(() => {
     let result = [...props.packages];
-    
+
     // Фильтрация по поисковому запросу
     if (props.searchTerm) {
       const term = props.searchTerm.toLowerCase();
-      result = result.filter(pkg => 
+      result = result.filter(pkg =>
         pkg.name.toLowerCase().includes(term) ||
         (pkg.description && pkg.description.toLowerCase().includes(term))
       );
     }
-    
+
     // Применение других фильтров
     if (props.filters.architecture && props.filters.architecture !== 'all') {
       const architectures = props.filters.architecture.split(',');
@@ -51,11 +53,11 @@ const PackageList = (props: PackageListProps) => {
         return pkg.architecture && architectures.some(arch => pkg.architecture?.includes(arch));
       });
     }
-    
+
     if (props.filters.channel && props.filters.channel !== 'all') {
       // Временно пропускаем фильтр канала, так как в данных нет этой информации
     }
-    
+
     if (props.filters.packageType && props.filters.packageType !== 'all') {
       const categories = props.filters.packageType.split(',');
       result = result.filter(pkg => {
@@ -76,10 +78,18 @@ const PackageList = (props: PackageListProps) => {
         return categories.some(cat => pkgCategory.includes(cat) || cat.includes(pkgCategory));
       });
     }
-    
+
+    // Фильтрация по версиям
+    if (props.selectedVersions && props.selectedVersions.length > 0) {
+      result = result.filter(pkg => {
+        const pkgVersion = pkg.version || 'unknown';
+        return props.selectedVersions.includes(pkgVersion);
+      });
+    }
+
     // Сортировка по имени
     result.sort((a, b) => a.name.localeCompare(b.name));
-    
+
     setFilteredPackages(result);
   });
 

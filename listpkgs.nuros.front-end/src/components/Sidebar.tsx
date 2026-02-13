@@ -31,7 +31,7 @@ interface TreeNode {
  */
 interface SidebarProps {
   packages: any[];
-  onFilterChange: (filters: { architectures: string[]; categories: string[] }) => void;
+  onFilterChange: (filters: { architectures: string[]; categories: string[]; versions: string[] }) => void;
 }
 
 /**
@@ -43,11 +43,12 @@ interface SidebarProps {
 const Sidebar = (props: SidebarProps) => {
   const [selectedArchitectures, setSelectedArchitectures] = createSignal<string[]>([]);
   const [selectedCategories, setSelectedCategories] = createSignal<string[]>([]);
+  const [selectedVersions, setSelectedVersions] = createSignal<string[]>([]);
   const [treeNodes, setTreeNodes] = createSignal<TreeNode[]>([]);
 
   /**
    * @brief Эффект для обновления дерева при изменении пакетов
-   * @details Группирует пакеты по архитектуре и категории, создает узлы дерева
+   * @details Группирует пакеты по различным аспектам, создает узлы дерева
    */
   createEffect(() => {
     const packages = props.packages;
@@ -78,11 +79,19 @@ const Sidebar = (props: SidebarProps) => {
       categoryMap.set(category, (categoryMap.get(category) || 0) + 1);
     });
 
+    // Группируем пакеты по версии
+    const versionMap = new Map<string, number>();
+    packages.forEach(pkg => {
+      const version = pkg.version || 'unknown';
+      versionMap.set(version, (versionMap.get(version) || 0) + 1);
+    });
+
     // Создаем узлы дерева
     const nodes: TreeNode[] = [
       {
         id: 'architectures',
         label: 'Architectures',
+        sortField: 'label', // Сортировка по алфавиту
         children: Array.from(archMap.entries()).map(([arch, count]) => ({
           id: `arch-${arch}`,
           label: arch,
@@ -92,9 +101,20 @@ const Sidebar = (props: SidebarProps) => {
       {
         id: 'categories',
         label: 'Categories',
+        sortField: 'label', // Сортировка по алфавиту
         children: Array.from(categoryMap.entries()).map(([category, count]) => ({
           id: `cat-${category}`,
           label: category.charAt(0).toUpperCase() + category.slice(1),
+          count: count
+        }))
+      },
+      {
+        id: 'versions',
+        label: 'Versions',
+        sortField: 'label', // Сортировка по версиям
+        children: Array.from(versionMap.entries()).map(([version, count]) => ({
+          id: `ver-${version}`,
+          label: version,
           count: count
         }))
       }
@@ -127,6 +147,15 @@ const Sidebar = (props: SidebarProps) => {
           return [...prev, category];
         }
       });
+    } else if (nodeId.startsWith('ver-')) {
+      const version = nodeId.substring(4); // убираем 'ver-'
+      setSelectedVersions(prev => {
+        if (prev.includes(version)) {
+          return prev.filter(c => c !== version);
+        } else {
+          return [...prev, version];
+        }
+      });
     }
   };
 
@@ -137,7 +166,8 @@ const Sidebar = (props: SidebarProps) => {
   createEffect(() => {
     props.onFilterChange({
       architectures: selectedArchitectures(),
-      categories: selectedCategories()
+      categories: selectedCategories(),
+      versions: selectedVersions()
     });
   });
 

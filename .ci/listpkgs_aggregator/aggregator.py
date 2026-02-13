@@ -242,9 +242,9 @@ def main() -> None:
 
     aggregated = dict(sorted(aggregated.items()))
 
-    with open("packages.json", "w", encoding="utf-8") as f:
+    with open("repodata.json", "w", encoding="utf-8") as f:
         json.dump(aggregated, f, indent=2, ensure_ascii=False)
-        logger.info(f"Saved aggregated data to packages.json with {len(aggregated)} packages")
+        logger.info(f"Saved aggregated data to repodata.json with {len(aggregated)} packages")
 
     logger.info("=" * 50)
     logger.info("Summary:")

@@ -2,7 +2,7 @@ name: Build Frontend
 
 on:
   workflow_run:
-    workflows: ["Update NurOS Package List"]
+    workflows: ["Update NurOS Package List"]  # Это имя workflow из update-list.yml
     types:
       - completed
   workflow_dispatch:
@@ -25,6 +25,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Download repodata artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: repodata-json
+
+      - name: Copy repodata files to frontend public directory
+        run: |
+          mkdir -p listpkgs.nuros.front-end/public/
+          cp repodata.json listpkgs.nuros.front-end/public/
+          cp repodata.json.sha256 listpkgs.nuros.front-end/public/
+
       - name: Install pnpm
         uses: pnpm/action-setup@v3
         with:
@@ -41,10 +52,6 @@ jobs:
         run: |
           cd listpkgs.nuros.front-end
           pnpm install
-
-      - name: Copy packages.json to frontend directory
-        run: |
-          cp packages.json listpkgs.nuros.front-end/
 
       - name: Build frontend
         run: |

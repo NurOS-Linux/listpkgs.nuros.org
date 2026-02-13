@@ -14,12 +14,14 @@ import { createSignal, For, Show, Switch, Match } from 'solid-js';
  * @property {string} label - Текстовое представление узла
  * @property {TreeNode[]} [children] - Дочерние узлы
  * @property {number} [count] - Количество элементов в узле
+ * @property {string} [sortField] - Поле, по которому сортируются дочерние элементы
  */
 interface TreeNode {
   id: string;
   label: string;
   children?: TreeNode[];
   count?: number;
+  sortField?: string;
 }
 
 /**
@@ -119,8 +121,38 @@ const TreeNodeComponent = (props: TreeNodeComponentProps) => {
   const hasChildren = () => !!props.node.children && props.node.children!.length > 0;
 
   /**
+   * @brief Функция сортировки дочерних узлов по заданному полю
+   * @returns {TreeNode[]} - Отсортированный массив дочерних узлов
+   */
+  const sortedChildren = () => {
+    if (!props.node.children) return [];
+    
+    // Если задано поле сортировки, сортируем по нему
+    if (props.node.sortField) {
+      return [...props.node.children].sort((a, b) => {
+        // Получаем значения полей для сравнения
+        const aValue = a[props.node.sortField as keyof TreeNode];
+        const bValue = b[props.node.sortField as keyof TreeNode];
+        
+        // Сравниваем значения
+        if (aValue && bValue) {
+          if (typeof aValue === 'string' && typeof bValue === 'string') {
+            return aValue.localeCompare(bValue);
+          } else {
+            return (aValue as number) - (bValue as number);
+          }
+        }
+        return 0;
+      });
+    }
+    
+    // Если поле сортировки не задано, возвращаем оригинальный порядок
+    return props.node.children;
+  };
+
+  /**
    * @brief Рендеринг компонента узла
-   * @details Возвращает JSX элемент узла дерева с кнопками управления
+   * @details Возвращает JSX элемент узла дерева с чекбоксами
    */
   return (
     <li class="tree-node">
@@ -139,22 +171,28 @@ const TreeNodeComponent = (props: TreeNodeComponentProps) => {
             </Match>
           </Switch>
         </button>
-        <button
-          class="tree-node-label"
-          onClick={() => props.onSelect(props.node.id)}
-        >
-          {props.node.label}
-          <Switch>
-            <Match when={props.node.count !== undefined}>
-              <span class="node-count">({props.node.count})</span>
-            </Match>
-          </Switch>
-        </button>
+        <div class="checkbox-wrapper">
+          <input
+            type="checkbox"
+            id={props.node.id}
+            checked={props.selectedNode === props.node.id}
+            onChange={() => props.onSelect(props.node.id)}
+          />
+          <label for={props.node.id} class="tree-node-label">
+            {props.node.label}
+            <Switch>
+              <Match when={props.node.count !== undefined}>
+                <span class="node-count">({props.node.count})</span>
+              </Match>
+            </Switch>
+          </label>
+          <span class="checkmark"></span>
+        </div>
       </div>
 
       <Show when={hasChildren() && props.isExpanded}>
         <ul class="tree-children">
-          <For each={props.node.children}>
+          <For each={sortedChildren()}>
             {(child) => (
               <TreeNodeComponent
                 node={child}

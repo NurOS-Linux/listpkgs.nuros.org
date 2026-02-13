@@ -35,11 +35,17 @@ jobs:
           name: frontend-dist
           path: ./temp-frontend-dist
 
-      - name: Copy packages.json to dist directory
+      - name: Copy repodata files to dist directory
         run: |
           mkdir -p ./frontend-dist
-          cp ./temp-frontend-dist/* ./frontend-dist/
-          cp packages.json ./frontend-dist/
+          cp -r ./temp-frontend-dist/* ./frontend-dist/
+          # Копируем файлы repodata из репозитория в директорию dist
+          if [ -f "listpkgs.nuros.front-end/public/repodata.json" ]; then
+            cp listpkgs.nuros.front-end/public/repodata.json ./frontend-dist/
+          fi
+          if [ -f "listpkgs.nuros.front-end/public/repodata.json.sha256" ]; then
+            cp listpkgs.nuros.front-end/public/repodata.json.sha256 ./frontend-dist/
+          fi
 
       - name: Verify artifact contents
         run: |
@@ -51,13 +57,23 @@ jobs:
             echo "ERROR: index.html not found in artifact"
             exit 1
           fi
-          
-          if [ ! -f "./frontend-dist/packages.json" ]; then
-            echo "ERROR: packages.json not found in artifact"
-            exit 1
-          fi
 
           echo "Artifact contains required files"
+
+      - name: Verify SHA256 checksum
+        run: |
+          echo "Verifying SHA256 checksum for repodata.json..."
+          if [ -f "./frontend-dist/repodata.json" ] && [ -f "./frontend-dist/repodata.json.sha256" ]; then
+            cd ./frontend-dist
+            if sha256sum -c repodata.json.sha256; then
+              echo "SHA256 verification passed"
+            else
+              echo "SHA256 verification failed!"
+              exit 1
+            fi
+          else
+            echo "WARNING: repodata.json or repodata.json.sha256 not found in artifact"
+          fi
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
