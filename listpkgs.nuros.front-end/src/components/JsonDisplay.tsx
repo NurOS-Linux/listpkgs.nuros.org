@@ -8,7 +8,7 @@
 import { onMount } from 'solid-js';
 import { Switch, Match } from 'solid-js';
 import Prism from 'prismjs';
-import 'prismjs/components/prism-javascript';
+import 'prismjs/components/prism-json';
 import 'prismjs/themes/prism-tomorrow.css';
 
 /**
@@ -59,7 +59,7 @@ const JsonDisplay = (props: JsonDisplayProps) => {
    * @details Возвращает JSX элемент с подсветкой синтаксиса JSON
    */
   return (
-    <pre ref={ref} class="json-display-prism">
+    <pre ref={ref} class="json-display-prism" style={{ "max-height": "400px", "overflow": "auto", "margin": "10px 0", "padding": "10px" }}>
       {/* Используем Switch для демонстрации возможностей, хотя в данном случае он не нужен */}
       <Switch fallback={<code>{JSON.stringify(props.data, null, 2)}</code>}>
         <Match when={typeof props.data === 'object'}>

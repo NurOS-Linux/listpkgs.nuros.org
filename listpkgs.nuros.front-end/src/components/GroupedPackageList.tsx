@@ -50,13 +50,13 @@ const GroupedPackageList = (props: GroupedPackageListProps) => {
       // Определяем категорию пакета на основе различных признаков
       let category = 'Other';
       if (pkg.type === 'system' || pkg.name.includes('kernel') || pkg.name.includes('core')) {
-        category = 'System/Core';
+        category = 'System Packages';
       } else if (pkg.type === 'application' || pkg.type === 'desktop') {
         category = 'Applications';
       } else if (pkg.type === 'library') {
         category = 'Libraries';
       } else if (pkg.type === 'development') {
-        category = 'Development';
+        category = 'Development Tools';
       } else if (pkg.type === 'shell' || pkg.name.includes('shell')) {
         category = 'Shells';
       } else if (pkg.type === 'misc') {
@@ -65,13 +65,19 @@ const GroupedPackageList = (props: GroupedPackageListProps) => {
         // Дополнительная эвристика: определение категории по названию
         const nameLower = pkg.name.toLowerCase();
         if (nameLower.includes('driver') || nameLower.includes('firmware')) {
-          category = 'Drivers/Firmware';
+          category = 'Drivers & Firmware';
         } else if (nameLower.includes('tool') || nameLower.includes('util')) {
           category = 'Utilities';
         } else if (nameLower.includes('game')) {
           category = 'Games';
         } else if (nameLower.includes('theme') || nameLower.includes('icon') || nameLower.includes('font')) {
-          category = 'Themes';
+          category = 'Themes & Fonts';
+        } else if (nameLower.includes('security') || nameLower.includes('crypto')) {
+          category = 'Security Tools';
+        } else if (nameLower.includes('network') || nameLower.includes('net')) {
+          category = 'Network Tools';
+        } else if (nameLower.includes('media')) {
+          category = 'Media Tools';
         } else {
           category = 'Other';
         }

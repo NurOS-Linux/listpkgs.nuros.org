@@ -2,7 +2,7 @@ import { createSignal } from 'solid-js';
 
 interface Filters {
   architecture: string;
-  channel: string;
+  channel: string; // repository name
   packageType: string;
 }
 
@@ -73,15 +73,14 @@ const SearchBar = (props: SearchBarProps) => {
             <option value="option">Option</option>
           </select>
           
-          <select 
-            class="filter-select" 
-            value={channel()} 
+          <select
+            class="filter-select"
+            value={channel()}
             onChange={(e) => setChannel(e.target.value)}
             onBlur={handleFiltersChange}
           >
-            <option value="all">All Channels</option>
-            <option value="unstable">Unstable</option>
-            <option value="23.11">23.11</option>
+            <option value="all">All Repositories</option>
+            <option value="NurOS-Packages">NurOS-Packages</option>
           </select>
           
           <select 
