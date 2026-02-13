@@ -118,6 +118,7 @@ function App() {
             <Sidebar
               packages={packages()}
               onFilterChange={(filters) => {
+                console.log('Sidebar filter change:', filters);
                 // Обновляем фильтры
                 setFilters(prev => ({
                   ...prev,
@@ -126,6 +127,7 @@ function App() {
                   maintainers: filters.maintainers,
                   licenses: filters.licenses
                 }));
+                console.log('Updated filters:', filters());
               }}
             />
 
@@ -133,14 +135,19 @@ function App() {
               <SearchBar
                 onSearch={handleSearch}
                 onFilterChange={(newFilters) => {
+                  console.log('SearchBar filter change:', newFilters);
                   setFilters(prev => ({
                     ...prev,
                     channel: newFilters.channel || prev.channel,
                     architecture: newFilters.architecture || prev.architecture,
                     packageType: newFilters.packageType || prev.packageType
                   }));
+                  console.log('Updated filters:', filters());
                 }}
-                onViewModeChange={handleViewModeChange}
+                onViewModeChange={(mode) => {
+                  console.log('View mode changed to:', mode);
+                  handleViewModeChange(mode);
+                }}
               />
               <PackageList
                 packages={packages()}

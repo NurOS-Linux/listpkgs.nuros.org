@@ -2,7 +2,7 @@ name: Build Frontend
 
 on:
   workflow_run:
-    workflows: ["Update NurOS Package List"]  # Это имя workflow из update-list.yml
+    workflows: ["Lint Frontend"]  # Теперь билд запускается после успешного линтинга
     types:
       - completed
   workflow_dispatch:
@@ -16,7 +16,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    # Убедимся, что билд запускается только если update-list успешно завершился
+    # Убедимся, что билд запускается только если lint успешно завершился
     if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
 
     steps:

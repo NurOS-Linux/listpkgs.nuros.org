@@ -26,27 +26,37 @@ const GroupedPackageList = (props: GroupedPackageListProps) => {
   const [expandedGroups, setExpandedGroups] = createSignal<Set<string>>(new Set());
 
   createEffect(() => {
+    console.log('GroupedPackageList effect triggered');
+    console.log('Initial packages count:', props.packages.length);
+    console.log('Filters applied:', props.filters);
+    console.log('Search term:', props.searchTerm);
+    
     let result = [...props.packages];
 
     // Фильтрация по поисковому запросу
     if (props.searchTerm) {
       const term = props.searchTerm.toLowerCase();
+      console.log('Applying search filter for term:', term);
       result = result.filter(pkg =>
         pkg.name.toLowerCase().includes(term) ||
         (pkg.description && pkg.description.toLowerCase().includes(term))
       );
+      console.log('Packages after search filter:', result.length);
     }
 
     // Применение других фильтров
     if (props.filters.architecture && props.filters.architecture !== 'all') {
       const architectures = props.filters.architecture.split(',');
+      console.log('Applying architecture filter:', architectures);
       result = result.filter(pkg => {
         if (architectures.includes('all')) return true;
         return pkg.architecture && architectures.some(arch => pkg.architecture?.includes(arch));
       });
+      console.log('Packages after architecture filter:', result.length);
     }
 
     if (props.filters.channel && props.filters.channel !== 'all') {
+      console.log('Applying channel filter:', props.filters.channel);
       // Фильтрация по репозиторию (берем из _source_repo)
       result = result.filter(pkg => {
         if (pkg._source_repo) {
@@ -54,11 +64,13 @@ const GroupedPackageList = (props: GroupedPackageListProps) => {
         }
         return true;
       });
+      console.log('Packages after channel filter:', result.length);
     }
 
     // Фильтрация по типу пакета
     if (props.filters.packageType && props.filters.packageType !== 'all') {
       const categories = props.filters.packageType.split(',');
+      console.log('Applying package type filter:', categories);
       result = result.filter(pkg => {
         if (categories.includes('all')) return true;
         // Определяем категорию пакета и проверяем соответствие
@@ -74,25 +86,33 @@ const GroupedPackageList = (props: GroupedPackageListProps) => {
         } else if (pkg.type === 'misc') {
           pkgCategory = 'misc';
         }
-        return categories.some(cat => pkgCategory.includes(cat) || cat.includes(pkgCategory));
+        const match = categories.some(cat => pkgCategory.includes(cat) || cat.includes(pkgCategory));
+        return match;
       });
+      console.log('Packages after package type filter:', result.length);
     }
 
     // Фильтрация по мейнтейнерам
     if (props.filters.maintainers && props.filters.maintainers.length > 0) {
+      console.log('Applying maintainers filter:', props.filters.maintainers);
       result = result.filter(pkg => {
         const pkgMaintainer = pkg.maintainer || 'unknown';
         return props.filters.maintainers.includes(pkgMaintainer);
       });
+      console.log('Packages after maintainers filter:', result.length);
     }
 
     // Фильтрация по лицензиям
     if (props.filters.licenses && props.filters.licenses.length > 0) {
+      console.log('Applying licenses filter:', props.filters.licenses);
       result = result.filter(pkg => {
         const pkgLicense = pkg.license || 'unknown';
         return props.filters.licenses.includes(pkgLicense);
       });
+      console.log('Packages after licenses filter:', result.length);
     }
+
+    console.log('Final packages count after all filters:', result.length);
 
     // Группировка пакетов по типу (умная группировка)
     const groupsMap = new Map<string, Package[]>();
@@ -146,36 +166,49 @@ const GroupedPackageList = (props: GroupedPackageListProps) => {
       groupsMap.get(category)?.push(pkg);
     });
 
+    console.log('Groups created:', Array.from(groupsMap.keys()));
+    Array.from(groupsMap.entries()).forEach(([name, packages]) => {
+      console.log(`Group "${name}" has ${packages.length} packages`);
+    });
+
     // Умная сортировка групп на основе примененных фильтров
     const sortedGroups = Array.from(groupsMap.entries())
       .sort(([a], [b]) => {
         // Если применен фильтр по архитектуре, сортируем по архитектуре
         if (props.filters.architecture && props.filters.architecture !== 'all') {
+          console.log('Sorting groups by architecture filter');
           return a.localeCompare(b);
         }
         // Если применен фильтр по мейнтейнерам, сортируем по мейнтейнерам
         else if (props.filters.maintainers && props.filters.maintainers.length > 0) {
+          console.log('Sorting groups by maintainers filter');
           return a.localeCompare(b);
         }
         // Если применен фильтр по лицензиям, сортируем по лицензиям
         else if (props.filters.licenses && props.filters.licenses.length > 0) {
+          console.log('Sorting groups by licenses filter');
           return a.localeCompare(b);
         }
         // Если применен фильтр по типу пакета, сортируем по типу
         else if (props.filters.packageType && props.filters.packageType !== 'all') {
+          console.log('Sorting groups by package type filter');
           return a.localeCompare(b);
         }
         // В противном случае, сортируем по алфавиту
         else {
+          console.log('Sorting groups alphabetically');
           return a.localeCompare(b);
         }
       })
       .map(([name, packages]) => {
+        console.log(`Processing group "${name}" with ${packages.length} packages`);
+        
         // Умная сортировка пакетов внутри групп на основе примененных фильтров
         let sortedPackages = packages;
         
         // Если применен фильтр по архитектуре, сортируем пакеты по архитектуре
         if (props.filters.architecture && props.filters.architecture !== 'all') {
+          console.log('Sorting packages by architecture within group');
           sortedPackages = packages.sort((a, b) => {
             const aArch = a.architecture || 'unknown';
             const bArch = b.architecture || 'unknown';
@@ -184,6 +217,7 @@ const GroupedPackageList = (props: GroupedPackageListProps) => {
         }
         // Если применен фильтр по мейнтейнерам, сортируем по мейнтейнерам
         else if (props.filters.maintainers && props.filters.maintainers.length > 0) {
+          console.log('Sorting packages by maintainers within group');
           sortedPackages = packages.sort((a, b) => {
             const aMaintainer = a.maintainer || 'unknown';
             const bMaintainer = b.maintainer || 'unknown';
@@ -192,6 +226,7 @@ const GroupedPackageList = (props: GroupedPackageListProps) => {
         }
         // Если применен фильтр по лицензиям, сортируем по лицензиям
         else if (props.filters.licenses && props.filters.licenses.length > 0) {
+          console.log('Sorting packages by licenses within group');
           sortedPackages = packages.sort((a, b) => {
             const aLicense = a.license || 'unknown';
             const bLicense = b.license || 'unknown';
@@ -200,10 +235,12 @@ const GroupedPackageList = (props: GroupedPackageListProps) => {
         }
         // Если применен фильтр по типу пакета, сортируем по имени
         else if (props.filters.packageType && props.filters.packageType !== 'all') {
+          console.log('Sorting packages by name within group');
           sortedPackages = packages.sort((a, b) => a.name.localeCompare(b.name));
         }
         // В противном случае, сортируем по имени
         else {
+          console.log('Default sorting by name within group');
           sortedPackages = packages.sort((a, b) => a.name.localeCompare(b.name));
         }
         
@@ -213,6 +250,7 @@ const GroupedPackageList = (props: GroupedPackageListProps) => {
         };
       });
 
+    console.log('Final grouped packages:', sortedGroups.map(g => `${g.name} (${g.packages.length})`));
     setGroupedPackages(sortedGroups);
   });
 

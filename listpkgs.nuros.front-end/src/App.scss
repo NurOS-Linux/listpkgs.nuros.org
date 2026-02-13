@@ -89,3 +89,30 @@ $hover-color: #1d4ed8;
   text-align: center;
   padding: 20px;
 }
+
+/* Дополнительные стили для лучшей отладки в dev tools */
+.debug-outline {
+  outline: 1px solid red !important;
+}
+
+.debug-background {
+  background-color: rgba(255, 0, 0, 0.1) !important;
+}
+
+/* Стили для отладки компонентов */
+.component-boundary {
+  position: relative;
+}
+
+.component-boundary::before {
+  content: attr(data-component);
+  position: absolute;
+  top: -10px;
+  left: 0;
+  background: #ff6b6b;
+  color: white;
+  font-size: 10px;
+  padding: 2px 4px;
+  border-radius: 2px;
+  z-index: 9999;
+}
