@@ -16,9 +16,9 @@ test('should load home page', async ({ page }) => {
   await page.goto('/');
   await page.waitForLoadState('networkidle');
 
-  // Log page content for debugging
+  // Verify page content loads
   const content = await page.content();
-  console.log('Page loaded, content length:', content.length);
+  expect(content.length).toBeGreaterThan(10000);
 
   // Try multiple selectors
   const searchInput = page
