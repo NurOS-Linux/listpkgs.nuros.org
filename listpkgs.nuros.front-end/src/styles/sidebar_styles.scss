@@ -1,28 +1,43 @@
-.app-layout {
-  display: flex;
-  gap: 2rem;
-  padding: 2rem;
-  box-sizing: border-box;
-}
-
 .sidebar {
   width: 250px;
-  background-color: white;
+  background-color: var(--card-bg);
   border-radius: 8px;
   padding: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
   height: fit-content;
   position: sticky;
   top: 2rem;
+  flex-shrink: 0;
+  transition: var(--transition);
+  color: var(--text-color);
+
+  @media (max-width: 768px) {
+    width: 100%;
+    position: relative;
+    top: auto;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.5rem;
+  }
 }
 
 .sidebar h3 {
   margin-top: 0;
   margin-bottom: 1rem;
-  color: #1e293b;
+  color: var(--text-color);
   font-size: 1.2rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 0.5rem;
+  transition: var(--transition);
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.25rem;
+  }
 }
 
 .tree-navigation ul {
@@ -33,12 +48,20 @@
 
 .tree-node {
   margin-bottom: 0.25rem;
+
+  @media (max-width: 768px) {
+    margin-bottom: 0.2rem;
+  }
 }
 
 .tree-node-header {
   display: flex;
   align-items: center;
   padding: 0.25rem 0;
+
+  @media (max-width: 768px) {
+    padding: 0.2rem 0;
+  }
 }
 
 .tree-node-toggle {
@@ -47,18 +70,33 @@
   cursor: pointer;
   padding: 0.25rem;
   margin-right: 0.25rem;
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 0.8rem;
-}
+  transition: var(--transition);
 
-.tree-node-toggle:disabled {
-  visibility: hidden;
+  @media (max-width: 768px) {
+    padding: 0.2rem;
+    font-size: 0.75rem;
+    margin-right: 0.15rem;
+  }
+
+  &:hover {
+    color: var(--primary-color);
+  }
+
+  &:disabled {
+    visibility: hidden;
+  }
 }
 
 .spacer {
   display: inline-block;
   width: 1rem;
   visibility: hidden;
+
+  @media (max-width: 768px) {
+    width: 0.75rem;
+  }
 }
 
 .tree-node-label {
@@ -67,23 +105,29 @@
   cursor: pointer;
   padding: 0.25rem;
   margin: 0;
-  color: #475569;
+  color: var(--text-color);
   text-align: left;
   flex-grow: 1;
   border-radius: 4px;
   font-size: 0.9rem;
   display: flex;
   align-items: center;
-}
+  transition: var(--transition);
 
-.tree-node-label:hover {
-  background-color: #f1f5f9;
-}
+  @media (max-width: 768px) {
+    font-size: 0.85rem;
+    padding: 0.2rem;
+  }
 
-.tree-node-label.selected {
-  background-color: #dbeafe;
-  color: #1d4ed8;
-  font-weight: 500;
+  &:hover {
+    background-color: var(--hover-bg);
+  }
+
+  &.selected {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 500;
+  }
 }
 
 /* Стили для чекбоксов с закругленными углами */
@@ -94,6 +138,10 @@
   margin-bottom: 0.25rem;
   cursor: pointer;
   user-select: none;
+
+  @media (max-width: 768px) {
+    padding-left: 1.25rem;
+  }
 }
 
 .checkbox-wrapper input {
@@ -110,20 +158,25 @@
   left: 0;
   height: 1rem;
   width: 1rem;
-  background-color: #fff;
-  border: 1px solid #cbd5e1;
-  border-radius: 0.25rem; /* Закругленные углы */
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 0.25rem;
   transition: all 0.2s ease;
+
+  @media (max-width: 768px) {
+    height: 0.875rem;
+    width: 0.875rem;
+  }
 }
 
 .checkbox-wrapper:hover input ~ .checkmark {
-  background-color: #f8fafc;
-  border-color: #94a3b8;
+  background-color: var(--hover-bg);
+  border-color: var(--primary-color);
 }
 
 .checkbox-wrapper input:checked ~ .checkmark {
-  background-color: #3b82f6;
-  border-color: #3b82f6;
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
 }
 
 .checkmark:after {
@@ -148,7 +201,7 @@
 
 .node-count {
   margin-left: 0.5rem;
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 0.8rem;
 }
 
@@ -158,9 +211,25 @@
   margin: 0;
 }
 
-.app-main {
-  flex: 1;
+// Package grid layout - for PackageList component
+.package-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    gap: 0.75rem;
+  }
 }
