@@ -70,8 +70,8 @@ const usePackageData = () => {
   onMount(async () => {
     try {
       console.log('Starting to fetch repodata.json');
-      // Используем относительный путь к файлу в публичной папке
-      const response = await fetch('/repodata.json');
+      // Используем относительный путь - работает и в dev и в production
+      const response = await fetch('./repodata.json');
       console.log('Response received:', response.status);
 
       if (!response.ok) {
