@@ -10,6 +10,7 @@ import SearchBar from './components/SearchBar';
 import PackageList from './components/PackageList';
 import Sidebar from './components/Sidebar';
 import usePackageData from './hooks/usePackageData';
+import logoGif from '/plymoth_adeki_logo.gif';
 import './App.scss';
 
 /**
@@ -145,7 +146,7 @@ function App() {
                 class="logo-link"
                 title="Visit NurOS Official Website"
               >
-                <img src="/plymoth_adeki_logo.gif" alt="NurOS Logo" class="logo" />
+                <img src={logoGif} alt="NurOS Logo" class="logo" />
               </a>
               <h1>NurOS Search</h1>
               <p>Независимый Linux дистрибутив - поиск пакетов</p>
