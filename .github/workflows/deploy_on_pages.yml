@@ -48,54 +48,79 @@ jobs:
             gh api repos/${{ github.repository }}/actions/artifacts/$ARTIFACT_ID/zip \
               -H "Accept: application/vnd.github.v3.raw" > artifact.zip
             
-            # Create temp directory and extract
-            mkdir -p ./temp-extract
-            unzip -q artifact.zip -d ./temp-extract
+            # Extract and flatten directory structure
+            echo "Extracting artifact..."
+            unzip -q artifact.zip
             rm artifact.zip
             
-            # List what was extracted
-            echo "Extracted files:"
-            find ./temp-extract -type f | head -20
+            # List extracted structure
+            echo "Extracted structure:"
+            find . -maxdepth 3 -type f | grep -v '.git' | head -20
             
-            # Find the actual content directory and move to temp-frontend-dist
-            if [ -d "./temp-extract" ]; then
-              mkdir -p ./temp-frontend-dist
-              # Copy everything from extraction directory
-              cp -r ./temp-extract/* ./temp-frontend-dist/ 2>/dev/null || true
-              rm -rf ./temp-extract
-            fi
           else
-            echo "Manual workflow_dispatch - creating empty directory"
-            mkdir -p ./temp-frontend-dist
+            echo "Manual workflow_dispatch - skipping artifact download"
           fi
-          
-          echo "Files to deploy:"
-          ls -la ./temp-frontend-dist/ || echo "Directory is empty or doesn't exist"
 
       - name: Prepare deployment directory
         run: |
-          echo "Current directory structure:"
+          echo "📁 Current directory structure:"
           ls -la ./
           
-          echo ""
-          echo "Files in temp-frontend-dist:"
-          if [ -d "./temp-frontend-dist" ]; then
-            ls -la ./temp-frontend-dist/ || echo "Directory exists but is empty"
+          # Find dist directory or files
+          if [ -d "dist" ]; then
+            echo "✅ Found 'dist' directory"
+            # Clear everything except .git and move dist files to root
+            find . -mindepth 1 -maxdepth 1 -not -name '.git*' -not -name 'dist' -exec rm -rf {} + 2>/dev/null || true
+            cp -r dist/* ./
+            rm -rf dist
           else
-            echo "temp-frontend-dist directory not found"
+            echo "⚠️  'dist' directory not found, checking current files..."
+            ls -la ./
+            # If dist doesn't exist but we have index.html, we're good
+            if [ ! -f "index.html" ]; then
+              find . -name "index.html" -type f
+              echo "❌ Could not find index.html anywhere"
+              exit 1
+            fi
           fi
           
-          # Очищаем все кроме .git
-          find . -mindepth 1 -not -name '.git*' -delete
+          echo ""
+          echo "✅ Files ready for deployment:"
+          ls -la ./
+
+      - name: Add repodata and verify SHA256
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "📦 Fetching repodata from main branch..."
           
-          # Копируем новый фронтенд
-          if [ -d "./temp-frontend-dist" ] && [ "$(ls -A ./temp-frontend-dist)" ]; then
-            cp -r ./temp-frontend-dist/* ./
-            cp -r ./temp-frontend-dist/.[!.]* ./ 2>/dev/null || true
-            rm -rf ./temp-frontend-dist
-            echo "✅ Files copied successfully"
+          # Fetch main branch to get the latest repodata
+          git fetch origin main --depth=1
+          
+          # Copy repodata.json if it exists
+          if [ -f "listpkgs.nuros.front-end/public/repodata.json" ]; then
+            cp listpkgs.nuros.front-end/public/repodata.json ./repodata.json
+            echo "✅ repodata.json added"
           else
-            echo "⚠️  No files to copy"
+            echo "⚠️  repodata.json not found on main branch"
+          fi
+          
+          # Copy and verify SHA256
+          if [ -f "listpkgs.nuros.front-end/public/repodata.json.sha256" ]; then
+            cp listpkgs.nuros.front-end/public/repodata.json.sha256 ./repodata.json.sha256
+            echo "✅ repodata.json.sha256 copied"
+            
+            # Verify SHA256 checksum
+            echo ""
+            echo "🔍 Verifying SHA256 checksum..."
+            if sha256sum -c repodata.json.sha256; then
+              echo "✅ SHA256 verification PASSED"
+            else
+              echo "❌ SHA256 verification FAILED"
+              exit 1
+            fi
+          else
+            echo "⚠️  repodata.json.sha256 not found - skipping SHA256 verification"
           fi
 
       - name: Verify artifact contents
