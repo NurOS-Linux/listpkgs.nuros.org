@@ -42,9 +42,9 @@ jobs:
       - name: Run ESLint
         run: |
           cd listpkgs.nuros.front-end
-          npx eslint src/**/*.{ts,tsx} --ext .ts,.tsx --max-warnings 0
+          pnpm lint
 
       - name: Run Prettier check
         run: |
           cd listpkgs.nuros.front-end
-          npx prettier --check src/**/*.{ts,tsx,json,css,scss,md}
+          pnpm check-format
