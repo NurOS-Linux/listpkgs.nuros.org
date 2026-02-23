@@ -50,7 +50,7 @@ jobs:
             
             # Extract and flatten directory structure
             echo "Extracting artifact..."
-            unzip -q artifact.zip
+            unzip -o -q artifact.zip
             rm artifact.zip
             
             # List extracted structure
