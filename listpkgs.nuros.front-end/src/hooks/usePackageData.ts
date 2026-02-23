@@ -44,10 +44,10 @@ interface Package {
 /**
  * @interface PackageData
  * @brief Интерфейс данных пакетов
- * @property {any} [key: string] - Произвольные данные пакета
+ * @property {Record<string, unknown>} [key: string] - Данные пакета
  */
 interface PackageData {
-  [key: string]: unknown;
+  [key: string]: Record<string, unknown>;
 }
 
 /**
@@ -84,25 +84,26 @@ const usePackageData = () => {
       // Преобразование объекта в массив пакетов
       const packageArray = Object.entries(data).map(([key, pkg]) => {
         // Убедимся, что у каждого пакета есть все необходимые поля
+        const pkgData = pkg as Record<string, unknown>;
         return {
           key,
-          name: pkg.name || key,
-          version: pkg.version || 'unknown',
-          type: pkg.type || 'unknown',
-          architecture: pkg.architecture || 'N/A',
-          description: pkg.description || 'No description available',
-          maintainer: pkg.maintainer || 'Unknown',
-          license: pkg.license || 'Not specified',
-          homepage: pkg.homepage || '#',
-          dependencies: pkg.dependencies || [],
-          conflicts: pkg.conflicts || [],
-          tags: pkg.tags || [],
-          provides: pkg.provides || [],
-          replaces: pkg.replaces || [],
-          conf: pkg.conf || [],
-          _source_repo: pkg._source_repo || '#',
-          _last_updated: pkg._last_updated || null,
-          ...pkg,
+          name: (pkgData.name as string) || key,
+          version: (pkgData.version as string) || 'unknown',
+          type: (pkgData.type as string) || 'unknown',
+          architecture: (pkgData.architecture as string | null) || 'N/A',
+          description: (pkgData.description as string) || 'No description available',
+          maintainer: (pkgData.maintainer as string) || 'Unknown',
+          license: (pkgData.license as string | null) || 'Not specified',
+          homepage: (pkgData.homepage as string) || '#',
+          dependencies: (pkgData.dependencies as string[]) || [],
+          conflicts: (pkgData.conflicts as string[]) || [],
+          tags: (pkgData.tags as string[]) || [],
+          provides: (pkgData.provides as string[]) || [],
+          replaces: (pkgData.replaces as string[]) || [],
+          conf: (pkgData.conf as string[]) || [],
+          _source_repo: (pkgData._source_repo as string) || '#',
+          _last_updated: (pkgData._last_updated as string) || undefined,
+          ...pkgData,
         };
       });
 

@@ -8,6 +8,23 @@
 import { createSignal, createEffect } from 'solid-js';
 import TreeNavigation from './TreeNavigation';
 
+interface Package {
+  key: string;
+  name: string;
+  version: string;
+  type?: string;
+  architecture?: string | null;
+  description?: string;
+  maintainer?: string;
+  license?: string | null;
+  homepage?: string;
+  dependencies: string[];
+  conflicts: string[];
+  _source_repo: string;
+  _last_updated?: string;
+  [key: string]: unknown;
+}
+
 /**
  * @interface TreeNode
  * @brief Интерфейс узла дерева навигации
@@ -28,11 +45,11 @@ interface TreeNode {
 /**
  * @interface SidebarProps
  * @brief Интерфейс свойств компонента Sidebar
- * @property {any[]} packages - Массив пакетов для фильтрации
+ * @property {Package[]} packages - Массив пакетов для фильтрации
  * @property {Function} onFilterChange - Функция для обработки изменения фильтров
  */
 interface SidebarProps {
-  packages: Record<string, unknown>[];
+  packages: Package[];
   onFilterChange: (filters: {
     architectures: string[];
     categories: string[];

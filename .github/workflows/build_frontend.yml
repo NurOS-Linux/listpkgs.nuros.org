@@ -2,7 +2,7 @@ name: Build Frontend
 
 on:
   workflow_run:
-    workflows: ["Lint Frontend"]  # Теперь билд запускается после успешного линтинга
+    workflows: ["Update NurOS Package List"]
     types:
       - completed
   workflow_dispatch:
@@ -13,11 +13,44 @@ permissions:
   id-token: write
 
 jobs:
+  check-lint:
+    runs-on: ubuntu-latest
+    outputs:
+      lint-status: ${{ steps.get-lint.outputs.status }}
+    steps:
+      - name: Get latest lint status
+        id: get-lint
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get the latest lint workflow run for the current commit or branch
+          LINT_STATUS=$(gh run list \
+            --repo ${{ github.repository }} \
+            --workflow "Lint Frontend" \
+            --branch ${{ github.ref_name }} \
+            --status completed \
+            --limit 1 \
+            --json conclusion \
+            -q '.[0].conclusion // "pending"')
+          
+          echo "status=$LINT_STATUS" >> $GITHUB_OUTPUT
+          echo "Latest lint status: $LINT_STATUS"
+          
+          if [ "$LINT_STATUS" != "success" ]; then
+            echo "❌ Lint workflow did not succeed. Build cancelled."
+            exit 1
+          fi
+          echo "✅ Lint workflow succeeded. Proceeding with build."
+
   build:
+    needs: check-lint
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    # Убедимся, что билд запускается только если lint успешно завершился
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    # Build only if lint succeeded OR if this is a manual dispatch
+    if: |
+      (github.event_name == 'workflow_dispatch') ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       needs.check-lint.outputs.lint-status == 'success')
 
     steps:
       - name: Checkout repository
