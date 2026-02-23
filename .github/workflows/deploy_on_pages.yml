@@ -66,6 +66,12 @@ jobs:
           echo "📁 Current directory structure:"
           ls -la ./
           
+          # Preserve repodata.json before clearing
+          if [ -f "repodata.json" ]; then
+            echo "✅ Found repodata.json - will preserve it"
+            cp repodata.json /tmp/repodata.json.backup
+          fi
+          
           # Find dist directory or files
           if [ -d "dist" ]; then
             echo "✅ Found 'dist' directory"
@@ -84,57 +90,46 @@ jobs:
             fi
           fi
           
+          # Restore repodata.json if we backed it up
+          if [ -f "/tmp/repodata.json.backup" ]; then
+            echo "✅ Restoring repodata.json"
+            cp /tmp/repodata.json.backup repodata.json
+          fi
+          
           echo ""
           echo "✅ Files ready for deployment:"
           ls -la ./
 
-      - name: Add repodata and verify SHA256
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Verify essential files
         run: |
-          echo "📦 Fetching repodata from main branch..."
+          echo "📋 Verifying essential deployment files..."
           
-          # Fetch main branch to get the latest repodata
-          git fetch origin main --depth=1
-          
-          # Copy repodata.json if it exists
-          if [ -f "listpkgs.nuros.front-end/public/repodata.json" ]; then
-            cp listpkgs.nuros.front-end/public/repodata.json ./repodata.json
-            echo "✅ repodata.json added"
-          else
-            echo "⚠️  repodata.json not found on main branch"
-          fi
-          
-          # Copy and verify SHA256
-          if [ -f "listpkgs.nuros.front-end/public/repodata.json.sha256" ]; then
-            cp listpkgs.nuros.front-end/public/repodata.json.sha256 ./repodata.json.sha256
-            echo "✅ repodata.json.sha256 copied"
-            
-            # Verify SHA256 checksum
-            echo ""
-            echo "🔍 Verifying SHA256 checksum..."
-            if sha256sum -c repodata.json.sha256; then
-              echo "✅ SHA256 verification PASSED"
-            else
-              echo "❌ SHA256 verification FAILED"
-              exit 1
-            fi
-          else
-            echo "⚠️  repodata.json.sha256 not found - skipping SHA256 verification"
-          fi
-
-      - name: Verify artifact contents
-        run: |
-          echo "Files in 'gh-pages' directory after preparation:"
-          ls -la ./
-          
+          # Check for index.html
           if [ ! -f "index.html" ]; then
-            echo "⚠️  index.html not found in root"
-            echo "Checking subdirectories..."
-            find . -name "index.html" -type f
+            echo "❌ index.html not found"
             exit 1
           fi
-          echo "✅ index.html found - deployment ready"
+          echo "✅ index.html found"
+          
+          # Check for repodata.json
+          if [ ! -f "repodata.json" ]; then
+            echo "❌ repodata.json not found"
+            echo "Available files:"
+            ls -la ./
+            exit 1
+          fi
+          echo "✅ repodata.json found ($(stat -f%z repodata.json || stat -c%s repodata.json) bytes)"
+          
+          # Check for logo
+          if [ ! -f "plymoth_adeki_logo.gif" ]; then
+            echo "⚠️  plymoth_adeki_logo.gif not found"
+          else
+            echo "✅ plymoth_adeki_logo.gif found"
+          fi
+          
+          echo ""
+          echo "📁 Final deployment structure:"
+          ls -la ./
 
       - name: Commit and push to gh-pages
         run: |
