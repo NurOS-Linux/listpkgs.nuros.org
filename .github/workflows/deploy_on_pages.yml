@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -18,71 +18,79 @@ concurrency:
 
 jobs:
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     # Убедимся, что деплой запускается только если build_frontend успешно завершился
     if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
 
     steps:
-      - name: Checkout
+      - name: Checkout gh-pages branch
         uses: actions/checkout@v4
-
-      - name: Download frontend artifact
-        uses: actions/download-artifact@v4
         with:
-          name: frontend-dist
-          path: ./temp-frontend-dist
+          ref: gh-pages
+          fetch-depth: 0
 
-      - name: Copy repodata files to dist directory
+      - name: Download frontend artifact from build workflow
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mkdir -p ./frontend-dist
-          cp -r ./temp-frontend-dist/* ./frontend-dist/
-          # Копируем файлы repodata из репозитория в директорию dist
-          if [ -f "listpkgs.nuros.front-end/public/repodata.json" ]; then
-            cp listpkgs.nuros.front-end/public/repodata.json ./frontend-dist/
+          # Get artifact download URL from the build_frontend workflow run
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            # For workflow_run trigger, get artifact from the triggering workflow
+            ARTIFACT_ID=$(gh api \
+              repos/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}/artifacts \
+              -q '.artifacts[] | select(.name=="frontend-dist") | .id' | head -1)
+            
+            if [ -z "$ARTIFACT_ID" ]; then
+              echo "❌ frontend-dist artifact not found"
+              exit 1
+            fi
+            
+            echo "Found artifact ID: $ARTIFACT_ID"
+            mkdir -p ./temp-frontend-dist
+            gh api repos/${{ github.repository }}/actions/artifacts/$ARTIFACT_ID/zip \
+              -H "Accept: application/vnd.github.v3.raw" > artifact.zip
+            unzip -d ./temp-frontend-dist artifact.zip
+            rm artifact.zip
+          else
+            echo "Manual workflow_dispatch: using previous build artifacts"
+            mkdir -p ./temp-frontend-dist
           fi
-          if [ -f "listpkgs.nuros.front-end/public/repodata.json.sha256" ]; then
-            cp listpkgs.nuros.front-end/public/repodata.json.sha256 ./frontend-dist/
-          fi
+          
+          echo "✅ Artifact processed"
+          ls -la ./temp-frontend-dist/
+
+      - name: Prepare deployment directory
+        run: |
+          # Очищаем все кроме .git
+          find . -mindepth 1 -not -name '.git*' -delete
+          
+          # Копируем новый фронтенд
+          cp -r ./temp-frontend-dist/* ./
+          rm -rf ./temp-frontend-dist
 
       - name: Verify artifact contents
         run: |
-          echo "Checking artifact contents:"
-          ls -la ./frontend-dist/
-
-          # Проверяем, что в артефакте есть необходимые файлы
-          if [ ! -f "./frontend-dist/index.html" ]; then
-            echo "ERROR: index.html not found in artifact"
+          echo "Checking deployed files:"
+          ls -la ./
+          
+          if [ ! -f "index.html" ]; then
+            echo "ERROR: index.html not found"
             exit 1
           fi
+          echo "✅ Deployment files verified"
 
-          echo "Artifact contains required files"
-
-      - name: Verify SHA256 checksum
+      - name: Commit and push to gh-pages
         run: |
-          echo "Verifying SHA256 checksum for repodata.json..."
-          if [ -f "./frontend-dist/repodata.json" ] && [ -f "./frontend-dist/repodata.json.sha256" ]; then
-            cd ./frontend-dist
-            if sha256sum -c repodata.json.sha256; then
-              echo "SHA256 verification passed"
-            else
-              echo "SHA256 verification failed!"
-              exit 1
-            fi
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          
+          git add .
+          
+          # Проверяем есть ли изменения
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
           else
-            echo "WARNING: repodata.json or repodata.json.sha256 not found in artifact"
+            git commit -m "chore: deploy frontend to gh-pages [skip ci]"
+            git push origin gh-pages
+            echo "✅ Deployed to gh-pages branch"
           fi
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./frontend-dist
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
