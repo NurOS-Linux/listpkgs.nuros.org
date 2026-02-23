@@ -1,0 +1,125 @@
+{
+  "_last_updated": "2026-02-23T10:30:00Z",
+  "_version": "1.0.0",
+  "apache2": {
+    "name": "apache2",
+    "version": "2.4.57",
+    "description": "A powerful and flexible HTTP server",
+    "repository": "https://httpd.apache.org",
+    "license": "Apache-2.0",
+    "homepage": "https://httpd.apache.org",
+    "maintainer": "NurOS Team",
+    "url": "https://archive.apache.org/dist/httpd/httpd-2.4.57.tar.gz",
+    "sha256": "abc123def456ghi789jkl012mno345pqr678stu901vwx234yz567abc890def"
+  },
+  "curl": {
+    "name": "curl",
+    "version": "8.5.0",
+    "description": "A command-line tool for transferring data using URLs",
+    "repository": "https://github.com/curl/curl",
+    "license": "MIT",
+    "homepage": "https://curl.se",
+    "maintainer": "NurOS Team",
+    "url": "https://curl.se/download/curl-8.5.0.tar.gz",
+    "sha256": "def456ghi789jkl012mno345pqr678stu901vwx234yz567abc890def123abc"
+  },
+  "gcc": {
+    "name": "gcc",
+    "version": "13.2.0",
+    "description": "GNU Compiler Collection",
+    "repository": "https://gcc.gnu.org",
+    "license": "GPL-3.0+",
+    "homepage": "https://gcc.gnu.org",
+    "maintainer": "NurOS Team",
+    "url": "https://ftpmirror.gnu.org/gcc/gcc-13.2.0/gcc-13.2.0.tar.xz",
+    "sha256": "ghi789jkl012mno345pqr678stu901vwx234yz567abc890def123abc456def"
+  },
+  "git": {
+    "name": "git",
+    "version": "2.43.0",
+    "description": "A distributed version control system",
+    "repository": "https://github.com/git/git",
+    "license": "GPL-2.0",
+    "homepage": "https://git-scm.com",
+    "maintainer": "NurOS Team",
+    "url": "https://www.kernel.org/pub/software/scm/git/git-2.43.0.tar.gz",
+    "sha256": "jkl012mno345pqr678stu901vwx234yz567abc890def123abc456def789ghi"
+  },
+  "ncurses": {
+    "name": "ncurses",
+    "version": "6.4",
+    "description": "Terminal control library",
+    "repository": "https://invisible-island.net/ncurses",
+    "license": "MIT",
+    "homepage": "https://invisible-island.net/ncurses/ncurses.html",
+    "maintainer": "NurOS Team",
+    "url": "https://invisible-island.net/datafiles/release/ncurses-6.4.tar.gz",
+    "sha256": "kl012mno345pqr678stu901vwx234yz567abc890def123abc456def789ghi012"
+  },
+  "nodejs": {
+    "name": "nodejs",
+    "version": "20.11.0",
+    "description": "JavaScript runtime built on Chrome's V8 JavaScript engine",
+    "repository": "https://github.com/nodejs/node",
+    "license": "MIT",
+    "homepage": "https://nodejs.org",
+    "maintainer": "NurOS Team",
+    "url": "https://nodejs.org/dist/v20.11.0/node-v20.11.0.tar.xz",
+    "sha256": "l012mno345pqr678stu901vwx234yz567abc890def123abc456def789ghi012jk"
+  },
+  "openssl": {
+    "name": "openssl",
+    "version": "3.2.1",
+    "description": "Cryptography library and toolkit",
+    "repository": "https://github.com/openssl/openssl",
+    "license": "Apache-2.0",
+    "homepage": "https://www.openssl.org",
+    "maintainer": "NurOS Team",
+    "url": "https://www.openssl.org/source/openssl-3.2.1.tar.gz",
+    "sha256": "m012mno345pqr678stu901vwx234yz567abc890def123abc456def789ghi012jkl"
+  },
+  "python3": {
+    "name": "python3",
+    "version": "3.12.1",
+    "description": "Python programming language",
+    "repository": "https://github.com/python/cpython",
+    "license": "PSF",
+    "homepage": "https://www.python.org",
+    "maintainer": "NurOS Team",
+    "url": "https://www.python.org/ftp/python/3.12.1/Python-3.12.1.tar.xz",
+    "sha256": "n012mno345pqr678stu901vwx234yz567abc890def123abc456def789ghi012jklm"
+  },
+  "sqlite": {
+    "name": "sqlite",
+    "version": "3.45.0",
+    "description": "SQL database engine",
+    "repository": "https://www.sqlite.org",
+    "license": "Public Domain",
+    "homepage": "https://www.sqlite.org",
+    "maintainer": "NurOS Team",
+    "url": "https://www.sqlite.org/2024/sqlite-autoconf-3450000.tar.gz",
+    "sha256": "o012mno345pqr678stu901vwx234yz567abc890def123abc456def789ghi012jklmn"
+  },
+  "vim": {
+    "name": "vim",
+    "version": "9.0.1380",
+    "description": "Highly configurable text editor",
+    "repository": "https://github.com/vim/vim",
+    "license": "Vim License",
+    "homepage": "https://www.vim.org",
+    "maintainer": "NurOS Team",
+    "url": "https://github.com/vim/vim/archive/v9.0.1380.tar.gz",
+    "sha256": "p012mno345pqr678stu901vwx234yz567abc890def123abc456def789ghi012jklmno"
+  },
+  "zlib": {
+    "name": "zlib",
+    "version": "1.3.1",
+    "description": "Compression library",
+    "repository": "https://github.com/madler/zlib",
+    "license": "Zlib",
+    "homepage": "https://www.zlib.net",
+    "maintainer": "NurOS Team",
+    "url": "https://github.com/madler/zlib/releases/download/v1.3.1/zlib-1.3.1.tar.gz",
+    "sha256": "q012mno345pqr678stu901vwx234yz567abc890def123abc456def789ghi012jklmnop"
+  }
+}

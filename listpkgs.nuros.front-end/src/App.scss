@@ -219,6 +219,74 @@ $hover-bg: var(--hover-bg);
   }
 }
 
+// JSON Display styling with theme support
+.json-display-prism {
+  max-height: 500px;
+  overflow: auto;
+  margin: 10px 0;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: var(--card-bg) !important;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  transition: var(--transition);
+
+  code {
+    color: var(--text-color) !important;
+    transition: var(--transition);
+  }
+
+  // Prism.js syntax highlighting overrides for light theme
+  :root &,
+  :root:not(.dark-theme) & {
+    .token.punctuation,
+    .token.property {
+      color: #2563eb;
+    }
+
+    .token.string {
+      color: #059669;
+    }
+
+    .token.number {
+      color: #d97706;
+    }
+
+    .token.boolean {
+      color: #dc2626;
+    }
+
+    .token.null {
+      color: #6366f1;
+    }
+  }
+
+  // Prism.js syntax highlighting overrides for dark theme
+  :root.dark-theme & {
+    .token.punctuation,
+    .token.property {
+      color: #60a5fa;
+    }
+
+    .token.string {
+      color: #34d399;
+    }
+
+    .token.number {
+      color: #fbbf24;
+    }
+
+    .token.boolean {
+      color: #f87171;
+    }
+
+    .token.null {
+      color: #a78bfa;
+    }
+  }
+}
+
 /* Дополнительные стили для лучшей отладки в dev tools */
 .debug-outline {
   outline: 1px solid red !important;
