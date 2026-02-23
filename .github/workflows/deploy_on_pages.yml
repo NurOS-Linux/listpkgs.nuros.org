@@ -25,11 +25,14 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Download frontend artifact from build workflow
         uses: actions/download-artifact@v4
         with:
           name: frontend-dist
-          path: ./dist
+          path: ./listpkgs.nuros.front-end/dist
         continue-on-error: true
 
       - name: Fallback - download from workflow run if artifact not found
@@ -48,20 +51,20 @@ jobs:
           fi
 
           echo "Downloading artifact ID: $ARTIFACT_ID"
-          mkdir -p ./dist
+          mkdir -p ./listpkgs.nuros.front-end/dist
           gh api repos/${{ github.repository }}/actions/artifacts/$ARTIFACT_ID/zip \
             -H "Accept: application/vnd.github.v3.raw" > artifact.zip
-          unzip -o -q artifact.zip -d ./dist
+          unzip -o -q artifact.zip -d ./listpkgs.nuros.front-end/dist
           rm artifact.zip
 
       - name: Verify dist directory exists
         run: |
-          if [ ! -d "./dist" ]; then
+          if [ ! -d "./listpkgs.nuros.front-end/dist" ]; then
             echo "❌ dist directory not found. Deployment failed."
             exit 1
           fi
           echo "✅ dist directory found:"
-          ls -la ./dist
+          ls -la ./listpkgs.nuros.front-end/dist
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -69,7 +72,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: './listpkgs.nuros.front-end/dist'
 
       - name: Deploy to GitHub Pages
         id: deployment
