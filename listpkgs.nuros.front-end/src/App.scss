@@ -1,9 +1,66 @@
-// Основные переменные стилей
-$primary-color: #2563eb;
-$secondary-color: #f8fafc;
-$text-color: #1e293b;
-$border-color: #cbd5e1;
-$hover-color: #1d4ed8;
+// Theme color variables
+$light-primary-color: #2563eb;
+$light-secondary-color: #f8fafc;
+$light-text-color: #1e293b;
+$light-text-muted: #64748b;
+$light-border-color: #cbd5e1;
+$light-hover-color: #1d4ed8;
+$light-background: #ffffff;
+$light-card-bg: #f1f5f9;
+$light-hover-bg: #e2e8f0;
+
+$dark-primary-color: #3b82f6;
+$dark-secondary-color: #1e293b;
+$dark-text-color: #f1f5f9;
+$dark-text-muted: #94a3b8;
+$dark-border-color: #334155;
+$dark-hover-color: #60a5fa;
+$dark-background: #0f172a;
+$dark-card-bg: #1e293b;
+$dark-hover-bg: #334155;
+
+// CSS Custom Properties for dynamic theming
+:root {
+  color-scheme: light;
+  --primary-color: #{$light-primary-color};
+  --secondary-color: #{$light-secondary-color};
+  --text-color: #{$light-text-color};
+  --text-muted: #{$light-text-muted};
+  --border-color: #{$light-border-color};
+  --hover-color: #{$light-hover-color};
+  --background: #{$light-background};
+  --card-bg: #{$light-card-bg};
+  --hover-bg: #{$light-hover-bg};
+
+  // Smooth transitions for theme
+  --transition: background-color 0.6s ease, color 0.6s ease, border-color 0.6s ease;
+}
+
+:root.dark-theme {
+  color-scheme: dark;
+  --primary-color: #{$dark-primary-color};
+  --secondary-color: #{$dark-secondary-color};
+  --text-color: #{$dark-text-color};
+  --text-muted: #{$dark-text-muted};
+  --border-color: #{$dark-border-color};
+  --hover-color: #{$dark-hover-color};
+  --background: #{$dark-background};
+  --card-bg: #{$dark-card-bg};
+  --hover-bg: #{$dark-hover-bg};
+
+  --transition: background-color 0.6s ease, color 0.6s ease, border-color 0.6s ease;
+}
+
+// Основные переменные стилей (используются для fallback)
+$primary-color: var(--primary-color);
+$secondary-color: var(--secondary-color);
+$text-color: var(--text-color);
+$text-muted: var(--text-muted);
+$border-color: var(--border-color);
+$hover-color: var(--hover-color);
+$background: var(--background);
+$card-bg: var(--card-bg);
+$hover-bg: var(--hover-bg);
 
 // Стили для корневого контейнера
 #root {
@@ -11,6 +68,10 @@ $hover-color: #1d4ed8;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  background-color: var(--background);
+  color: var(--text-color);
+  transition: var(--transition);
+  min-height: 100vh;
 }
 
 // Стили для логотипов
@@ -22,7 +83,7 @@ $hover-color: #1d4ed8;
 
   &:hover {
     filter: drop-shadow(0 0 2em rgba(100, 108, 255, 0.66));
-    
+
     &.solid {
       filter: drop-shadow(0 0 2em rgba(97, 218, 251, 0.66));
     }
@@ -32,14 +93,16 @@ $hover-color: #1d4ed8;
 // Стили для карточки
 .card {
   padding: 2em;
-  border: 1px solid $border-color;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
-  background-color: $secondary-color;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  transition: var(--transition);
 }
 
 // Стили для текста документации
 .read-the-docs {
-  color: #888;
+  color: var(--text-muted);
 }
 
 // Стили для grouped package list
@@ -47,39 +110,56 @@ $hover-color: #1d4ed8;
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  
+
   .package-group {
     flex: 1;
     min-width: 300px;
     max-width: 400px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 15px;
-    background-color: #f9f9f9;
-    
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    transition: var(--transition);
+
     .group-header {
       cursor: pointer;
       margin-bottom: 10px;
       padding-bottom: 5px;
-      border-bottom: 1px solid #eee;
-      
+      border-bottom: 1px solid var(--border-color);
+      user-select: none;
+
+      &:hover {
+        background-color: var(--hover-bg);
+        border-radius: 4px;
+        padding-left: 5px;
+        transition: var(--transition);
+      }
+
       .group-name {
         margin: 0;
         font-size: 1.2em;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        color: var(--text-color);
+      }
+
+      .expand-icon {
+        color: var(--primary-color);
+        font-size: 0.8em;
+        transition: transform 0.2s ease;
       }
     }
-    
+
     .group-packages {
       max-height: 400px;
       overflow-y: auto;
     }
-    
+
     .package-count {
       font-size: 0.9em;
-      color: #666;
+      color: var(--text-muted);
     }
   }
 }
@@ -88,6 +168,55 @@ $hover-color: #1d4ed8;
   width: 100%;
   text-align: center;
   padding: 20px;
+  color: var(--text-muted);
+}
+
+// Theme toggle button styles
+.theme-toggle-btn {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-color);
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition:
+    background-color 0.6s ease,
+    color 0.6s ease,
+    border-color 0.6s ease,
+    transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 0;
+
+  &:hover {
+    background-color: var(--primary-color);
+    color: var(--background);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// Package statistics banner
+.package-stats {
+  margin-top: 0.8rem;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+
+  strong {
+    color: var(--primary-color);
+    font-weight: 600;
+  }
 }
 
 /* Дополнительные стили для лучшей отладки в dev tools */

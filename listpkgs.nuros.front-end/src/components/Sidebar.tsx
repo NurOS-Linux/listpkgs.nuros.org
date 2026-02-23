@@ -15,12 +15,14 @@ import TreeNavigation from './TreeNavigation';
  * @property {string} label - Текстовое представление узла
  * @property {TreeNode[]} [children] - Дочерние узлы
  * @property {number} [count] - Количество элементов в узле
+ * @property {string} [sortField] - Поле для сортировки
  */
 interface TreeNode {
   id: string;
   label: string;
   children?: TreeNode[];
   count?: number;
+  sortField?: string;
 }
 
 /**
@@ -30,8 +32,13 @@ interface TreeNode {
  * @property {Function} onFilterChange - Функция для обработки изменения фильтров
  */
 interface SidebarProps {
-  packages: any[];
-  onFilterChange: (filters: { architectures: string[]; categories: string[]; maintainers: string[]; licenses: string[] }) => void;
+  packages: Record<string, unknown>[];
+  onFilterChange: (filters: {
+    architectures: string[];
+    categories: string[];
+    maintainers: string[];
+    licenses: string[];
+  }) => void;
 }
 
 /**
@@ -103,8 +110,8 @@ const Sidebar = (props: SidebarProps) => {
         children: Array.from(archMap.entries()).map(([arch, count]) => ({
           id: `arch-${arch}`,
           label: arch,
-          count: count
-        }))
+          count: count,
+        })),
       },
       {
         id: 'categories',
@@ -113,8 +120,8 @@ const Sidebar = (props: SidebarProps) => {
         children: Array.from(categoryMap.entries()).map(([category, count]) => ({
           id: `cat-${category}`,
           label: category.charAt(0).toUpperCase() + category.slice(1),
-          count: count
-        }))
+          count: count,
+        })),
       },
       {
         id: 'maintainers',
@@ -123,8 +130,8 @@ const Sidebar = (props: SidebarProps) => {
         children: Array.from(maintainerMap.entries()).map(([maintainer, count]) => ({
           id: `maintainer-${maintainer}`,
           label: maintainer,
-          count: count
-        }))
+          count: count,
+        })),
       },
       {
         id: 'licenses',
@@ -133,9 +140,9 @@ const Sidebar = (props: SidebarProps) => {
         children: Array.from(licenseMap.entries()).map(([license, count]) => ({
           id: `license-${license}`,
           label: license,
-          count: count
-        }))
-      }
+          count: count,
+        })),
+      },
     ];
 
     setTreeNodes(nodes);
@@ -195,7 +202,7 @@ const Sidebar = (props: SidebarProps) => {
       architectures: selectedArchitectures(),
       categories: selectedCategories(),
       maintainers: selectedMaintainers(),
-      licenses: selectedLicenses()
+      licenses: selectedLicenses(),
     });
   });
 
@@ -206,10 +213,7 @@ const Sidebar = (props: SidebarProps) => {
   return (
     <aside class="sidebar">
       <h3>Filters</h3>
-      <TreeNavigation
-        nodes={treeNodes()}
-        onSelect={handleNodeSelect}
-      />
+      <TreeNavigation nodes={treeNodes()} onSelect={handleNodeSelect} />
     </aside>
   );
 };

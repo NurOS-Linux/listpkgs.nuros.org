@@ -6,7 +6,6 @@
  */
 
 import { onMount } from 'solid-js';
-import { Switch, Match } from 'solid-js';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-json';
 import 'prismjs/themes/prism-tomorrow.css';
@@ -17,7 +16,7 @@ import 'prismjs/themes/prism-tomorrow.css';
  * @property {any} data - Данные для отображения в формате JSON
  */
 interface JsonDisplayProps {
-  data: any;
+  data: Record<string, unknown>;
 }
 
 /**
@@ -27,6 +26,7 @@ interface JsonDisplayProps {
  * @returns JSX.Element - Компонент для отображения JSON
  */
 const JsonDisplay = (props: JsonDisplayProps) => {
+  // eslint-disable-next-line no-unassigned-vars
   let ref: HTMLPreElement | undefined;
 
   /**
@@ -59,10 +59,20 @@ const JsonDisplay = (props: JsonDisplayProps) => {
    * @details Возвращает JSX элемент с подсветкой синтаксиса JSON
    */
   return (
-    <pre ref={ref} class="json-display-prism" style={{ "max-height": "500px", "overflow": "auto", "margin": "10px 0", "padding": "15px", "background-color": "#f6f8fa", "border-radius": "8px", "font-size": "14px" }}>
-      <code class="language-json">
-        {JSON.stringify(props.data, null, 2)}
-      </code>
+    <pre
+      ref={ref}
+      class="json-display-prism"
+      style={{
+        'max-height': '500px',
+        overflow: 'auto',
+        margin: '10px 0',
+        padding: '15px',
+        'background-color': '#f6f8fa',
+        'border-radius': '8px',
+        'font-size': '14px',
+      }}
+    >
+      <code class="language-json">{JSON.stringify(props.data, null, 2)}</code>
     </pre>
   );
 };

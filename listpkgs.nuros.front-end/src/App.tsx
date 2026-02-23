@@ -42,10 +42,48 @@ function App() {
     channel: 'all',
     packageType: 'all',
     maintainers: [],
-    licenses: []
+    licenses: [],
   });
   const [viewMode, setViewMode] = createSignal<'list' | 'grouped'>('list');
   const [dots, setDots] = createSignal('.');
+  const [isDarkTheme, setIsDarkTheme] = createSignal(false);
+
+  /**
+   * @brief Эффект для инициализации темы из localStorage
+   * @details Загружает сохраненное значение темы при загрузке компонента
+   */
+  createEffect(() => {
+    const savedTheme = localStorage.getItem('nuros-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = savedTheme ? savedTheme === 'dark' : prefersDark;
+    setIsDarkTheme(isDark);
+    applyTheme(isDark);
+  });
+
+  /**
+   * @brief Применение темы к DOM
+   * @param {boolean} isDark - Использовать темную тему
+   * @returns void
+   */
+  const applyTheme = (isDark: boolean) => {
+    const root = document.documentElement;
+    if (isDark) {
+      root.classList.add('dark-theme');
+    } else {
+      root.classList.remove('dark-theme');
+    }
+    localStorage.setItem('nuros-theme', isDark ? 'dark' : 'light');
+  };
+
+  /**
+   * @brief Переключение темы
+   * @returns void
+   */
+  const toggleTheme = () => {
+    const newTheme = !isDarkTheme();
+    setIsDarkTheme(newTheme);
+    applyTheme(newTheme);
+  };
 
   /**
    * @brief Эффект для анимации точек на экране загрузки
@@ -54,7 +92,7 @@ function App() {
   createEffect(() => {
     if (loading()) {
       const interval = setInterval(() => {
-        setDots(prev => prev.length >= 3 ? '.' : prev + '.');
+        setDots(prev => (prev.length >= 3 ? '.' : prev + '.'));
       }, 500);
 
       return () => clearInterval(interval);
@@ -75,10 +113,6 @@ function App() {
    * @param newFilters Новые значения фильтров
    * @returns void
    */
-  const handleFilterChange = (newFilters: Filters) => {
-    setFilters(newFilters);
-  };
-
   /**
    * @brief Обработчик переключения режима отображения
    * @param mode Режим отображения ('list' или 'grouped')
@@ -89,82 +123,94 @@ function App() {
   };
 
   return (
-    <Switch>
-      <Match when={loading()}>
-        <div class="loading-screen">
-          <img src="/assets/nuros_logo.svg" alt="NurOS Logo" class="loading-logo" />
-          <div class="loading-text">
-            Loading packages{dots()}
+    <>
+      <Switch>
+        <Match when={loading()}>
+          <div class="loading-screen">
+            <img src="/assets/nuros_logo.svg" alt="NurOS Logo" class="loading-logo" />
+            <div class="loading-text">Loading packages{dots()}</div>
+            <div class="packages-count">Found {packages().length} packages</div>
           </div>
-          <div class="packages-count">
-            Found {packages().length} packages
-          </div>
-        </div>
-      </Match>
-      <Match when={error()}>
-        <div class="error">Error: {error()}</div>
-      </Match>
-      <Match when={!loading() && !error()}>
-        <div class="app">
-          <header class="app-header">
-            <a href="https://www.nuros.org/" target="_blank" rel="noopener noreferrer">
-              <img src="/assets/nuros_logo.svg" alt="NurOS Logo" class="logo" />
-            </a>
-            <h1>NurOS Search</h1>
-            <p>Search and browse NurOS packages</p>
-          </header>
+        </Match>
+        <Match when={error()}>
+          <div class="error">Error: {error()}</div>
+        </Match>
+        <Match when={!loading() && !error()}>
+          <div class="app">
+            <header class="app-header">
+              <a href="https://www.nuros.org/" target="_blank" rel="noopener noreferrer">
+                <img src="/assets/nuros_logo.svg" alt="NurOS Logo" class="logo" />
+              </a>
+              <h1>NurOS Search</h1>
+              <p>Search and browse NurOS packages</p>
+              <div class="package-stats">
+                Search more than <strong>{packages().length.toLocaleString()}</strong> packages
+              </div>
+            </header>
 
-          <div class="app-layout">
-            <Sidebar
-              packages={packages()}
-              onFilterChange={(filters) => {
-                console.log('Sidebar filter change:', filters);
-                // Обновляем фильтры
-                setFilters(prev => ({
-                  ...prev,
-                  architecture: filters.architectures.length > 0 ? filters.architectures.join(',') : 'all',
-                  packageType: filters.categories.length > 0 ? filters.categories.join(',') : 'all',
-                  maintainers: filters.maintainers,
-                  licenses: filters.licenses
-                }));
-                console.log('Updated filters:', filters());
-              }}
-            />
-
-            <main class="app-main">
-              <SearchBar
-                onSearch={handleSearch}
-                onFilterChange={(newFilters) => {
-                  console.log('SearchBar filter change:', newFilters);
+            <div class="app-layout">
+              <Sidebar
+                packages={packages()}
+                onFilterChange={filters => {
+                  console.log('Sidebar filter change:', filters);
+                  // Обновляем фильтры
                   setFilters(prev => ({
                     ...prev,
-                    channel: newFilters.channel || prev.channel,
-                    architecture: newFilters.architecture || prev.architecture,
-                    packageType: newFilters.packageType || prev.packageType
+                    architecture:
+                      filters.architectures.length > 0 ? filters.architectures.join(',') : 'all',
+                    packageType:
+                      filters.categories.length > 0 ? filters.categories.join(',') : 'all',
+                    maintainers: filters.maintainers,
+                    licenses: filters.licenses,
                   }));
-                  console.log('Updated filters:', filters());
-                }}
-                onViewModeChange={(mode) => {
-                  console.log('View mode changed to:', mode);
-                  handleViewModeChange(mode);
+                  console.log('Updated filters:', filters);
                 }}
               />
-              <PackageList
-                packages={packages()}
-                searchTerm={searchTerm()}
-                filters={filters()}
-                grouped={viewMode() === 'grouped'}
-              />
-            </main>
+
+              <main class="app-main">
+                <SearchBar
+                  onSearch={handleSearch}
+                  onFilterChange={newFilters => {
+                    console.log('SearchBar filter change:', newFilters);
+                    setFilters(prev => ({
+                      ...prev,
+                      channel: newFilters.channel || prev.channel,
+                      architecture: newFilters.architecture || prev.architecture,
+                      packageType: newFilters.packageType || prev.packageType,
+                    }));
+                    console.log('Updated filters:', newFilters);
+                  }}
+                  onViewModeChange={mode => {
+                    console.log('View mode changed to:', mode);
+                    handleViewModeChange(mode);
+                  }}
+                />
+                <PackageList
+                  packages={packages()}
+                  searchTerm={searchTerm()}
+                  filters={filters()}
+                  grouped={viewMode() === 'grouped'}
+                />
+              </main>
+            </div>
           </div>
-        </div>
-      </Match>
-    </Switch>
+        </Match>
+      </Switch>
+
+      {/* Кнопка переключения темы */}
+      <button
+        class="theme-toggle-btn"
+        onClick={toggleTheme}
+        title={isDarkTheme() ? 'Switch to light mode' : 'Switch to dark mode'}
+        aria-label={isDarkTheme() ? 'Switch to light mode' : 'Switch to dark mode'}
+      >
+        {isDarkTheme() ? '☀️' : '🌙'}
+      </button>
+    </>
   );
 }
 
 /**
  * @brief Экспорт компонента App
  * @details Экспортирует основной компонент приложения по умолчанию
- */
-export default App;
+ */ export default App;

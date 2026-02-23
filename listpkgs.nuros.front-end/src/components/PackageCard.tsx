@@ -38,7 +38,7 @@ interface Package {
   conflicts?: string[];
   _source_repo?: string;
   _last_updated?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
@@ -96,9 +96,15 @@ const PackageCard = (props: PackageCardProps) => {
       </div>
 
       <div class="package-meta">
-        <span class="package-architecture">Architecture: {props.packageData.architecture || 'N/A'}</span>
-        <span class="package-maintainer">Maintainer: {props.packageData.maintainer || 'Unknown'}</span>
-        <span class="package-updated">Last Updated: {formatDate(props.packageData._last_updated)}</span>
+        <span class="package-architecture">
+          Architecture: {props.packageData.architecture || 'N/A'}
+        </span>
+        <span class="package-maintainer">
+          Maintainer: {props.packageData.maintainer || 'Unknown'}
+        </span>
+        <span class="package-updated">
+          Last Updated: {formatDate(props.packageData._last_updated)}
+        </span>
       </div>
 
       <div class="package-description">

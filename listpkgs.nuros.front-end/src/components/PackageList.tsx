@@ -2,6 +2,7 @@ import { createSignal, createEffect } from 'solid-js';
 import PackageCard from './PackageCard';
 import GroupedPackageList from './GroupedPackageList';
 import { type Package } from './PackageCard'; // Импортируем интерфейс Package
+import { sortPackagesByName } from '../utils/sorting';
 
 interface Filters {
   architecture: string;
@@ -15,22 +16,11 @@ interface PackageListProps {
   packages: Package[];
   searchTerm: string;
   filters: Filters;
-  grouped: boolean;
+  grouped?: boolean;
 }
 
 const PackageList = (props: PackageListProps) => {
-  // Если включена группировка, используем GroupedPackageList
-  if (props.grouped) {
-    return (
-      <GroupedPackageList
-        packages={props.packages}
-        searchTerm={props.searchTerm}
-        filters={props.filters}
-      />
-    );
-  }
-
-  // Иначе используем обычный список
+  // Используем обычный список
   const [filteredPackages, setFilteredPackages] = createSignal<Package[]>([]);
 
   createEffect(() => {
@@ -39,16 +29,17 @@ const PackageList = (props: PackageListProps) => {
     console.log('Filters applied:', props.filters);
     console.log('Search term:', props.searchTerm);
     console.log('Grouped mode:', props.grouped);
-    
+
     let result = [...props.packages];
 
     // Фильтрация по поисковому запросу
     if (props.searchTerm) {
       const term = props.searchTerm.toLowerCase();
       console.log('Applying search filter for term:', term);
-      result = result.filter(pkg =>
-        pkg.name.toLowerCase().includes(term) ||
-        (pkg.description && pkg.description.toLowerCase().includes(term))
+      result = result.filter(
+        pkg =>
+          pkg.name.toLowerCase().includes(term) ||
+          (pkg.description && pkg.description.toLowerCase().includes(term))
       );
       console.log('Packages after search filter:', result.length);
     }
@@ -94,7 +85,9 @@ const PackageList = (props: PackageListProps) => {
         } else if (pkg.type === 'misc') {
           pkgCategory = 'miscellaneous';
         }
-        const match = categories.some(cat => pkgCategory.includes(cat) || cat.includes(pkgCategory));
+        const match = categories.some(
+          cat => pkgCategory.includes(cat) || cat.includes(pkgCategory)
+        );
         return match;
       });
       console.log('Packages after package type filter:', result.length);
@@ -121,7 +114,7 @@ const PackageList = (props: PackageListProps) => {
     }
 
     // Сортировка по имени
-    result.sort((a, b) => a.name.localeCompare(b.name));
+    result = sortPackagesByName(result);
     console.log('Final packages count after all filters:', result.length);
 
     setFilteredPackages(result);
@@ -129,10 +122,10 @@ const PackageList = (props: PackageListProps) => {
 
   return (
     <div class="package-list">
-      {filteredPackages().length > 0 ? (
-        filteredPackages().map(pkg => (
-          <PackageCard packageData={pkg} />
-        ))
+      {props.grouped ? (
+        <GroupedPackageList packages={filteredPackages()} />
+      ) : filteredPackages().length > 0 ? (
+        filteredPackages().map(pkg => <PackageCard packageData={pkg} />)
       ) : (
         <div class="no-results">No packages found</div>
       )}

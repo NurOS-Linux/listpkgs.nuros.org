@@ -75,7 +75,7 @@ const TreeNavigation = (props: TreeNavigationProps) => {
     <nav class="tree-navigation">
       <ul class="tree-root">
         <For each={props.nodes}>
-          {(node) => (
+          {node => (
             <TreeNodeComponent
               node={node}
               onSelect={props.onSelect}
@@ -126,14 +126,15 @@ const TreeNodeComponent = (props: TreeNodeComponentProps) => {
    */
   const sortedChildren = () => {
     if (!props.node.children) return [];
-    
+
     // Если задано поле сортировки, сортируем по нему
     if (props.node.sortField) {
+      // eslint-disable-next-line solid/reactivity
       return [...props.node.children].sort((a, b) => {
         // Получаем значения полей для сравнения
         const aValue = a[props.node.sortField as keyof TreeNode];
         const bValue = b[props.node.sortField as keyof TreeNode];
-        
+
         // Сравниваем значения
         if (aValue && bValue) {
           if (typeof aValue === 'string' && typeof bValue === 'string') {
@@ -145,7 +146,7 @@ const TreeNodeComponent = (props: TreeNodeComponentProps) => {
         return 0;
       });
     }
-    
+
     // Если поле сортировки не задано, возвращаем оригинальный порядок
     return props.node.children;
   };
@@ -159,13 +160,11 @@ const TreeNodeComponent = (props: TreeNodeComponentProps) => {
       <div class={`tree-node-header ${props.selectedNode === props.node.id ? 'selected' : ''}`}>
         <button
           class="tree-node-toggle"
-          onClick={props.onToggle}
+          onClick={() => props.onToggle?.()}
           disabled={!hasChildren()}
         >
           <Switch>
-            <Match when={hasChildren()}>
-              {props.isExpanded ? '▼' : '▶'}
-            </Match>
+            <Match when={hasChildren()}>{props.isExpanded ? '▼' : '▶'}</Match>
             <Match when={!hasChildren()}>
               <span class="spacer" />
             </Match>
@@ -186,14 +185,14 @@ const TreeNodeComponent = (props: TreeNodeComponentProps) => {
               </Match>
             </Switch>
           </label>
-          <span class="checkmark"></span>
+          <span class="checkmark" />
         </div>
       </div>
 
       <Show when={hasChildren() && props.isExpanded}>
         <ul class="tree-children">
           <For each={sortedChildren()}>
-            {(child) => (
+            {child => (
               <TreeNodeComponent
                 node={child}
                 onSelect={props.onSelect}

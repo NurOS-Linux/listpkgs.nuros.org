@@ -38,7 +38,7 @@ interface Package {
   conflicts: string[];
   _source_repo: string;
   _last_updated?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
@@ -47,7 +47,7 @@ interface Package {
  * @property {any} [key: string] - Произвольные данные пакета
  */
 interface PackageData {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
@@ -102,7 +102,7 @@ const usePackageData = () => {
           conf: pkg.conf || [],
           _source_repo: pkg._source_repo || '#',
           _last_updated: pkg._last_updated || null,
-          ...pkg
+          ...pkg,
         };
       });
 
