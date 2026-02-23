@@ -54,6 +54,15 @@ jobs:
           unzip -o -q artifact.zip -d ./dist
           rm artifact.zip
 
+      - name: Verify dist directory exists
+        run: |
+          if [ ! -d "./dist" ]; then
+            echo "❌ dist directory not found. Deployment failed."
+            exit 1
+          fi
+          echo "✅ dist directory found:"
+          ls -la ./dist
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
