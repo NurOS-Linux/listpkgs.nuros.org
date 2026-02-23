@@ -8,146 +8,60 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
 concurrency:
   group: "pages"
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # Убедимся, что деплой запускается только если build_frontend успешно завершился
     if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Checkout gh-pages branch
-        uses: actions/checkout@v4
-        with:
-          ref: gh-pages
-          fetch-depth: 0
-
       - name: Download frontend artifact from build workflow
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: ./dist
+        continue-on-error: true
+
+      - name: Fallback - download from workflow run if artifact not found
+        if: steps.download.outcome == 'failure'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_run" ]; then
-            # Get artifact download URL from the build_frontend workflow run
-            ARTIFACT_ID=$(gh api \
-              repos/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}/artifacts \
-              -q '.artifacts[] | select(.name=="frontend-dist") | .id' | head -1)
-            
-            if [ -z "$ARTIFACT_ID" ]; then
-              echo "❌ frontend-dist artifact not found"
-              exit 1
-            fi
-            
-            echo "Downloading artifact ID: $ARTIFACT_ID"
-            gh api repos/${{ github.repository }}/actions/artifacts/$ARTIFACT_ID/zip \
-              -H "Accept: application/vnd.github.v3.raw" > artifact.zip
-            
-            # Extract and flatten directory structure
-            echo "Extracting artifact..."
-            unzip -o -q artifact.zip
-            rm artifact.zip
-            
-            # List extracted structure
-            echo "Extracted structure:"
-            find . -maxdepth 3 -type f | grep -v '.git' | head -20
-            
-          else
-            echo "Manual workflow_dispatch - skipping artifact download"
-          fi
+          echo "Trying to download artifact from workflow run..."
+          ARTIFACT_ID=$(gh api \
+            repos/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}/artifacts \
+            -q '.artifacts[] | select(.name=="frontend-dist") | .id' | head -1)
 
-      - name: Prepare deployment directory
-        run: |
-          echo "📁 Current directory structure:"
-          ls -la ./
-          
-          # Preserve repodata.json before clearing
-          if [ -f "repodata.json" ]; then
-            echo "✅ Found repodata.json - will preserve it"
-            cp repodata.json /tmp/repodata.json.backup
-          fi
-          
-          # Find dist directory or files
-          if [ -d "dist" ]; then
-            echo "✅ Found 'dist' directory"
-            # Clear everything except .git and move dist files to root
-            find . -mindepth 1 -maxdepth 1 -not -name '.git*' -not -name 'dist' -exec rm -rf {} + 2>/dev/null || true
-            cp -r dist/* ./
-            rm -rf dist
-          else
-            echo "⚠️  'dist' directory not found, checking current files..."
-            ls -la ./
-            # If dist doesn't exist but we have index.html, we're good
-            if [ ! -f "index.html" ]; then
-              find . -name "index.html" -type f
-              echo "❌ Could not find index.html anywhere"
-              exit 1
-            fi
-          fi
-          
-          # Restore repodata.json if we backed it up
-          if [ -f "/tmp/repodata.json.backup" ]; then
-            echo "✅ Restoring repodata.json"
-            cp /tmp/repodata.json.backup repodata.json
-          fi
-          
-          echo ""
-          echo "✅ Files ready for deployment:"
-          ls -la ./
-
-      - name: Verify essential files
-        run: |
-          echo "📋 Verifying essential deployment files..."
-          
-          # Check for index.html
-          if [ ! -f "index.html" ]; then
-            echo "❌ index.html not found"
+          if [ -z "$ARTIFACT_ID" ]; then
+            echo "❌ frontend-dist artifact not found"
             exit 1
           fi
-          echo "✅ index.html found"
-          
-          # Check for repodata.json
-          if [ ! -f "repodata.json" ]; then
-            echo "❌ repodata.json not found"
-            echo "Available files:"
-            ls -la ./
-            exit 1
-          fi
-          echo "✅ repodata.json found ($(stat -f%z repodata.json || stat -c%s repodata.json) bytes)"
-          
-          # Check for logo
-          if [ ! -f "plymoth_adeki_logo.gif" ]; then
-            echo "⚠️  plymoth_adeki_logo.gif not found"
-          else
-            echo "✅ plymoth_adeki_logo.gif found"
-          fi
-          
-          echo ""
-          echo "📁 Final deployment structure:"
-          ls -la ./
 
-      - name: Commit and push to gh-pages
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-          
-          # Check for changes
-          echo "Checking for changes..."
-          git status
-          
-          git add .
-          
-          if git diff --cached --quiet; then
-            echo "ℹ️  No changes to commit"
-          else
-            echo "📝 Committing changes..."
-            git commit -m "chore: deploy frontend build to gh-pages [skip ci]"
-            echo "🚀 Pushing to gh-pages..."
-            git push origin gh-pages
-            echo "✅ Successfully deployed to gh-pages"
-          fi
+          echo "Downloading artifact ID: $ARTIFACT_ID"
+          mkdir -p ./dist
+          gh api repos/${{ github.repository }}/actions/artifacts/$ARTIFACT_ID/zip \
+            -H "Accept: application/vnd.github.v3.raw" > artifact.zip
+          unzip -o -q artifact.zip -d ./dist
+          rm artifact.zip
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
