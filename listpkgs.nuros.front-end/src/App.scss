@@ -1,21 +1,21 @@
 // Theme color variables
 $light-primary-color: #2563eb;
-$light-secondary-color: #f8fafc;
+$light-secondary-color: #f0f6ff;
 $light-text-color: #1e293b;
 $light-text-muted: #64748b;
 $light-border-color: #cbd5e1;
 $light-hover-color: #1d4ed8;
 $light-background: #ffffff;
-$light-card-bg: #f1f5f9;
-$light-hover-bg: #e2e8f0;
+$light-card-bg: #f8fbff;
+$light-hover-bg: #e0eeff;
 
 $dark-primary-color: #3b82f6;
-$dark-secondary-color: #1e293b;
+$dark-secondary-color: #0f172a;
 $dark-text-color: #f1f5f9;
 $dark-text-muted: #94a3b8;
 $dark-border-color: #334155;
 $dark-hover-color: #60a5fa;
-$dark-background: #0f172a;
+$dark-background: #020617;
 $dark-card-bg: #1e293b;
 $dark-hover-bg: #334155;
 
@@ -136,11 +136,28 @@ $hover-bg: var(--hover-bg);
   height: 80px;
   margin-bottom: 2rem;
   animation: spin 2s linear infinite;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
 
   @media (max-width: 768px) {
     width: 60px;
     height: 60px;
     margin-bottom: 1.5rem;
+  }
+}
+
+// Logo link styling
+.logo-link {
+  display: inline-block;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.98);
   }
 }
 
@@ -219,10 +236,12 @@ $hover-bg: var(--hover-bg);
 .app-header {
   padding: 2rem;
   text-align: center;
-  background-color: var(--background);
-  border-bottom: 1px solid var(--border-color);
+  background: linear-gradient(135deg, var(--primary-color) 0%, rgba(37, 99, 235, 0.8) 100%);
+  border-bottom: 2px solid var(--primary-color);
   transition: var(--transition);
   margin-bottom: 1rem;
+  color: white;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
 
   @media (max-width: 768px) {
     padding: 1rem;
@@ -231,31 +250,60 @@ $hover-bg: var(--hover-bg);
 
   h1 {
     margin: 0.5rem 0;
-    font-size: 2rem;
-    color: var(--text-color);
+    font-size: 2.5rem;
+    color: white;
+    font-weight: 700;
+    letter-spacing: -0.5px;
 
     @media (max-width: 768px) {
+      font-size: 1.8rem;
+    }
+
+    @media (max-width: 480px) {
       font-size: 1.5rem;
     }
   }
 
   p {
-    margin: 0.25rem 0;
-    color: var(--text-muted);
-    font-size: 0.95rem;
+    margin: 0.5rem 0;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
 
     @media (max-width: 768px) {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 0.8rem;
+    }
+  }
+
+  .project-tagline {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+    letter-spacing: 1px;
+    margin-top: 0.25rem;
+
+    @media (max-width: 768px) {
+      font-size: 0.75rem;
     }
   }
 
   .logo {
-    height: 4rem;
-    padding: 0.5rem;
+    height: 5rem;
+    width: auto;
+    display: block;
+    margin: 0 auto 1rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 
     @media (max-width: 768px) {
-      height: 3rem;
-      padding: 0.25rem;
+      height: 4rem;
+      margin-bottom: 0.75rem;
+    }
+
+    @media (max-width: 480px) {
+      height: 3.5rem;
+      margin-bottom: 0.5rem;
     }
   }
 }
@@ -413,14 +461,19 @@ $hover-bg: var(--hover-bg);
 
 // Package statistics banner
 .package-stats {
-  margin-top: 0.8rem;
-  font-size: 0.95rem;
-  color: var(--text-muted);
+  margin-top: 1rem;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.95);
   letter-spacing: 0.3px;
 
   strong {
-    color: var(--primary-color);
-    font-weight: 600;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  @media (max-width: 768px) {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
   }
 }
 

@@ -138,11 +138,18 @@ function App() {
         <Match when={!loading() && !error()}>
           <div class="app">
             <header class="app-header">
-              <a href="https://www.nuros.org/" target="_blank" rel="noopener noreferrer">
-                <img src="/assets/nuros_logo.svg" alt="NurOS Logo" class="logo" />
+              <a
+                href="https://www.nuros.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="logo-link"
+                title="Visit NurOS Official Website"
+              >
+                <img src="/plymoth_adeki_logo.gif" alt="NurOS Logo" class="logo" />
               </a>
               <h1>NurOS Search</h1>
-              <p>Search and browse NurOS packages</p>
+              <p>Независимый Linux дистрибутив - поиск пакетов</p>
+              <p class="project-tagline">Скорость • Безопасность • Доступность</p>
               <div class="package-stats">
                 Search more than <strong>{packages().length.toLocaleString()}</strong> packages
               </div>
