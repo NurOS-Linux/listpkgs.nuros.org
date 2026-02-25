@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import solid from 'vite-plugin-solid';
 
 export default defineConfig({
-  base: '/',
+  base: '/listpkgs.nuros.org/',
   plugins: [solid()],
   css: {
     preprocessorOptions: {
