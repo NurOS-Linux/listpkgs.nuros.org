@@ -2,7 +2,7 @@ name: Build Frontend
 
 on:
   workflow_run:
-    workflows: ["Update NurOS Package List", "Lint Frontend"]
+    workflows: ["Update NurOS Package List"]
     types:
       - completed
   workflow_dispatch:
@@ -13,12 +13,42 @@ permissions:
   id-token: write
 
 jobs:
+  check-lint:
+    runs-on: ubuntu-latest
+    outputs:
+      lint-passed: ${{ steps.check.outputs.passed }}
+    steps:
+      - name: Check lint status
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get latest lint run for the commit
+          LINT_RESULT=$(gh run list \
+            --repo ${{ github.repository }} \
+            --workflow "Lint Frontend" \
+            --status completed \
+            --limit 1 \
+            --json conclusion \
+            -q '.[0].conclusion // "unknown"')
+          
+          echo "Latest lint result: $LINT_RESULT"
+          
+          if [ "$LINT_RESULT" = "success" ]; then
+            echo "passed=true" >> $GITHUB_OUTPUT
+            echo "✅ Lint passed"
+          else
+            echo "passed=false" >> $GITHUB_OUTPUT
+            echo "❌ Lint failed or not run"
+          fi
+
   build:
+    needs: check-lint
     runs-on: ubuntu-latest
     timeout-minutes: 15
     if: |
       (github.event_name == 'workflow_dispatch') ||
-      (github.event.workflow_run.conclusion == 'success')
+      ((github.event.workflow_run.conclusion == 'success') && (needs.check-lint.outputs.lint-passed == 'true'))
 
     steps:
       - name: Checkout repository
