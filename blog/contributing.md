@@ -98,7 +98,7 @@ cd listpkgs.nuros.front-end
 
 # Start development server
 pnpm dev
-# Access at http://localhost:5173
+# Access at localhost:5173
 
 # Format code
 pnpm format
@@ -123,7 +123,7 @@ cd blog
 
 # Start VitePress dev server
 pnpm docs:dev
-# Access at http://localhost:5173
+# Access at localhost:5173
 
 # Build documentation
 pnpm docs:build

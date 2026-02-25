@@ -45,7 +45,7 @@ pnpm install --frozen-lockfile
 # Start development server with hot reload
 pnpm docs:dev
 
-# Access at http://localhost:5173
+# Access at localhost:5173
 ```
 
 ### Build for Production
@@ -123,7 +123,7 @@ Documentation rebuild is triggered when:
 
 ### Access Documentation
 
-- **Development**: http://localhost:5173 (after `pnpm docs:dev`)
+- **Development**: `localhost:5173` (after `pnpm docs:dev`)
 - **Production**: https://NurOS-Linux.github.io/listpkgs.nuros.org/docs/
   - Or via separate github.io repo if configured
 
