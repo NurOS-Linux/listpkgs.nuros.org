@@ -26,7 +26,6 @@ interface JsonDisplayProps {
  * @returns JSX.Element - Компонент для отображения JSON
  */
 const JsonDisplay = (props: JsonDisplayProps) => {
-  // eslint-disable-next-line no-unassigned-vars
   let ref: HTMLPreElement | undefined;
 
   /**

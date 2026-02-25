@@ -69,7 +69,7 @@ const PackageList = (props: PackageListProps) => {
     if (props.filters.channel && props.filters.channel !== 'all') {
       console.log('Applying channel filter:', props.filters.channel);
       result = result.filter(pkg => {
-        if (pkg._source_repo) {
+        if (pkg._source_repo && typeof pkg._source_repo === 'string') {
           return pkg._source_repo.includes(props.filters.channel);
         }
         return true;
@@ -80,11 +80,11 @@ const PackageList = (props: PackageListProps) => {
     if (props.filters.source && props.filters.source !== 'all') {
       console.log('Applying source filter:', props.filters.source);
       result = result.filter(pkg => {
-        let pkgSource = pkg._source_repo || pkg.source || 'unknown';
-        if (typeof pkgSource !== 'string') {
-          pkgSource = 'unknown';
+        const pkgSource = pkg._source_repo || pkg.source;
+        if (typeof pkgSource === 'string') {
+          return pkgSource.toLowerCase().includes(props.filters.source.toLowerCase());
         }
-        return pkgSource.toLowerCase().includes(props.filters.source.toLowerCase());
+        return false;
       });
       console.log('Packages after source filter:', result.length);
     }

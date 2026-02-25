@@ -129,7 +129,6 @@ const TreeNodeComponent = (props: TreeNodeComponentProps) => {
 
     // Если задано поле сортировки, сортируем по нему
     if (props.node.sortField) {
-      // eslint-disable-next-line solid/reactivity
       return [...props.node.children].sort((a, b) => {
         // Получаем значения полей для сравнения
         const aValue = a[props.node.sortField as keyof TreeNode];
