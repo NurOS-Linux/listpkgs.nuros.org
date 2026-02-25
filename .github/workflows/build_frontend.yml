@@ -120,6 +120,9 @@ jobs:
           cache: 'pnpm'
           cache-dependency-path: 'listpkgs.nuros.front-end/pnpm-lock.yaml'
 
+      - name: Enable pnpm
+        run: corepack enable pnpm
+
       - name: Install dependencies
         run: |
           cd listpkgs.nuros.front-end
