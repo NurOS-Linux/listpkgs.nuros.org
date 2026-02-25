@@ -5,8 +5,8 @@ export default defineConfig({
   description: 'Documentation for the NurOS Package Search System',
   lang: 'en-US',
 
-  // GitHub Pages base path - serves from /listpkgs.nuros.org/docs/
-  base: '/docs/',
+  // GitHub Pages base path - serves from separate github.io docs repo
+  base: '/',
 
   // Social links
   head: [
@@ -81,8 +81,8 @@ export default defineConfig({
     // Appearance toggle
     appearance: 'auto',
 
-    // Dark model CSS class
-    darkModeCssClass: 'dark',
+    // Dark mode CSS class
+    darkModeCssClass: 'dark'
   },
 
   // Markdown configuration

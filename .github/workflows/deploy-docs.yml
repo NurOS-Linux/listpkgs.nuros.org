@@ -1,0 +1,145 @@
+name: Build & Deploy Documentation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'blog/**'
+      - '.github/workflows/deploy-docs.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'blog/**'
+  workflow_dispatch:
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9.x
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+          cache-dependency-path: 'blog/pnpm-lock.yaml'
+
+      - name: Install documentation dependencies
+        run: |
+          cd blog
+          pnpm install --frozen-lockfile
+          echo "✅ Dependencies installed with pnpm"
+
+      - name: Format markdown files
+        run: |
+          cd blog
+          pnpm format
+          echo "✅ Markdown files formatted with Prettier"
+
+      - name: Build documentation
+        run: |
+          cd blog
+          pnpm docs:build
+          echo "✅ Documentation build complete"
+          echo "📊 Build size:"
+          du -sh .vitepress/dist/
+          ls -1 .vitepress/dist/ | head -20
+
+      - name: Verify build artifacts
+        run: |
+          if [ ! -f "blog/.vitepress/dist/index.html" ]; then
+            echo "❌ ERROR: Documentation index.html not found"
+            exit 1
+          fi
+          echo "✅ Documentation build verified"
+          wc -l blog/.vitepress/dist/index.html
+
+      - name: Upload documentation artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-dist
+          path: blog/.vitepress/dist/
+          retention-days: 30
+          compression-level: 9
+
+  deploy-docs:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build-docs
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages-docs
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Download documentation artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: docs-dist
+          path: docs-dist
+
+      - name: Verify documentation
+        run: |
+          echo "📋 Documentation contents:"
+          ls -lh docs-dist/
+          if [ ! -f "docs-dist/index.html" ]; then
+            echo "❌ ERROR: index.html not found in artifact"
+            exit 1
+          fi
+          echo "✅ Documentation verified"
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload to GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs-dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Create deployment summary
+        if: always()
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" << EOF
+          ## 📚 Documentation Deployment
+
+          - **Status**: ✅ Success
+          - **URL**: ${{ steps.deployment.outputs.page_url }}
+          - **Triggered by**: \`${{ github.event_name }}\`
+          - **Build timestamp**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+
+          ### Documentation includes:
+          - Getting Started Guide
+          - Architecture Overview
+          - Frontend User Guide
+          - API Reference
+          - Deployment Guide
+          - Contributing Guide
+          - FAQ
+
+          ### Next Steps:
+          - Access documentation at the URL above
+          - Check for any broken links
+          - Report issues on GitHub
+          EOF

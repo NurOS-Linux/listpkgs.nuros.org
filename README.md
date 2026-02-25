@@ -7,11 +7,12 @@ This repository contains the package search and cataloging system for the NurOS 
 - `.github/workflows/` - GitHub Actions automation files
   - `update-list.yml` - updates package list every 6 hours
   - `build_frontend.yml` - builds frontend after package list update
-  - `deploy_on_pages.yml` - deploys built frontend to GitHub Pages via GitHub Actions
+  - `deploy_on_pages.yml` - deploys built frontend to GitHub Pages
+  - `deploy-docs.yml` - builds and deploys documentation (VitePress) separately
 - `listpkgs.nuros.front-end/` - frontend application source code
-- `blog/` - documentation and guides (VitePress)
+- `blog/` - VitePress documentation with comprehensive guides (auto-deployed)
 - `packages.json` - metadata file for all NurOS packages (auto-generated)
-- `CNAME` - custom domain file for GitHub Pages
+- `CNAME` - custom domain file for GitHub Pages (frontend)
 
 ## How It Works
 
@@ -46,7 +47,28 @@ See [README](listpkgs.nuros.front-end/README.md) in the frontend folder for more
 
 ## Documentation
 
-Full documentation, guides, and development information is available in the `blog/` folder and can be viewed via [VitePress](blog/).
+Full documentation, guides, and development information is available as a separate GitHub Pages site built with VitePress.
+
+### Documentation Site
+
+- **Primary**: https://NurOS-Linux.github.io/listpkgs.nuros.org/docs/ (via separate github.io repo or same repo different domain)
+- **Includes**:
+  - Getting Started Guide
+  - System Architecture Overview
+  - Frontend User Guide
+  - API Reference & Integration Examples
+  - Deployment & CI/CD Guide
+  - Contributing Guidelines
+  - FAQ
+
+### Documentation Development
+
+Documentation is in the `blog/` directory and uses:
+- **VitePress** for static site generation
+- **Prettier** for markdown formatting (run with `pnpm format`)
+- **pnpm** for dependency management
+
+See [blog/README.md](blog/README.md) for documentation development guide.
 
 ## Contributing
 
