@@ -8,3 +8,5 @@ _book/
 *.swp
 .env.local
 .env.*.local
+# Node JS
+node_modules

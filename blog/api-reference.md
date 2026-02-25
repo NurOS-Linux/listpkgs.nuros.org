@@ -380,5 +380,5 @@ Current version: **1.0**
 
 ---
 
-See [Architecture](architecture.md) for system overview | [Frontend Guide](frontend-guide.md)
-for UI integration details
+See [Architecture](architecture.md) for system overview | [Frontend Guide](frontend-guide.md) for UI
+integration details

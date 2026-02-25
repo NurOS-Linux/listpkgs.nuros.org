@@ -5,6 +5,7 @@ This document explains how to migrate the documentation from VitePress to GitBoo
 ## Overview
 
 The documentation has been migrated from VitePress to GitBook to:
+
 - Have a separate domain for documentation (not conflicting with the main site)
 - Simplify the build and deployment process
 - Leverage GitBook's built-in features (search, versions, collaboration)
@@ -65,6 +66,7 @@ blog/
 ## GitHub Actions Workflow
 
 The workflow `.github/workflows/sync-gitbook.yml` automatically:
+
 - Validates documentation structure on each push
 - Formats markdown files
 - Triggers GitBook sync when changes are pushed to `main`
@@ -88,6 +90,7 @@ GitBook provides powerful full-text search out of the box.
 ### Versions
 
 You can create different versions of your documentation:
+
 - Go to **Settings** → **Versions**
 - Create versions for different releases
 
@@ -148,9 +151,11 @@ After setup, documentation will be available at:
 ## Support
 
 For GitBook-specific issues:
+
 - [GitBook Documentation](https://docs.gitbook.com/)
 - [GitBook Community](https://community.gitbook.com/)
 - [GitBook Support](https://support.gitbook.com/)
 
 For project-specific issues:
+
 - [GitHub Issues](https://github.com/NurOS-Linux/listpkgs.nuros.org/issues)
