@@ -78,11 +78,16 @@ const usePackageData = () => {
       console.log('Response received:', response.status);
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        console.error('Failed to fetch repodata from URL:', dataUrl);
+        console.error('Response status:', response.status, response.statusText);
+        throw new Error(`HTTP error! status: ${response.status} ${response.statusText}`);
       }
 
       const data: PackageData = await response.json();
-      console.log('Data parsed, number of packages:', Object.keys(data).length);
+      console.log('Data parsed successfully');
+      console.log('Raw data keys:', Object.keys(data));
+      console.log('Number of packages:', Object.keys(data).length);
+      console.log('First 3 packages:', Object.entries(data).slice(0, 3));
 
       // Преобразование объекта в массив пакетов
       const packageArray = Object.entries(data).map(([key, pkg]) => {
@@ -110,10 +115,12 @@ const usePackageData = () => {
         };
       });
 
+      console.log('Package array transformed, total count:', packageArray.length);
+      console.log('First package:', packageArray[0]);
       console.log('Setting packages and updating loading state');
       setPackages(packageArray);
       setLoading(false);
-      console.log('Loading state updated to false');
+      console.log('✅ Successfully loaded', packageArray.length, 'packages');
     } catch (err) {
       console.error('Error loading repodata:', err);
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
