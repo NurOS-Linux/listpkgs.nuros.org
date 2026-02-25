@@ -70,8 +70,10 @@ const usePackageData = () => {
   onMount(async () => {
     try {
       console.log('Starting to fetch repodata.json');
-      // Используем относительный путь - работает и в dev и в production
-      const response = await fetch('./repodata.json');
+      // Используем BASE_URL для работы с base path в production
+      const dataUrl = new URL('repodata.json', import.meta.env.BASE_URL).href;
+      console.log('Fetching from:', dataUrl);
+      const response = await fetch(dataUrl);
       console.log('Response received:', response.status);
 
       if (!response.ok) {
