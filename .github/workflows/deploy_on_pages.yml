@@ -27,44 +27,74 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Download frontend artifact from build workflow
-        uses: actions/download-artifact@v4
-        with:
-          name: frontend-dist
-          path: ./listpkgs.nuros.front-end/dist
-        continue-on-error: true
-
-      - name: Fallback - download from workflow run if artifact not found
-        if: steps.download.outcome == 'failure'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Trying to download artifact from workflow run..."
+          echo "📥 Downloading frontend artifact..."
+          
+          # Get the build workflow ID from the triggered event
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            BUILD_RUN_ID="${{ github.event.workflow_run.id }}"
+          else
+            # For manual dispatch, get the latest successful build run
+            echo "No workflow_run event, finding latest successful build..."
+            BUILD_RUN_ID=$(gh run list \
+              --repo ${{ github.repository }} \
+              --workflow "Build Frontend" \
+              --status completed \
+              --conclusion success \
+              --limit 1 \
+              --json databaseId \
+              -q '.[0].databaseId')
+            
+            if [ -z "$BUILD_RUN_ID" ]; then
+              echo "❌ No successful build run found"
+              exit 1
+            fi
+          fi
+          
+          echo "Using build run ID: $BUILD_RUN_ID"
+          
+          # Get artifact from the build run
           ARTIFACT_ID=$(gh api \
-            repos/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}/artifacts \
+            repos/${{ github.repository }}/actions/runs/$BUILD_RUN_ID/artifacts \
             -q '.artifacts[] | select(.name=="frontend-dist") | .id' | head -1)
-
+          
           if [ -z "$ARTIFACT_ID" ]; then
-            echo "❌ frontend-dist artifact not found"
+            echo "❌ frontend-dist artifact not found in build run $BUILD_RUN_ID"
+            gh api repos/${{ github.repository }}/actions/runs/$BUILD_RUN_ID/artifacts -q '.artifacts[].name'
             exit 1
           fi
-
-          echo "Downloading artifact ID: $ARTIFACT_ID"
-          mkdir -p ./listpkgs.nuros.front-end/dist
+          
+          echo "✅ Found artifact ID: $ARTIFACT_ID"
+          
+          # Download and extract
+          mkdir -p ./dist
           gh api repos/${{ github.repository }}/actions/artifacts/$ARTIFACT_ID/zip \
             -H "Accept: application/vnd.github.v3.raw" > artifact.zip
-          unzip -o -q artifact.zip -d ./listpkgs.nuros.front-end/dist
+          
+          unzip -o -q artifact.zip -d ./dist
           rm artifact.zip
+          
+          echo "✅ Artifact extracted"
+          echo "📁 Contents:"
+          ls -la ./dist
 
       - name: Verify dist directory exists
         run: |
-          if [ ! -d "./listpkgs.nuros.front-end/dist" ]; then
-            echo "❌ dist directory not found. Deployment failed."
+          if [ ! -f "./dist/index.html" ]; then
+            echo "❌ index.html not found in dist. Deployment failed."
+            echo "Available files:"
+            find ./dist -type f | head -20
             exit 1
           fi
-          echo "✅ dist directory found:"
-          ls -la ./listpkgs.nuros.front-end/dist
+          echo "✅ dist directory ready for deployment"
+          echo "📋 Final contents:"
+          ls -la ./dist
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -72,7 +102,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './listpkgs.nuros.front-end/dist'
+          path: './dist'
 
       - name: Deploy to GitHub Pages
         id: deployment
