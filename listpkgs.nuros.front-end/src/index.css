@@ -283,6 +283,11 @@ button:focus-visible {
   gap: 1rem;
   justify-content: flex-start;
   flex-wrap: wrap;
+  animation: slideInDown 0.4s ease-out 0.1s both;
+}
+
+.filters-container {
+  animation: slideInDown 0.4s ease-out 0.15s both;
 }
 
 @media (max-width: 768px) {
@@ -318,6 +323,7 @@ button:focus-visible {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   gap: 1.5rem;
+  animation: fadeIn 0.4s ease-in 0.2s both;
 }
 
 .package-card {
@@ -544,15 +550,32 @@ button:focus-visible {
   padding: 3rem;
   color: var(--text-muted);
   font-size: 1.2rem;
+  grid-column: 1 / -1;
+  animation: fadeIn 0.3s ease-in;
 }
 
 /* Стили для компонентов группировки */
-.controls {
+.view-mode-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
   gap: 1rem;
+  margin: 2rem 0 2rem 0;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, var(--card-bg) 0%, rgba(37, 99, 235, 0.05) 100%);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
+  animation: slideInUp 0.4s ease-out;
+}
+
+@media (max-width: 768px) {
+  .view-mode-container {
+    flex-direction: row;
+    gap: 0.75rem;
+    padding: 1rem;
+    margin: 1.5rem 0;
+  }
 }
 
 .view-mode-selector {
@@ -561,19 +584,50 @@ button:focus-visible {
 }
 
 .view-mode-btn {
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--border-color);
+  padding: 0.625rem 1.25rem;
+  border: 2px solid var(--border-color);
   background-color: var(--card-bg);
   color: var(--text-color);
   cursor: pointer;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  transition: var(--transition);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.view-mode-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.view-mode-btn:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  transform: translateY(-2px);
+}
+
+.view-mode-btn:hover::before {
+  left: 100%;
 }
 
 .view-mode-btn.active {
-  background-color: var(--hover-bg);
-  border-color: var(--text-muted);
+  background: linear-gradient(135deg, var(--primary-color) 0%, #1d4ed8 100%);
+  color: white;
+  border-color: var(--primary-color);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+  transform: scale(1.02);
+}
+
+.view-mode-btn:active {
+  transform: translateY(0) scale(0.98);
 }
 
 .package-group {
@@ -583,6 +637,7 @@ button:focus-visible {
   overflow: hidden;
   background-color: var(--card-bg);
   color: var(--text-color);
+  animation: fadeIn 0.3s ease-in;
 }
 
 .group-header {
@@ -590,30 +645,86 @@ button:focus-visible {
   padding: 1rem;
   cursor: pointer;
   border-bottom: 1px solid var(--border-color);
-  transition: var(--transition);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
 }
 
 .group-header:hover {
-  background-color: var(--border-color);
+  background-color: var(--primary-color);
+  color: white;
+  transform: translateX(4px);
 }
 
 .group-name {
   margin: 0;
   font-size: 1.5rem;
-  color: var(--text-color);
+  color: inherit;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-weight: 600;
 }
 
 .expand-icon {
-  font-size: 1rem;
-  color: var(--primary-color);
+  font-size: 1.2rem;
+  color: inherit;
+  transition: transform 0.3s ease;
+  display: inline-block;
 }
 
 .group-packages {
   padding: 1rem;
   background-color: var(--card-bg);
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
 }
 
 @media (max-width: 768px) {
@@ -623,15 +734,6 @@ button:focus-visible {
 
   .search-input-container {
     flex-direction: column;
-  }
-
-  .controls {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .filters {
-    flex-wrap: wrap;
   }
 
   .package-list {
@@ -774,7 +876,46 @@ button:focus-visible {
 
 .app-main {
   flex: 1;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Dark Reader CSS filters - ensures light theme is preserved */
+html {
+  color-scheme: light !important;
+}
+
+html.dark-theme {
+  color-scheme: dark !important;
+}
+
+/* Prevent Dark Reader from too aggressively invading color scheme */
+:root {
+  --darkreader-neutral-background: #f8fafc;
+  --darkreader-neutral-text: #1e293b;
+  --darkreader-border: #cbd5e1;
+}
+
+:root.dark-theme {
+  --darkreader-neutral-background: #020617;
+  --darkreader-neutral-text: #f1f5f9;
+  --darkreader-border: #334155;
+}
+
+/* Additional smooth transitions for theme switching */
+* {
+  transition-property: background-color, color, border-color, box-shadow;
+  transition-duration: 0.3s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button, input, select, textarea {
+  background-image: none !important; /* Remove any background gradients Dark Reader might add */
+}
+
+/* Ensure card backgrounds are preserved in light theme */
+:root:not(.dark-theme) .package-card,
+:root:not(.dark-theme) .search-bar,
+:root:not(.dark-theme) .view-mode-container {
+  background: linear-gradient(135deg, var(--card-bg) 0%, rgba(37, 99, 235, 0.03) 100%) !important;
 }

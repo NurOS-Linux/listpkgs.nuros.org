@@ -18,12 +18,14 @@ import './App.scss';
  * @property {string} architecture - Архитектура пакета
  * @property {string} channel - Канал обновлений
  * @property {string} packageType - Тип пакета
+ * @property {string} source - Источник пакета (репозиторий)
  * @property {string[]} versions - Версии пакетов
  */
 interface Filters {
   architecture: string;
   channel: string;
   packageType: string;
+  source: string;
   maintainers: string[];
   licenses: string[];
 }
@@ -41,6 +43,7 @@ function App() {
     architecture: 'all',
     channel: 'all',
     packageType: 'all',
+    source: 'all',
     maintainers: [],
     licenses: [],
   });
@@ -184,14 +187,28 @@ function App() {
                       channel: newFilters.channel || prev.channel,
                       architecture: newFilters.architecture || prev.architecture,
                       packageType: newFilters.packageType || prev.packageType,
+                      source: newFilters.source || prev.source,
                     }));
                     console.log('Updated filters:', newFilters);
                   }}
-                  onViewModeChange={mode => {
-                    console.log('View mode changed to:', mode);
-                    handleViewModeChange(mode);
-                  }}
                 />
+                
+                {/* View Mode Selector */}
+                <div class="view-mode-container">
+                  <button
+                    class={`view-mode-btn ${viewMode() === 'list' ? 'active' : ''}`}
+                    onClick={() => handleViewModeChange('list')}
+                  >
+                    📋 List View
+                  </button>
+                  <button
+                    class={`view-mode-btn ${viewMode() === 'grouped' ? 'active' : ''}`}
+                    onClick={() => handleViewModeChange('grouped')}
+                  >
+                    📦 Grouped View
+                  </button>
+                </div>
+
                 <PackageList
                   packages={packages()}
                   searchTerm={searchTerm()}

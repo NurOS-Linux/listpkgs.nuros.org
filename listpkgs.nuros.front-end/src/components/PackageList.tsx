@@ -8,6 +8,7 @@ interface Filters {
   architecture: string;
   channel: string;
   packageType: string;
+  source: string;
   maintainers: string[];
   licenses: string[];
 }
@@ -65,6 +66,16 @@ const PackageList = (props: PackageListProps) => {
         return true;
       });
       console.log('Packages after channel filter:', result.length);
+    }
+
+    if (props.filters.source && props.filters.source !== 'all') {
+      console.log('Applying source filter:', props.filters.source);
+      // Фильтрация по источнику
+      result = result.filter(pkg => {
+        const pkgSource = pkg._source_repo || pkg.source || 'unknown';
+        return pkgSource.includes(props.filters.source);
+      });
+      console.log('Packages after source filter:', result.length);
     }
 
     if (props.filters.packageType && props.filters.packageType !== 'all') {

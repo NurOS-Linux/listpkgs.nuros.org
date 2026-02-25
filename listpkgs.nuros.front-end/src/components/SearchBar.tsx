@@ -2,33 +2,39 @@ import { createSignal } from 'solid-js';
 
 interface Filters {
   architecture: string;
-  channel: string; // repository name
+  channel: string;
   packageType: string;
+  source: string;
 }
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
   onFilterChange: (filters: Filters) => void;
-  onViewModeChange?: (mode: 'list' | 'grouped') => void;
 }
 
 const SearchBar = (props: SearchBarProps) => {
   const [searchQuery, setSearchQuery] = createSignal('');
-  const [viewMode, setViewMode] = createSignal<'list' | 'grouped'>('list');
 
   // Фильтры
   const [architecture, setArchitecture] = createSignal('all');
   const [channel, setChannel] = createSignal('all');
   const [packageType, setPackageType] = createSignal('all');
+  const [source, setSource] = createSignal('all');
 
-  const handleSearch = () => {
-    props.onSearch(searchQuery());
+  // Real-time поиск и фильтрация
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    triggerSearch(value);
   };
 
   const handleKeyPress = (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
-      handleSearch();
+      triggerSearch(searchQuery());
     }
+  };
+
+  const triggerSearch = (query: string) => {
+    props.onSearch(query);
   };
 
   const handleFiltersChange = () => {
@@ -36,12 +42,8 @@ const SearchBar = (props: SearchBarProps) => {
       architecture: architecture(),
       channel: channel(),
       packageType: packageType(),
+      source: source(),
     });
-  };
-
-  const handleViewModeChange = (mode: 'list' | 'grouped') => {
-    setViewMode(mode);
-    props.onViewModeChange?.(mode);
   };
 
   return (
@@ -52,21 +54,23 @@ const SearchBar = (props: SearchBarProps) => {
           class="search-input"
           placeholder="Search packages..."
           value={searchQuery()}
-          onInput={e => setSearchQuery(e.currentTarget.value)}
+          onInput={e => handleSearchChange(e.currentTarget.value)}
           onKeyUp={handleKeyPress}
         />
-        <button class="search-button" onClick={handleSearch}>
+        <button class="search-button" onClick={() => triggerSearch(searchQuery())}>
           Search
         </button>
       </div>
 
-      <div class="controls">
+      <div class="filters-container">
         <div class="filters">
           <select
             class="filter-select"
             value={packageType()}
-            onChange={e => setPackageType(e.target.value)}
-            onBlur={handleFiltersChange}
+            onChange={e => {
+              setPackageType(e.target.value);
+              handleFiltersChange();
+            }}
           >
             <option value="all">All Types</option>
             <option value="package">Package</option>
@@ -75,9 +79,25 @@ const SearchBar = (props: SearchBarProps) => {
 
           <select
             class="filter-select"
+            value={source()}
+            onChange={e => {
+              setSource(e.target.value);
+              handleFiltersChange();
+            }}
+          >
+            <option value="all">All Sources</option>
+            <option value="NurOS-Packages">NurOS-Packages</option>
+            <option value="NixOS">NixOS</option>
+            <option value="custom">Custom Repository</option>
+          </select>
+
+          <select
+            class="filter-select"
             value={channel()}
-            onChange={e => setChannel(e.target.value)}
-            onBlur={handleFiltersChange}
+            onChange={e => {
+              setChannel(e.target.value);
+              handleFiltersChange();
+            }}
           >
             <option value="all">All Repositories</option>
             <option value="NurOS-Packages">NurOS-Packages</option>
@@ -86,28 +106,15 @@ const SearchBar = (props: SearchBarProps) => {
           <select
             class="filter-select"
             value={architecture()}
-            onChange={e => setArchitecture(e.target.value)}
-            onBlur={handleFiltersChange}
+            onChange={e => {
+              setArchitecture(e.target.value);
+              handleFiltersChange();
+            }}
           >
             <option value="all">All Architectures</option>
             <option value="x86_64-linux">x86_64-linux</option>
             <option value="aarch64-linux">aarch64-linux</option>
           </select>
-        </div>
-
-        <div class="view-mode-selector">
-          <button
-            class={`view-mode-btn ${viewMode() === 'list' ? 'active' : ''}`}
-            onClick={() => handleViewModeChange('list')}
-          >
-            List View
-          </button>
-          <button
-            class={`view-mode-btn ${viewMode() === 'grouped' ? 'active' : ''}`}
-            onClick={() => handleViewModeChange('grouped')}
-          >
-            Grouped View
-          </button>
         </div>
       </div>
     </div>
