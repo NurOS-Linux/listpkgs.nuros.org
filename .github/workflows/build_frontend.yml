@@ -80,6 +80,25 @@ jobs:
           cd listpkgs.nuros.front-end
           pnpm build
 
+      - name: Copy package data to dist
+        run: |
+          # Copy repodata files from public to dist if they exist
+          if [ -f "listpkgs.nuros.front-end/public/repodata.json" ]; then
+            echo "✅ Copying repodata.json to dist"
+            cp listpkgs.nuros.front-end/public/repodata.json listpkgs.nuros.front-end/dist/
+          else
+            echo "⚠️  repodata.json not found in public, will use empty file"
+            echo "{}" > listpkgs.nuros.front-end/dist/repodata.json
+          fi
+          
+          if [ -f "listpkgs.nuros.front-end/public/repodata.json.sha256" ]; then
+            cp listpkgs.nuros.front-end/public/repodata.json.sha256 listpkgs.nuros.front-end/dist/
+            echo "✅ Copied repodata.json.sha256"
+          fi
+          
+          echo "📁 Dist contents:"
+          ls -la listpkgs.nuros.front-end/dist/
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
