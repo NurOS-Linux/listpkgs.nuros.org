@@ -228,4 +228,4 @@ Rendered in UI
 
 ---
 
-See [Deployment Guide](./deployment.md) for detailed deployment information.
+See [Deployment Guide](deployment.md) for detailed deployment information.

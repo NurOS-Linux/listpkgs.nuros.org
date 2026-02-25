@@ -378,5 +378,5 @@ id-token: write # OIDC token
 
 ---
 
-See [Architecture](./architecture.md) for system overview | [Contributing](./contributing.md) for
+See [Architecture](architecture.md) for system overview | [Contributing](contributing.md) for
 development guide

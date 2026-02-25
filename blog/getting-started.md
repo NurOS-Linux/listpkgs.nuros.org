@@ -108,11 +108,11 @@ Click on any package to see:
 
 ## Next Steps
 
-- Explore [Architecture](./architecture.md) to understand the system
-- Read [Frontend Guide](./frontend-guide.md) for detailed UI information
-- Check [API Reference](./api-reference.md) to integrate packages programmatically
+- Explore [Architecture](architecture.md) to understand the system
+- Read [Frontend Guide](frontend-guide.md) for detailed UI information
+- Check [API Reference](api-reference.md) to integrate packages programmatically
 
 ---
 
-**Need Help?** See [FAQ](./faq.md) or visit the
+**Need Help?** See [FAQ](faq.md) or visit the
 [GitHub Issues](https://github.com/NurOS-Linux/listpkgs.nuros.org/issues)

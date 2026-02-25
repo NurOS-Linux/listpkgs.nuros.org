@@ -341,4 +341,4 @@ pnpm test:ui
 
 ---
 
-Next: [API Reference](./api-reference.md) | Back: [Architecture](./architecture.md)
+Next: [API Reference](api-reference.md) | Back: [Architecture](architecture.md)

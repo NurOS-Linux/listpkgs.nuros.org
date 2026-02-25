@@ -28,7 +28,7 @@ Yes! The data is available as JSON:
 https://listpkgs.nuros.org/repodata.json
 ```
 
-See [API Reference](./api-reference.md) for usage examples.
+See [API Reference](api-reference.md) for usage examples.
 
 ## Using the Interface
 
@@ -58,7 +58,7 @@ See [API Reference](./api-reference.md) for usage examples.
 - **Wrong repository**: Package must be in official NurOS organization
 - **Wait for update**: List updates every 6 hours
 
-See [Contributing Guide](./contributing.md) for adding new packages.
+See [Contributing Guide](contributing.md) for adding new packages.
 
 ### Can I see the raw JSON?
 
@@ -137,7 +137,7 @@ Supported browsers:
    - Upload to GitHub Pages
    - Available at listpkgs.nuros.org
 
-See [Architecture](./architecture.md) for details.
+See [Architecture](architecture.md) for details.
 
 ### What technology is used?
 
@@ -156,7 +156,7 @@ const response = await fetch('https://listpkgs.nuros.org/repodata.json');
 const packages = await response.json();
 ```
 
-See [API Reference](./api-reference.md) with Python, Node.js, curl examples.
+See [API Reference](api-reference.md) with Python, Node.js, curl examples.
 
 ### Is there an API?
 
@@ -186,7 +186,7 @@ Yes! Recommended practices:
 - Use `ETag` for conditional requests
 - Implement local storage
 
-See [API Reference](./api-reference.md) for cache examples.
+See [API Reference](api-reference.md) for cache examples.
 
 ## Troubleshooting
 
@@ -292,7 +292,7 @@ Common fixes:
 
 ### How do I contribute?
 
-See [Contributing Guide](./contributing.md) for:
+See [Contributing Guide](contributing.md) for:
 
 1. Development setup
 2. Code style guidelines
@@ -333,6 +333,6 @@ Create GitHub issue with:
 
 **Still have questions?**
 
-- Check [Architecture](./architecture.md) and [API Reference](./api-reference.md)
+- Check [Architecture](architecture.md) and [API Reference](api-reference.md)
 - Open a [GitHub Discussion](https://github.com/NurOS-Linux/listpkgs.nuros.org/discussions)
-- Review [Contributing Guide](./contributing.md)
+- Review [Contributing Guide](contributing.md)

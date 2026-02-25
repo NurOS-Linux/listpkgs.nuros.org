@@ -426,7 +426,7 @@ Instead:
 - **Issues**: GitHub Issues for bugs/features
 - **Discussions**: GitHub Discussions for questions
 - **Chat**: Join NurOS community channels
-- **Docs**: Check [FAQ](./faq.md) and [Architecture](./architecture.md)
+- **Docs**: Check [FAQ](faq.md) and [Architecture](architecture.md)
 
 ## Recognition
 

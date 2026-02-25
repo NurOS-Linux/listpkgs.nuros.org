@@ -8,9 +8,9 @@ This repository contains the package search and cataloging system for the NurOS 
   - `update-list.yml` - updates package list every 6 hours
   - `build_frontend.yml` - builds frontend after package list update
   - `deploy_on_pages.yml` - deploys built frontend to GitHub Pages
-  - `deploy-docs.yml` - builds and deploys documentation (VitePress) separately
+  - `sync-gitbook.yml` - syncs documentation to GitBook
 - `listpkgs.nuros.front-end/` - frontend application source code
-- `blog/` - VitePress documentation with comprehensive guides (auto-deployed)
+- `blog/` - GitBook documentation source files
 - `packages.json` - metadata file for all NurOS packages (auto-generated)
 - `CNAME` - custom domain file for GitHub Pages (frontend)
 
@@ -47,11 +47,11 @@ See [README](listpkgs.nuros.front-end/README.md) in the frontend folder for more
 
 ## Documentation
 
-Full documentation, guides, and development information is available as a separate GitHub Pages site built with VitePress.
+Documentation is now hosted on **GitBook** for a better reading experience and separate domain.
 
-### Documentation Site
+### 📚 Documentation Site
 
-- **Primary**: https://NurOS-Linux.github.io/listpkgs.nuros.org/docs/ (via separate github.io repo or same repo different domain)
+- **GitBook**: Setup required - see [GITBOOK_SETUP.md](blog/GITBOOK_SETUP.md)
 - **Includes**:
   - Getting Started Guide
   - System Architecture Overview
@@ -64,11 +64,34 @@ Full documentation, guides, and development information is available as a separa
 ### Documentation Development
 
 Documentation is in the `blog/` directory and uses:
-- **VitePress** for static site generation
-- **Prettier** for markdown formatting (run with `pnpm format`)
-- **pnpm** for dependency management
+- **GitBook** for hosting and rendering
+- **GitHub Actions** for automatic sync on push to `main`
+- **Prettier** for markdown formatting
 
-See [blog/README.md](blog/README.md) for documentation development guide.
+#### Quick Setup
+
+1. Go to [GitBook](https://app.gitbook.com/)
+2. Create a Space
+3. Connect this repository (`NurOS-Linux/listpkgs.nuros.org`)
+4. Set source folder to `blog/`
+5. Enable auto-sync
+
+See [blog/GITBOOK_SETUP.md](blog/GITBOOK_SETUP.md) for detailed instructions.
+
+#### Documentation Files
+
+| File | Description |
+|------|-------------|
+| `blog/README.md` | Documentation home page |
+| `blog/SUMMARY.md` | Table of contents (GitBook navigation) |
+| `blog/book.json` | GitBook configuration |
+| `blog/getting-started.md` | Quick start guide |
+| `blog/architecture.md` | System architecture |
+| `blog/frontend-guide.md` | Frontend user guide |
+| `blog/api-reference.md` | API documentation |
+| `blog/deployment.md` | Deployment guide |
+| `blog/contributing.md` | Contributing guidelines |
+| `blog/faq.md` | Frequently asked questions |
 
 ## Contributing
 
@@ -79,6 +102,8 @@ To contribute:
 3. Commit your changes
 4. Push to the remote branch
 5. Create a pull request
+
+For documentation changes, simply edit files in `blog/` and they will auto-sync to GitBook.
 
 ## License
 

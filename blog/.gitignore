@@ -1,6 +1,8 @@
-node_modules/
-dist/
-.vitepress/dist/
+# GitBook ignores (GitBook manages build internally)
+_book/
+.gitbook/
+
+# General ignores
 .DS_Store
 *.log
 *.swp
