@@ -119,9 +119,13 @@ jobs:
           node-version: '22'
           cache: 'pnpm'
           cache-dependency-path: 'listpkgs.nuros.front-end/pnpm-lock.yaml'
+          check-latest: true
 
-      - name: Enable pnpm
-        run: corepack enable pnpm
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
 
       - name: Install dependencies
         run: |
