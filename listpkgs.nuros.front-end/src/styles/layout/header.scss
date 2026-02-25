@@ -48,8 +48,8 @@
 }
 
 .logo {
-  width: 90px;   // Increased from 80px
-  height: 90px;  // Increased from 80px
+  width: 90px; // Increased from 80px
+  height: 90px; // Increased from 80px
   object-fit: contain;
   animation: slideInDown $transition-base;
 
@@ -94,7 +94,7 @@
 }
 
 .loading-logo {
-  width: 130px;  // Increased from 120px
+  width: 130px; // Increased from 120px
   height: 130px; // Increased from 120px
   object-fit: contain;
   animation: bounce 1s ease-in-out infinite;
