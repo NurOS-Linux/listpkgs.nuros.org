@@ -8,13 +8,14 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: ./listpkgs.nuros.front-end
 
     steps:
       - name: Checkout repository
@@ -22,34 +23,24 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           check-latest: true
-
-      - name: Setup pnpm
-        run: npm install -g pnpm@9
-
-      - name: Cache pnpm
-        uses: actions/cache@v4
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('listpkgs.nuros.front-end/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
+          cache: 'pnpm'
+          cache-dependency-path: listpkgs.nuros.front-end/pnpm-lock.yaml
 
       - name: Install dependencies
-        run: |
-          cd listpkgs.nuros.front-end
-          pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Run ESLint
-        run: |
-          cd listpkgs.nuros.front-end
-          pnpm lint
+        run: pnpm lint
 
       - name: Run Prettier check
-        run: |
-          cd listpkgs.nuros.front-end
-          pnpm check-format
+        run: pnpm check-format

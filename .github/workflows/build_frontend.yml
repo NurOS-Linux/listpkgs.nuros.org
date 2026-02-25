@@ -23,7 +23,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Get latest lint run for the commit
           LINT_RESULT=$(gh run list \
             --repo ${{ github.repository }} \
             --workflow "Lint Frontend" \
@@ -49,6 +48,9 @@ jobs:
     if: |
       (github.event_name == 'workflow_dispatch') ||
       ((github.event.workflow_run.conclusion == 'success') && (needs.check-lint.outputs.lint-passed == 'true'))
+    defaults:
+      run:
+        working-directory: ./listpkgs.nuros.front-end
 
     steps:
       - name: Checkout repository
@@ -63,7 +65,6 @@ jobs:
         run: |
           echo "📥 Attempting to download latest repodata..."
           
-          # Get the latest successful update-list run
           UPDATE_RUN=$(gh run list \
             --repo ${{ github.repository }} \
             --workflow "Update NurOS Package List" \
@@ -77,7 +78,6 @@ jobs:
             exit 0
           fi
           
-          # Get artifact ID
           ARTIFACT=$(gh api \
             repos/${{ github.repository }}/actions/runs/$UPDATE_RUN/artifacts \
             -q '.artifacts[] | select(.name=="repodata-json") | .id // ""') 
@@ -87,57 +87,46 @@ jobs:
             exit 0
           fi
           
-          # Download and extract
-          mkdir -p listpkgs.nuros.front-end/public
+          mkdir -p public
           
           echo "Downloading artifact..."
           gh api repos/${{ github.repository }}/actions/artifacts/$ARTIFACT/zip \
             -H "Accept: application/vnd.github.v3.raw" > /tmp/repodata.zip
           
           echo "Extracting..."
-          unzip -o /tmp/repodata.zip -d listpkgs.nuros.front-end/public/
+          unzip -o /tmp/repodata.zip -d public/
           rm /tmp/repodata.zip
           
           echo "✅ Downloaded latest repodata files"
-          ls -lh listpkgs.nuros.front-end/public/repodata.json* 2>/dev/null || true
+          ls -lh public/repodata.json* 2>/dev/null || true
 
       - name: Verify source data exists
         run: |
-          if [ ! -f "listpkgs.nuros.front-end/public/repodata.json" ]; then
+          if [ ! -f "public/repodata.json" ]; then
             echo "❌ ERROR: repodata.json not found in public/"
-            echo "This will cause the site to have no packages!"
-            echo "Available files:"
-            ls -la listpkgs.nuros.front-end/public/ || echo "public/ directory is empty"
             exit 1
           fi
           echo "✅ Source data verified"
-          wc -l listpkgs.nuros.front-end/public/repodata.json
+          wc -l public/repodata.json
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           check-latest: true
-
-      - name: Setup pnpm
-        run: npm install -g pnpm@9
-
-      - name: Cache pnpm
-        uses: actions/cache@v4
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('listpkgs.nuros.front-end/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
+          cache: 'pnpm'
+          cache-dependency-path: listpkgs.nuros.front-end/pnpm-lock.yaml
 
       - name: Install dependencies
-        run: |
-          cd listpkgs.nuros.front-end
-          pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Build frontend
         run: |
-          cd listpkgs.nuros.front-end
           pnpm build
           echo "✅ Build complete"
           du -sh dist/
@@ -145,32 +134,30 @@ jobs:
 
       - name: Copy repodata to dist
         run: |
-          # Ensure repodata is in dist (Vite should copy from public, but verify)
-          if [ ! -f "listpkgs.nuros.front-end/dist/repodata.json" ]; then
-            cp listpkgs.nuros.front-end/public/repodata.json listpkgs.nuros.front-end/dist/
+          if [ ! -f "dist/repodata.json" ]; then
+            cp public/repodata.json dist/
             echo "ℹ️  Manually copied repodata.json to dist"
           else
             echo "✅ repodata.json already in dist"
           fi
           
-          if [ -f "listpkgs.nuros.front-end/public/repodata.json.sha256" ]; then
-            cp listpkgs.nuros.front-end/public/repodata.json.sha256 listpkgs.nuros.front-end/dist/
+          if [ -f "public/repodata.json.sha256" ]; then
+            cp public/repodata.json.sha256 dist/
           fi
 
       - name: Verify build artifacts
         run: |
-          if [ ! -f "listpkgs.nuros.front-end/dist/index.html" ]; then
+          if [ ! -f "dist/index.html" ]; then
             echo "❌ ERROR: index.html not found in dist/"
             exit 1
           fi
-          if [ ! -f "listpkgs.nuros.front-end/dist/repodata.json" ]; then
+          if [ ! -f "dist/repodata.json" ]; then
             echo "❌ ERROR: repodata.json not found in dist/"
             exit 1
           fi
           echo "✅ All critical files present in dist/"
-          echo "📊 Dist contents:"
-          ls -lh listpkgs.nuros.front-end/dist/index.html
-          ls -lh listpkgs.nuros.front-end/dist/repodata.json
+          ls -lh dist/index.html
+          ls -lh dist/repodata.json
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
