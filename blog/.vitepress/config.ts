@@ -32,7 +32,6 @@ export default defineConfig({
       },
       { text: 'Contributing', link: '/contributing' },
       { text: 'FAQ', link: '/faq' },
-      { text: 'Back to App', link: '../' },
     ],
 
     sidebar: [
