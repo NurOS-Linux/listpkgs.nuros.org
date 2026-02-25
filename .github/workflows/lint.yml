@@ -26,10 +26,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'pnpm'
-          cache-dependency-path: 'listpkgs.nuros.front-end/pnpm-lock.yaml'
           check-latest: true
-          package-manager: 'pnpm@9.15.0'
+
+      - name: Setup pnpm
+        run: npm install -g pnpm@9
+
+      - name: Cache pnpm
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('listpkgs.nuros.front-end/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
 
       - name: Install dependencies
         run: |
