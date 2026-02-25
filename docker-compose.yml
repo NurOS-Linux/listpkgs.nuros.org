@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: ./docker/backend.Dockerfile
+    volumes:
+      # Mount the entire project directory for live code changes
+      - .:/app
+    environment:
+      # Pass the GitHub token if needed for the aggregation script
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    # The backend service runs once to generate the file and then exits.
+    # It's a one-off task, not a long-running service.
+    command: >
+      sh -c "
+        echo '🐍 Generating repodata.json...' &&
+        listpkgs-aggregate --output /app/listpkgs.nuros.front-end/public/repodata.json &&
+        echo '✅ repodata.json generated successfully.'
+      "
+
+  frontend:
+    build:
+      context: .
+      dockerfile: ./docker/frontend.Dockerfile
+    volumes:
+      # Mount the frontend source code for hot-reloading
+      - ./listpkgs.nuros.front-end:/app/listpkgs.nuros.front-end
+      # Exclude node_modules to use the ones installed in the container
+      - /app/listpkgs.nuros.front-end/node_modules
+    ports:
+      # Map the container's port 5173 to the host's port 5173
+      - "5173:5173"
+    depends_on:
+      # Ensure the backend runs and completes before the frontend starts
+      - backend
+    # The command to start the Vite dev server
+    command: pnpm --dir /app/listpkgs.nuros.front-end dev --host
