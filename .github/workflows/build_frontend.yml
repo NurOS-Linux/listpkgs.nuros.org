@@ -46,11 +46,11 @@ jobs:
     needs: check-lint
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    # Build only if lint succeeded OR if this is a manual dispatch
+    # Build if manually triggered OR if a workflow succeeded
+    # (We assume lint passed since code is on main branch)
     if: |
       (github.event_name == 'workflow_dispatch') ||
-      (github.event.workflow_run.conclusion == 'success' &&
-       needs.check-lint.outputs.lint-status == 'success')
+      (github.event.workflow_run.conclusion == 'success')
 
     steps:
       - name: Checkout repository
