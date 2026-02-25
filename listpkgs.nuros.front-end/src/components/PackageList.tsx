@@ -31,15 +31,23 @@ const PackageList = (props: PackageListProps) => {
     console.log('Search term:', props.searchTerm);
     console.log('Grouped mode:', props.grouped);
 
-    let result = [...props.packages];
+    // Гарантируем что packages - это массив
+    let result = Array.isArray(props.packages) ? [...props.packages] : [];
+    
+    // Если пакетов нет, устанавливаем пустой массив
+    if (result.length === 0) {
+      console.log('No packages available');
+      setFilteredPackages([]);
+      return;
+    }
 
     // Фильтрация по поисковому запросу
-    if (props.searchTerm) {
-      const term = props.searchTerm.toLowerCase();
+    if (props.searchTerm && props.searchTerm.trim()) {
+      const term = props.searchTerm.toLowerCase().trim();
       console.log('Applying search filter for term:', term);
       result = result.filter(
         pkg =>
-          pkg.name.toLowerCase().includes(term) ||
+          (pkg.name && pkg.name.toLowerCase().includes(term)) ||
           (pkg.description && pkg.description.toLowerCase().includes(term))
       );
       console.log('Packages after search filter:', result.length);
@@ -47,18 +55,19 @@ const PackageList = (props: PackageListProps) => {
 
     // Применение других фильтров
     if (props.filters.architecture && props.filters.architecture !== 'all') {
-      const architectures = props.filters.architecture.split(',');
+      const architectures = props.filters.architecture.split(',').filter(a => a);
       console.log('Applying architecture filter:', architectures);
-      result = result.filter(pkg => {
-        if (architectures.includes('all')) return true;
-        return pkg.architecture && architectures.some(arch => pkg.architecture?.includes(arch));
-      });
+      if (architectures.length > 0) {
+        result = result.filter(pkg => {
+          if (architectures.includes('all')) return true;
+          return pkg.architecture && architectures.some(arch => pkg.architecture?.includes(arch));
+        });
+      }
       console.log('Packages after architecture filter:', result.length);
     }
 
     if (props.filters.channel && props.filters.channel !== 'all') {
       console.log('Applying channel filter:', props.filters.channel);
-      // Фильтрация по репозиторию (берем из _source_repo)
       result = result.filter(pkg => {
         if (pkg._source_repo) {
           return pkg._source_repo.includes(props.filters.channel);
@@ -70,37 +79,37 @@ const PackageList = (props: PackageListProps) => {
 
     if (props.filters.source && props.filters.source !== 'all') {
       console.log('Applying source filter:', props.filters.source);
-      // Фильтрация по источнику
       result = result.filter(pkg => {
         const pkgSource = pkg._source_repo || pkg.source || 'unknown';
-        return pkgSource.includes(props.filters.source);
+        return pkgSource.toLowerCase().includes(props.filters.source.toLowerCase());
       });
       console.log('Packages after source filter:', result.length);
     }
 
     if (props.filters.packageType && props.filters.packageType !== 'all') {
-      const categories = props.filters.packageType.split(',');
+      const categories = props.filters.packageType.split(',').filter(c => c);
       console.log('Applying package type filter:', categories);
-      result = result.filter(pkg => {
-        if (categories.includes('all')) return true;
-        // Определяем категорию пакета и проверяем соответствие
-        let pkgCategory = 'other';
-        if (pkg.type === 'system' || pkg.name.includes('kernel') || pkg.name.includes('core')) {
-          pkgCategory = 'core';
-        } else if (pkg.type === 'application' || pkg.type === 'desktop') {
-          pkgCategory = 'applications';
-        } else if (pkg.type === 'library') {
-          pkgCategory = 'libraries';
-        } else if (pkg.type === 'development') {
-          pkgCategory = 'development';
-        } else if (pkg.type === 'misc') {
-          pkgCategory = 'miscellaneous';
-        }
-        const match = categories.some(
-          cat => pkgCategory.includes(cat) || cat.includes(pkgCategory)
-        );
-        return match;
-      });
+      if (categories.length > 0) {
+        result = result.filter(pkg => {
+          if (categories.includes('all')) return true;
+          let pkgCategory = 'other';
+          if (pkg.type === 'system' || pkg.name.includes('kernel') || pkg.name.includes('core')) {
+            pkgCategory = 'core';
+          } else if (pkg.type === 'application' || pkg.type === 'desktop') {
+            pkgCategory = 'applications';
+          } else if (pkg.type === 'library') {
+            pkgCategory = 'libraries';
+          } else if (pkg.type === 'development') {
+            pkgCategory = 'development';
+          } else if (pkg.type === 'misc') {
+            pkgCategory = 'miscellaneous';
+          }
+          const match = categories.some(
+            cat => pkgCategory.includes(cat) || cat.includes(pkgCategory)
+          );
+          return match;
+        });
+      }
       console.log('Packages after package type filter:', result.length);
     }
 
