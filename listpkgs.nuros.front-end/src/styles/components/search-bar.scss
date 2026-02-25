@@ -2,8 +2,8 @@
 // COMPONENTS/SEARCH-BAR.SCSS - Search bar and input styles
 // ============================================================================
 
-@import '../variables';
-@import '../animations';
+@use '../variables' as *;
+@use '../animations';
 
 .search-bar {
   margin-bottom: $spacing-xl;

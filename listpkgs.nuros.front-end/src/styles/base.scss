@@ -2,7 +2,7 @@
 // BASE.SCSS - Global reset and base styles
 // ============================================================================
 
-@import './variables';
+@use './variables' as *;
 
 // Reset and global styles
 * {

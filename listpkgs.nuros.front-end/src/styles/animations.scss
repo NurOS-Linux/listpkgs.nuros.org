@@ -2,7 +2,7 @@
 // ANIMATIONS.SCSS - All keyframe animations
 // ============================================================================
 
-@import './variables';
+@use './variables' as *;
 
 // Fade animations
 @keyframes fadeIn {

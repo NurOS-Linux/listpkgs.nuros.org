@@ -2,7 +2,7 @@
 // COMPONENTS/FILTERS.SCSS - Filter select styles
 // ============================================================================
 
-@import '../variables';
+@use '../variables' as *;
 
 .filters-container {
   animation: slideInDown $transition-base 0.15s both;
