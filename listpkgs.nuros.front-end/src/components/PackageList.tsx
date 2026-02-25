@@ -80,7 +80,10 @@ const PackageList = (props: PackageListProps) => {
     if (props.filters.source && props.filters.source !== 'all') {
       console.log('Applying source filter:', props.filters.source);
       result = result.filter(pkg => {
-        const pkgSource = pkg._source_repo || pkg.source || 'unknown';
+        let pkgSource = pkg._source_repo || pkg.source || 'unknown';
+        if (typeof pkgSource !== 'string') {
+          pkgSource = 'unknown';
+        }
         return pkgSource.toLowerCase().includes(props.filters.source.toLowerCase());
       });
       console.log('Packages after source filter:', result.length);
