@@ -44,8 +44,8 @@ const PackageList = (props: PackageListProps) => {
     if (props.filters.architecture) {
       const architectures = props.filters.architecture.split(',').filter(a => a);
       if (architectures.length > 0) {
-        result = result.filter(pkg => 
-          pkg.architecture && architectures.some(arch => pkg.architecture?.includes(arch))
+        result = result.filter(
+          pkg => pkg.architecture && architectures.some(arch => pkg.architecture?.includes(arch))
         );
       }
     }
@@ -71,7 +71,7 @@ const PackageList = (props: PackageListProps) => {
         });
       }
     }
-    
+
     // Sources filter
     if (props.filters.sources && props.filters.sources.length > 0) {
       result = result.filter(pkg => {
