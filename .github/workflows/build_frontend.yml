@@ -89,8 +89,14 @@ jobs:
           
           # Download and extract
           mkdir -p listpkgs.nuros.front-end/public
+          
+          echo "Downloading artifact..."
           gh api repos/${{ github.repository }}/actions/artifacts/$ARTIFACT/zip \
-            -H "Accept: application/vnd.github.v3.raw" | unzip -o -d listpkgs.nuros.front-end/public/
+            -H "Accept: application/vnd.github.v3.raw" > /tmp/repodata.zip
+          
+          echo "Extracting..."
+          unzip -o /tmp/repodata.zip -d listpkgs.nuros.front-end/public/
+          rm /tmp/repodata.zip
           
           echo "✅ Downloaded latest repodata files"
           ls -lh listpkgs.nuros.front-end/public/repodata.json* 2>/dev/null || true
