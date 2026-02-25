@@ -15,6 +15,11 @@ on:
     workflows: ["Deploy to GitHub Pages"]
     types:
       - completed
+    paths:
+      - 'blog/**.md'
+      - 'blog/book.json'
+      - 'blog/SUMMARY.md'
+      - 'blog/styles.css'
 
 jobs:
   sync-gitbook:
@@ -40,7 +45,7 @@ jobs:
       - name: Verify documentation structure
         run: |
           echo "📋 Checking documentation structure..."
-          required_files=("blog/README.md" "blog/SUMMARY.md" "blog/book.json")
+          required_files=("blog/README.md" "blog/SUMMARY.md" "blog/book.json" "blog/styles.css")
           for file in "${required_files[@]}"; do
             if [ ! -f "$file" ]; then
               echo "❌ ERROR: $file not found"
