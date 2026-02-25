@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.vitepress/dist/
+.DS_Store
+*.log
+*.swp
+.env.local
+.env.*.local

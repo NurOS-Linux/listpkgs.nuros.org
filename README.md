@@ -1,58 +1,63 @@
 # NurOS Package Search System
 
-Это репозиторий для системы поиска и каталогизации пакетов в экосистеме NurOS.
+This repository contains the package search and cataloging system for the NurOS ecosystem.
 
-## Структура проекта
+## Project Structure
 
-- `.github/workflows/` - файлы автоматизации для GitHub Actions
-  - `update-list.yml` - обновляет список пакетов каждые 6 часов
-  - `build_frontend.yml` - собирает фронтенд после обновления списка пакетов
-  - `deploy_on_pages.yml` - размещает собранный фронтенд на GitHub Pages через GitHub Actions
-- `listpkgs.nuros.front-end/` - исходный код фронтенд-приложения
-- `packages.json` - файл с метаданными всех пакетов NurOS (генерируется автоматически)
-- `CNAME` - файл кастомного домена для GitHub Pages
+- `.github/workflows/` - GitHub Actions automation files
+  - `update-list.yml` - updates package list every 6 hours
+  - `build_frontend.yml` - builds frontend after package list update
+  - `deploy_on_pages.yml` - deploys built frontend to GitHub Pages via GitHub Actions
+- `listpkgs.nuros.front-end/` - frontend application source code
+- `blog/` - documentation and guides (VitePress)
+- `packages.json` - metadata file for all NurOS packages (auto-generated)
+- `CNAME` - custom domain file for GitHub Pages
 
-## Как это работает
+## How It Works
 
-1. Каждые 6 часов запускается `update-list.yaml`, который:
-   - Обходит все репозитории в организации NurOS-Packages
-   - Собирает метаданные из файлов `metadata.json`
-   - Создает единый `packages.json` файл
+1. Every 6 hours, `update-list.yml` runs to:
+   - Scan all repositories in NurOS-Packages organization
+   - Collect metadata from `metadata.json` files
+   - Generate a single `packages.json` file
 
-2. После успешного обновления списка запускается `build_frontend.yaml`, который:
-   - Устанавливает зависимости фронтенда
-   - Собирает фронтенд с помощью Vite
-   - Подключает актуальные данные из `packages.json`
-   - Загружает результат как артефакт
+2. After successful list update, `build_frontend.yml` runs to:
+   - Install frontend dependencies
+   - Build frontend using Vite
+   - Include up-to-date data from `packages.json`
+   - Upload result as artifact
 
-3. После успешной сборки запускается `deploy_on_pages.yml`, который:
-   - Скачивает артефакт с собранным фронтендом
-   - Размещает его на GitHub Pages через GitHub Actions
+3. After successful build, `deploy_on_pages.yml` runs to:
+   - Download built frontend artifact
+   - Deploy to GitHub Pages via GitHub Actions
 
-> **Примечание:** Ветка `gh-pages` больше не используется. Деплой происходит напрямую через GitHub Actions с использованием артефактов.
+> **Note:** The `gh-pages` branch is no longer used. Deployment happens directly through GitHub Actions using artifacts.
 
-## Фронтенд
+## Frontend
 
-Фронтенд реализован с использованием SolidJS и предоставляет:
+The frontend is built with SolidJS and provides:
 
-- Поиск пакетов по названию и описанию
-- Фильтрацию по различным критериям
-- Группировку пакетов
-- Отображение детальной информации
-- Возможность просмотра полного JSON-представления
+- Package search by name and description
+- Filtering by various criteria
+- Package grouping
+- Detailed information display
+- Full JSON representation view
 
-См. [README](listpkgs.nuros.front-end/README.md) в папке фронтенда для более подробной информации.
+See [README](listpkgs.nuros.front-end/README.md) in the frontend folder for more details.
 
-## Вклад в развитие
+## Documentation
 
-Чтобы внести свой вклад:
+Full documentation, guides, and development information is available in the `blog/` folder and can be viewed via [VitePress](blog/).
 
-1. Сделайте форк репозитория
-2. Создайте ветку для новой функции
-3. Сделайте коммит изменений
-4. Отправьте изменения в удаленную ветку
-5. Создайте pull request
+## Contributing
 
-## Лицензия
+To contribute:
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the remote branch
+5. Create a pull request
+
+## License
 
 MIT
