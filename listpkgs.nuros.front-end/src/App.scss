@@ -3,6 +3,6 @@
 // ============================================================================
 // This file imports all modular styles and can contain app-specific overrides
 
-@import './styles/index.scss';
+@use './styles/index.scss';
 
 // App-specific overrides and utilities can be added here if needed in the future

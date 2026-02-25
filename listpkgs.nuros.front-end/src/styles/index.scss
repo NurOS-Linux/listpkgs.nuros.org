@@ -1,29 +1,28 @@
 // ============================================================================
 // INDEX.SCSS - Main stylesheet entry point
 // ============================================================================
-// Import order:
+// Using @use for modern Sass module system.
+
 // 1. Variables and config
+@use './variables';
+
 // 2. Base styles and reset
+@use './base';
+
 // 3. Animations/keyframes
+@use './animations';
+
 // 4. Components
+@use './components/search-bar';
+@use './components/filters';
+@use './components/view-mode';
+@use './components/package-card';
+@use './components/grouped-list';
+@use './components/sidebar';
+
 // 5. Layout
-// 6. Utilities and overrides
-
-@import './variables';
-@import './base';
-@import './animations';
-
-// Components
-@import './components/search-bar';
-@import './components/filters';
-@import './components/view-mode';
-@import './components/package-card';
-@import './components/grouped-list';
-@import './components/sidebar';
-
-// Layout
-@import './layout/app-layout';
-@import './layout/header';
+@use './layout/app-layout';
+@use './layout/header';
 
 // Dark Reader CSS filters - ensures light theme is preserved
 html {
