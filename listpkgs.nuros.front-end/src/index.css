@@ -710,7 +710,8 @@ button:focus-visible {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -909,7 +910,10 @@ html.dark-theme {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
   background-image: none !important; /* Remove any background gradients Dark Reader might add */
 }
 

@@ -1,0 +1,48 @@
+// ============================================================================
+// INDEX.SCSS - Main stylesheet entry point
+// ============================================================================
+// Import order:
+// 1. Variables and config
+// 2. Base styles and reset
+// 3. Animations/keyframes
+// 4. Components
+// 5. Layout
+// 6. Utilities and overrides
+
+@import './variables';
+@import './base';
+@import './animations';
+
+// Components
+@import './components/search-bar';
+@import './components/filters';
+@import './components/view-mode';
+@import './components/package-card';
+@import './components/grouped-list';
+@import './components/sidebar';
+
+// Layout
+@import './layout/app-layout';
+@import './layout/header';
+
+// Dark Reader CSS filters - ensures light theme is preserved
+html {
+  color-scheme: light !important;
+}
+
+html.dark-theme {
+  color-scheme: dark !important;
+}
+
+// Prevent Dark Reader from too aggressively invading color scheme
+:root {
+  --darkreader-neutral-background: #f8fafc;
+  --darkreader-neutral-text: #1e293b;
+  --darkreader-border: #cbd5e1;
+}
+
+:root.dark-theme {
+  --darkreader-neutral-background: #020617;
+  --darkreader-neutral-text: #f1f5f9;
+  --darkreader-border: #334155;
+}

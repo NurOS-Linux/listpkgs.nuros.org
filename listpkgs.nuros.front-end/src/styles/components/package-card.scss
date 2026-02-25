@@ -1,0 +1,194 @@
+// ============================================================================
+// COMPONENTS/PACKAGE-CARD.SCSS - Package card styles
+// ============================================================================
+
+@import '../variables';
+@import '../animations';
+
+.package-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: $spacing-lg;
+  animation: fadeIn $transition-base 0.2s both;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.package-card {
+  border: 1px solid var(--border-color);
+  border-radius: $radius-xl;
+  padding: 1.75rem;
+  background: linear-gradient(135deg, var(--card-bg) 0%, rgba(37, 99, 235, 0.03) 100%);
+  color: var(--text-color);
+  box-shadow: $shadow-sm;
+  transition: all $transition-base;
+  position: relative;
+  overflow: hidden;
+  animation: scaleIn $transition-base;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color), transparent);
+    opacity: 0;
+    transition: opacity $transition-base;
+  }
+
+  &:hover {
+    box-shadow: $shadow-lg;
+    border-color: var(--primary-color);
+    transform: translateY(-4px);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &:active {
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    padding: 1.25rem;
+  }
+}
+
+.package-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-md;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--border-color);
+  gap: $spacing-md;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    margin-bottom: 0.75rem;
+  }
+}
+
+.package-name {
+  margin: 0;
+  font-size: $fs-xl;
+  color: var(--text-color);
+  font-weight: 700;
+  letter-spacing: -0.3px;
+
+  @media (max-width: 768px) {
+    font-size: 1.3rem;
+  }
+}
+
+.package-version {
+  color: var(--primary-color);
+  font-size: 0.9em;
+  margin-left: 0.5rem;
+  font-weight: 600;
+  background-color: rgba(37, 99, 235, 0.1);
+  padding: 0.25rem 0.75rem;
+  border-radius: $radius-md;
+  white-space: nowrap;
+}
+
+.toggle-details-btn {
+  padding: $spacing-sm $spacing-md;
+  font-size: 0.85rem;
+  background: linear-gradient(135deg, var(--primary-color) 0%, rgba(37, 99, 235, 0.8) 100%);
+  color: white;
+  cursor: pointer;
+  border: none;
+  border-radius: $radius-md;
+  font-weight: 500;
+  transition: all $transition-base;
+  white-space: nowrap;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+}
+
+.package-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-bottom: $spacing-md;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+
+  @media (max-width: 768px) {
+    gap: $spacing-md;
+    font-size: 0.85rem;
+  }
+}
+
+.package-maintainer {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.package-description {
+  margin: 1.25rem 0;
+  line-height: 1.6;
+  color: var(--text-color);
+
+  @media (max-width: 768px) {
+    margin: $spacing-md 0;
+    font-size: 0.95rem;
+  }
+}
+
+.package-links {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid var(--border-color);
+}
+
+.package-license {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.package-details {
+  margin-top: 1.5rem;
+  padding: $spacing-md;
+  background-color: var(--hover-bg);
+  border: 1px solid var(--border-color);
+  border-radius: $radius-md;
+  overflow-x: auto;
+  animation: slideInUp $transition-base;
+}
+
+.json-display {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-color);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.no-results {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-muted);
+  font-size: $fs-lg;
+  grid-column: 1 / -1;
+}

@@ -1,0 +1,86 @@
+// ============================================================================
+// LAYOUT/APP-LAYOUT.SCSS - Main application layout styles
+// ============================================================================
+
+@import '../variables';
+@import '../animations';
+
+.app {
+  width: 100%;
+  min-height: 100vh;
+  padding: $spacing-xl;
+  box-sizing: border-box;
+  background-color: var(--background);
+  color: var(--text-color);
+  transition: var(--transition);
+}
+
+.app-layout {
+  display: flex;
+  gap: $spacing-xl;
+  padding: $spacing-xl;
+  box-sizing: border-box;
+  background-color: var(--background);
+  color: var(--text-color);
+  animation: fadeIn $transition-base;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    gap: $spacing-lg;
+    padding: $spacing-lg;
+  }
+
+  @media (max-width: 768px) {
+    padding: $spacing-md;
+  }
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  animation: slideInUp $transition-base 0.1s both;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: var(--card-bg);
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  box-shadow: $shadow-sm;
+  height: fit-content;
+  position: sticky;
+  top: $spacing-xl;
+  border: 1px solid var(--border-color);
+  transition: var(--transition);
+
+  &:hover {
+    box-shadow: $shadow-md;
+  }
+
+  @media (max-width: 1024px) {
+    width: 100%;
+    position: relative;
+    top: 0;
+  }
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: $spacing-md;
+    color: var(--text-color);
+    font-size: 1.2rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+  }
+}
+
+// Dark Reader preservation for light theme
+:root:not(.dark-theme) {
+  .package-card,
+  .search-bar,
+  .view-mode-container,
+  .sidebar {
+    background: linear-gradient(135deg, var(--card-bg) 0%, rgba(37, 99, 235, 0.03) 100%) !important;
+  }
+}

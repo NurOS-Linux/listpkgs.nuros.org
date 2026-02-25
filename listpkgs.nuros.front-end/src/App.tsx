@@ -192,7 +192,7 @@ function App() {
                     console.log('Updated filters:', newFilters);
                   }}
                 />
-                
+
                 {/* View Mode Selector */}
                 <div class="view-mode-container">
                   <button

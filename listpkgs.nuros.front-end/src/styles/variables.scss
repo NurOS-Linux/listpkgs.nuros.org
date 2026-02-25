@@ -1,0 +1,101 @@
+// ============================================================================
+// VARIABLES.SCSS - Global color and style variables
+// ============================================================================
+
+// Light theme colors
+$light-primary-color: #2563eb;
+$light-secondary-color: #f0f6ff;
+$light-text-color: #1e293b;
+$light-text-muted: #64748b;
+$light-border-color: #cbd5e1;
+$light-hover-color: #1d4ed8;
+$light-background: #ffffff;
+$light-card-bg: #f8fbff;
+$light-hover-bg: #e0eeff;
+
+// Dark theme colors
+$dark-primary-color: #3b82f6;
+$dark-secondary-color: #0f172a;
+$dark-text-color: #f1f5f9;
+$dark-text-muted: #94a3b8;
+$dark-border-color: #334155;
+$dark-hover-color: #60a5fa;
+$dark-background: #020617;
+$dark-card-bg: #1e293b;
+$dark-hover-bg: #334155;
+
+// Spacing
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+$spacing-2xl: 3rem;
+
+// Border radius
+$radius-sm: 4px;
+$radius-md: 6px;
+$radius-lg: 8px;
+$radius-xl: 12px;
+
+// Font sizes
+$fs-xs: 0.75rem;
+$fs-sm: 0.875rem;
+$fs-base: 1rem;
+$fs-lg: 1.2rem;
+$fs-xl: 1.5rem;
+$fs-2xl: 2.5em;
+
+// Transitions
+$transition-fast: 0.2s ease-out;
+$transition-base: 0.3s ease;
+$transition-slow: 0.6s ease;
+
+// Z-index scale
+$z-dropdown: 100;
+$z-sticky: 200;
+$z-fixed: 300;
+$z-modal: 400;
+$z-tooltip: 500;
+$z-debug: 9999;
+
+// Box shadows
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-md:
+  0 4px 12px rgba(37, 99, 235, 0.1),
+  0 2px 4px rgba(0, 0, 0, 0.05);
+$shadow-lg:
+  0 8px 16px rgba(37, 99, 235, 0.15),
+  0 2px 4px rgba(0, 0, 0, 0.08);
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+// CSS Custom Properties - will be set on :root
+:root {
+  --primary-color: #{$light-primary-color};
+  --secondary-color: #{$light-secondary-color};
+  --text-color: #{$light-text-color};
+  --text-muted: #{$light-text-muted};
+  --border-color: #{$light-border-color};
+  --hover-color: #{$light-hover-color};
+  --background: #{$light-background};
+  --card-bg: #{$light-card-bg};
+  --hover-bg: #{$light-hover-bg};
+  --transition:
+    background-color #{$transition-slow}, color #{$transition-slow},
+    border-color #{$transition-slow};
+}
+
+:root.dark-theme {
+  --primary-color: #{$dark-primary-color};
+  --secondary-color: #{$dark-secondary-color};
+  --text-color: #{$dark-text-color};
+  --text-muted: #{$dark-text-muted};
+  --border-color: #{$dark-border-color};
+  --hover-color: #{$dark-hover-color};
+  --background: #{$dark-background};
+  --card-bg: #{$dark-card-bg};
+  --hover-bg: #{$dark-hover-bg};
+  --transition:
+    background-color #{$transition-slow}, color #{$transition-slow},
+    border-color #{$transition-slow};
+}

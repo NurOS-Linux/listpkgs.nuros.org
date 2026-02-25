@@ -33,7 +33,7 @@ const PackageList = (props: PackageListProps) => {
 
     // Гарантируем что packages - это массив
     let result = Array.isArray(props.packages) ? [...props.packages] : [];
-    
+
     // Если пакетов нет, устанавливаем пустой массив
     if (result.length === 0) {
       console.log('No packages available');

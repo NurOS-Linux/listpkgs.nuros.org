@@ -1,0 +1,92 @@
+// ============================================================================
+// COMPONENTS/GROUPED-LIST.SCSS - Grouped package list styles
+// ============================================================================
+
+@import '../variables';
+@import '../animations';
+
+.grouped-package-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  animation: fadeIn $transition-base 0.2s both;
+}
+
+.package-group {
+  margin-bottom: $spacing-xl;
+  border: 1px solid var(--border-color);
+  border-radius: $radius-lg;
+  overflow: hidden;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  box-shadow: $shadow-sm;
+  transition: var(--transition);
+  animation: slideInUp $transition-base;
+
+  &:hover {
+    box-shadow: $shadow-md;
+    border-color: var(--primary-color);
+  }
+}
+
+.group-header {
+  background-color: var(--hover-bg);
+  padding: $spacing-md;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-color);
+  transition: var(--transition);
+  user-select: none;
+
+  &:hover {
+    background-color: var(--border-color);
+  }
+
+  &:active {
+    background-color: var(--primary-color);
+    color: white;
+
+    .expand-icon {
+      color: white;
+    }
+  }
+}
+
+.group-name {
+  margin: 0;
+  font-size: $fs-xl;
+  color: var(--text-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+}
+
+.expand-icon {
+  font-size: 1rem;
+  color: var(--primary-color);
+  transition: transform $transition-base;
+  display: inline-block;
+
+  .package-group:hover & {
+    transform: scale(1.2);
+  }
+}
+
+.package-count {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.group-packages {
+  padding: $spacing-md;
+  background-color: var(--card-bg);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: $spacing-lg;
+  animation: slideInDown $transition-base;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
