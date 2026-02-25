@@ -113,17 +113,17 @@ jobs:
           echo "✅ Source data verified"
           wc -l listpkgs.nuros.front-end/public/repodata.json
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9.x
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'pnpm'
           cache-dependency-path: 'listpkgs.nuros.front-end/pnpm-lock.yaml'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 9.x
 
       - name: Install dependencies
         run: |
