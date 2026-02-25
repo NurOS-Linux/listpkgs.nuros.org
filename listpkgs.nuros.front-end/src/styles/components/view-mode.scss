@@ -2,34 +2,34 @@
 // COMPONENTS/VIEW-MODE.SCSS - View mode selector styles
 // ============================================================================
 
-@import '../variables';
-@import '../animations';
+@use '../variables' as v;
+@use '../animations';
 
 .view-mode-container {
   display: flex;
   justify-content: center;
-  gap: $spacing-md;
-  margin: $spacing-lg 0;
-  animation: slideInDown $transition-base 0.2s both;
+  gap: v.$spacing-md;
+  margin: v.$spacing-lg 0;
+  animation: slideInDown v.$transition-base 0.2s both;
 
   @media (max-width: 768px) {
-    gap: $spacing-sm;
+    gap: v.$spacing-sm;
     flex-wrap: wrap;
   }
 }
 
 .view-mode-selector {
   display: flex;
-  gap: $spacing-sm;
+  gap: v.$spacing-sm;
 }
 
 .view-mode-btn {
-  padding: $spacing-sm $spacing-md;
+  padding: v.$spacing-sm v.$spacing-md;
   border: 1px solid var(--border-color);
   background-color: var(--card-bg);
   color: var(--text-color);
   cursor: pointer;
-  border-radius: $radius-md;
+  border-radius: v.$radius-md;
   font-size: 0.9rem;
   transition: var(--transition);
   font-weight: 500;
@@ -53,5 +53,5 @@
     box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
   }
 
-  animation: scaleIn $transition-base;
+  animation: scaleIn v.$transition-base;
 }

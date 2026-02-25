@@ -1,159 +1,122 @@
 // ============================================================================
-// COMPONENTS/SIDEBAR.SCSS - Sidebar and tree navigation styles
+// COMPONENTS/SIDEBAR.SCSS - NurOS-style sidebar and tree navigation
 // ============================================================================
 
-@import '../variables';
-@import '../animations';
+@use '../variables' as v;
+@use '../base' as b;
 
 .tree-navigation ul {
   list-style-type: none;
-  padding-left: 0;
+  padding: 0;
   margin: 0;
 }
 
 .tree-node {
-  margin-bottom: 0.25rem;
+  margin-bottom: v.$spacing-xs;
 }
 
 .tree-node-header {
   display: flex;
   align-items: center;
-  padding: 0.25rem 0;
-  color: var(--text-color);
+  padding: v.$spacing-xs;
+  border-radius: v.$radius-md;
+  cursor: pointer;
+  transition: background v.$transition-fast;
+
+  &:hover {
+    background: rgba(v.$nuros-accent-cyan, 0.05);
+  }
 }
 
 .tree-node-toggle {
   background: none;
   border: none;
-  cursor: pointer;
-  padding: 0.25rem;
-  margin-right: 0.25rem;
   color: var(--text-muted);
-  font-size: $fs-xs;
-  transition: var(--transition);
+  padding: v.$spacing-xs;
+  transition: transform v.$transition-fast;
 
-  &:disabled {
-    visibility: hidden;
+  &.expanded {
+    transform: rotate(90deg);
   }
-
-  &:hover {
-    transform: scale(1.2);
-    color: var(--primary-color);
-  }
-}
-
-.spacer {
-  display: inline-block;
-  width: 1rem;
-  visibility: hidden;
 }
 
 .tree-node-label {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.25rem;
-  margin: 0;
-  color: var(--text-color);
-  text-align: left;
   flex-grow: 1;
-  border-radius: $radius-sm;
-  font-size: 0.9rem;
-  transition: var(--transition);
-  font-family: inherit;
   font-weight: 500;
-
-  &:hover {
-    background-color: var(--hover-bg);
-    transform: translateX(4px);
-  }
-
-  &.selected {
-    background-color: var(--primary-color);
-    color: white;
-    font-weight: 600;
-    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
-  }
 }
 
 .node-count {
-  background-color: var(--hover-bg);
-  padding: 0.1rem 0.4rem;
-  border-radius: 9999px;
-  font-size: $fs-xs;
   color: var(--text-muted);
-  margin-left: 0.5rem;
-  font-weight: 600;
+  font-size: v.$fs-sm;
 }
 
 .tree-children {
   list-style-type: none;
-  padding-left: 1.5rem;
-  margin: 0;
-  animation: slideInLeft $transition-base;
+  padding-left: v.$spacing-lg;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height v.$transition-base ease-in-out;
+
+  &.expanded {
+    max-height: 1000px; // Arbitrary large value
+  }
 }
 
+.tree-node-leaf {
+  padding: v.$spacing-xs v.$spacing-sm;
+  cursor: pointer;
+  border-radius: v.$radius-md;
+  display: flex;
+  justify-content: space-between;
+  transition:
+    background v.$transition-fast,
+    color v.$transition-fast;
+
+  &:hover {
+    background: rgba(v.$nuros-accent-cyan, 0.1);
+  }
+
+  &.selected {
+    background: linear-gradient(90deg, v.$nuros-accent-cyan, v.$nuros-accent-pink);
+    color: v.$nuros-navy;
+    font-weight: 600;
+
+    .node-count {
+      color: v.$nuros-navy;
+    }
+  }
+}
+
+// JSON viewer styles
 .json-display-prism {
-  background-color: var(--hover-bg);
-  border: 1px solid var(--border-color);
-  border-radius: $radius-md;
-  padding: $spacing-md;
+  @include b.glass-effect;
+  margin-top: v.$spacing-lg;
+  padding: v.$spacing-md;
+  border-radius: v.$radius-md;
+  font-size: v.$fs-sm;
   overflow-x: auto;
-  font-size: $fs-sm;
-  color: var(--text-color);
-  margin-top: $spacing-md;
-  animation: slideInUp $transition-base;
 
   pre {
     margin: 0;
-    font-family: 'Courier New', monospace;
+    font-family: 'Fira Code', 'Courier New', monospace;
   }
-}
 
-// Prism syntax highlighting for light theme
-:root:not(.dark-theme) .json-display-prism {
-  .token.punctuation,
+  .token.punctuation {
+    color: v.$nuros-accent-pink;
+  }
   .token.property {
-    color: $light-primary-color;
+    color: v.$nuros-accent-cyan;
   }
-
   .token.string {
-    color: #059669;
+    color: #95ff95;
   }
-
   .token.number {
-    color: #d97706;
+    color: #ffc795;
   }
-
   .token.boolean {
-    color: #dc2626;
+    color: #ff9595;
   }
-
   .token.null {
-    color: #6366f1;
-  }
-}
-
-// Prism syntax highlighting for dark theme
-:root.dark-theme .json-display-prism {
-  .token.punctuation,
-  .token.property {
-    color: #60a5fa;
-  }
-
-  .token.string {
-    color: #34d399;
-  }
-
-  .token.number {
-    color: #fbbf24;
-  }
-
-  .token.boolean {
-    color: #f87171;
-  }
-
-  .token.null {
-    color: #a78bfa;
+    color: #c795ff;
   }
 }

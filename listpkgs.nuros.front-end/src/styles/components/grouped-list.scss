@@ -2,36 +2,36 @@
 // COMPONENTS/GROUPED-LIST.SCSS - Grouped package list styles
 // ============================================================================
 
-@import '../variables';
-@import '../animations';
+@use '../variables' as v;
+@use '../animations';
 
 .grouped-package-list {
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg;
-  animation: fadeIn $transition-base 0.2s both;
+  gap: v.$spacing-lg;
+  animation: fadeIn v.$transition-base 0.2s both;
 }
 
 .package-group {
-  margin-bottom: $spacing-xl;
+  margin-bottom: v.$spacing-xl;
   border: 1px solid var(--border-color);
-  border-radius: $radius-lg;
+  border-radius: v.$radius-lg;
   overflow: hidden;
   background-color: var(--card-bg);
   color: var(--text-color);
-  box-shadow: $shadow-sm;
+  box-shadow: v.$shadow-md;
   transition: var(--transition);
-  animation: slideInUp $transition-base;
+  animation: slideInUp v.$transition-base;
 
   &:hover {
-    box-shadow: $shadow-md;
+    box-shadow: v.$shadow-lg;
     border-color: var(--primary-color);
   }
 }
 
 .group-header {
   background-color: var(--hover-bg);
-  padding: $spacing-md;
+  padding: v.$spacing-md;
   cursor: pointer;
   border-bottom: 1px solid var(--border-color);
   transition: var(--transition);
@@ -53,7 +53,7 @@
 
 .group-name {
   margin: 0;
-  font-size: $fs-xl;
+  font-size: v.$fs-xl;
   color: var(--text-color);
   display: flex;
   justify-content: space-between;
@@ -64,7 +64,7 @@
 .expand-icon {
   font-size: 1rem;
   color: var(--primary-color);
-  transition: transform $transition-base;
+  transition: transform v.$transition-base;
   display: inline-block;
 
   .package-group:hover & {
@@ -79,12 +79,12 @@
 }
 
 .group-packages {
-  padding: $spacing-md;
+  padding: v.$spacing-md;
   background-color: var(--card-bg);
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: $spacing-lg;
-  animation: slideInDown $transition-base;
+  gap: v.$spacing-lg;
+  animation: slideInDown v.$transition-base;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;

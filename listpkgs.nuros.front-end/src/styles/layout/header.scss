@@ -1,166 +1,148 @@
 // ============================================================================
-// LAYOUT/HEADER.SCSS - Header and app header styles
+// LAYOUT/HEADER.SCSS - NurOS-style header
 // ============================================================================
 
-@use '../variables' as *;
-@use '../animations';
+@use '../variables' as v;
+@use '../base' as b;
 
 .app-header {
+  position: sticky;
+  top: 0;
+  z-index: v.$z-header;
+  padding: v.$spacing-md v.$spacing-xl;
   text-align: center;
-  margin-bottom: $spacing-xl;
-  padding-bottom: $spacing-md;
-  border-bottom: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: $spacing-md;
-  animation: slideInDown $transition-base;
+  gap: v.$spacing-sm;
+
+  // Glassmorphism for the header
+  background: var(--header-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border-color);
 
   @media (max-width: 768px) {
-    margin-bottom: $spacing-lg;
+    padding: v.$spacing-sm v.$spacing-md;
   }
 
   h1 {
     margin: 0;
+    font-size: v.$fs-xl;
     color: var(--text-color);
-    transition: var(--transition);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
   }
 
   p {
-    margin: 0.25rem 0;
+    margin: 0;
     color: var(--text-muted);
-    transition: var(--transition);
-  }
-}
-
-.logo-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  overflow: hidden;
-  transition: all $transition-base;
-
-  &:hover {
-    transform: scale(1.1);
-    filter: brightness(1.2);
   }
 }
 
 .logo {
-  width: 90px; // Increased from 80px
-  height: 90px; // Increased from 80px
+  width: 60px; // Reduced for sticky header
+  height: 60px;
   object-fit: contain;
-  animation: slideInDown $transition-base;
-
-  @media (max-width: 768px) {
-    width: 70px; // Adjusted for smaller screens
-    height: 70px;
-  }
 }
 
 .project-tagline {
-  font-size: $fs-sm;
+  font-size: v.$fs-sm;
   color: var(--primary-color);
   font-weight: 500;
   letter-spacing: 0.05em;
-  animation: fadeIn $transition-base 0.3s both;
 }
 
 .package-stats {
-  padding: $spacing-md $spacing-lg;
-  background: linear-gradient(135deg, var(--card-bg) 0%, rgba(37, 99, 235, 0.05) 100%);
-  border-radius: $radius-lg;
-  border: 1px solid var(--border-color);
+  @include b.glass-effect; // Apply glassmorphism
+  padding: v.$spacing-sm v.$spacing-lg;
+  border-radius: v.$radius-lg;
   font-weight: 500;
   color: var(--text-color);
-  animation: scaleIn $transition-base 0.4s both;
+  cursor: pointer; // Make it clickable for the easter egg
+  position: relative; // For the glow effect
+  overflow: hidden;
 
   strong {
     color: var(--primary-color);
     font-weight: 700;
   }
+
+  // Glow effect on hover
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+      circle at center,
+      rgba(v.$nuros-accent-cyan, 0.3) 0%,
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity v.$transition-base;
+    z-index: -1;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+
+  &:hover {
+    box-shadow: v.$shadow-glow;
+    transform: translateY(-2px);
+  }
 }
 
-.loading-screen {
+// Styles for the loading screen and error messages
+.loading-screen,
+.error {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, var(--background) 0%, rgba(37, 99, 235, 0.05) 100%);
-  gap: $spacing-lg;
-  animation: fadeIn $transition-base;
+  gap: v.$spacing-lg;
 }
 
 .loading-logo {
-  width: 130px; // Increased from 120px
-  height: 130px; // Increased from 120px
-  object-fit: contain;
-  animation: bounce 1s ease-in-out infinite;
-
-  @media (max-width: 768px) {
-    width: 90px; // Adjusted for smaller screens
-    height: 90px;
-  }
+  width: 130px;
+  height: 130px;
 }
 
 .loading-text {
-  font-size: $fs-lg;
-  color: var(--text-color);
-  animation: pulse 1s ease-in-out infinite;
-}
-
-.packages-count {
-  font-size: $fs-base;
-  color: var(--text-muted);
-  animation: slideInUp $transition-base 0.5s both;
+  font-size: v.$fs-lg;
+  animation: pulse 1.5s ease-in-out infinite;
 }
 
 .error {
-  text-align: center;
-  padding: $spacing-xl;
-  color: #dc2626;
-  font-size: $fs-lg;
-  background-color: rgba(220, 38, 38, 0.1);
-  border: 1px solid #dc2626;
-  border-radius: $radius-lg;
-  animation: slideInDown $transition-base;
+  color: #ff4d4d;
 }
 
+// Theme toggle button
 .theme-toggle-btn {
+  @include b.glass-effect;
   position: fixed;
-  bottom: $spacing-xl;
-  right: $spacing-xl;
-  width: 50px;
-  height: 50px;
+  bottom: v.$spacing-lg;
+  right: v.$spacing-lg;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary-color) 0%, rgba(37, 99, 235, 0.8) 100%);
-  border: none;
-  color: white;
+  border: 1px solid var(--glass-border-color);
+  color: var(--text-color);
   font-size: 1.5rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: $shadow-lg;
-  transition: all $transition-base;
-  z-index: $z-fixed;
+  z-index: v.$z-fixed;
+  transition:
+    transform v.$transition-base,
+    box-shadow v.$transition-base;
 
   &:hover {
-    transform: scale(1.1) rotate(20deg);
-    box-shadow: $shadow-xl;
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
-
-  @media (max-width: 768px) {
-    width: 45px;
-    height: 45px;
-    font-size: 1.2rem;
-    bottom: $spacing-md;
-    right: $spacing-md;
+    transform: scale(1.1) rotate(15deg);
+    box-shadow: v.$shadow-glow;
   }
 }

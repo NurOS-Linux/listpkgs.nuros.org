@@ -1,235 +1,118 @@
+// ============================================================================
+// COMPONENTS/SIDEBAR.SCSS - NurOS-style sidebar
+// ============================================================================
+
+@use './variables' as v;
+@use './base' as b;
+
 .sidebar {
-  width: 250px;
-  background-color: var(--card-bg);
-  border-radius: 8px;
-  padding: 1rem;
-  border: 1px solid var(--border-color);
+  @include b.glass-effect;
+  width: 280px;
+  border-radius: v.$radius-lg;
+  padding: v.$spacing-lg;
   height: fit-content;
   position: sticky;
-  top: 2rem;
+  top: 100px; // Adjust based on header height
   flex-shrink: 0;
-  transition: var(--transition);
-  color: var(--text-color);
 
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     width: 100%;
     position: relative;
     top: auto;
-    margin-bottom: 1rem;
-    padding: 0.75rem;
-  }
-
-  @media (max-width: 480px) {
-    padding: 0.5rem;
+    margin-bottom: v.$spacing-lg;
   }
 }
 
 .sidebar h3 {
   margin-top: 0;
-  margin-bottom: 1rem;
+  margin-bottom: v.$spacing-md;
   color: var(--text-color);
-  font-size: 1.2rem;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 0.5rem;
-  transition: var(--transition);
-
-  @media (max-width: 768px) {
-    font-size: 1rem;
-    margin-bottom: 0.75rem;
-    padding-bottom: 0.25rem;
-  }
+  font-size: v.$fs-lg;
+  border-bottom: 1px solid var(--glass-border-color);
+  padding-bottom: v.$spacing-sm;
 }
 
 .tree-navigation ul {
   list-style-type: none;
-  padding-left: 0;
+  padding: 0;
   margin: 0;
-}
-
-.tree-node {
-  margin-bottom: 0.25rem;
-
-  @media (max-width: 768px) {
-    margin-bottom: 0.2rem;
-  }
 }
 
 .tree-node-header {
   display: flex;
   align-items: center;
-  padding: 0.25rem 0;
+  cursor: pointer;
+  padding: v.$spacing-xs 0;
+  border-radius: v.$radius-md;
+  transition: background v.$transition-fast;
 
-  @media (max-width: 768px) {
-    padding: 0.2rem 0;
+  &:hover {
+    background: rgba(v.$nuros-accent-cyan, 0.1);
   }
 }
 
 .tree-node-toggle {
   background: none;
   border: none;
-  cursor: pointer;
-  padding: 0.25rem;
-  margin-right: 0.25rem;
   color: var(--text-muted);
   font-size: 0.8rem;
-  transition: var(--transition);
+  padding: v.$spacing-xs;
+  transition:
+    transform v.$transition-fast,
+    color v.$transition-fast;
 
-  @media (max-width: 768px) {
-    padding: 0.2rem;
-    font-size: 0.75rem;
-    margin-right: 0.15rem;
+  &.expanded {
+    transform: rotate(90deg);
   }
 
   &:hover {
     color: var(--primary-color);
   }
-
-  &:disabled {
-    visibility: hidden;
-  }
-}
-
-.spacer {
-  display: inline-block;
-  width: 1rem;
-  visibility: hidden;
-
-  @media (max-width: 768px) {
-    width: 0.75rem;
-  }
 }
 
 .tree-node-label {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.25rem;
-  margin: 0;
-  color: var(--text-color);
-  text-align: left;
   flex-grow: 1;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  transition: var(--transition);
-
-  @media (max-width: 768px) {
-    font-size: 0.85rem;
-    padding: 0.2rem;
-  }
-
-  &:hover {
-    background-color: var(--hover-bg);
-  }
-
-  &.selected {
-    background-color: var(--primary-color);
-    color: white;
-    font-weight: 500;
-  }
-}
-
-/* Стили для чекбоксов с закругленными углами */
-.checkbox-wrapper {
-  display: inline-block;
-  position: relative;
-  padding-left: 1.5rem;
-  margin-bottom: 0.25rem;
-  cursor: pointer;
-  user-select: none;
-
-  @media (max-width: 768px) {
-    padding-left: 1.25rem;
-  }
-}
-
-.checkbox-wrapper input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
-}
-
-.checkmark {
-  position: absolute;
-  top: 0.25rem;
-  left: 0;
-  height: 1rem;
-  width: 1rem;
-  background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 0.25rem;
-  transition: all 0.2s ease;
-
-  @media (max-width: 768px) {
-    height: 0.875rem;
-    width: 0.875rem;
-  }
-}
-
-.checkbox-wrapper:hover input ~ .checkmark {
-  background-color: var(--hover-bg);
-  border-color: var(--primary-color);
-}
-
-.checkbox-wrapper input:checked ~ .checkmark {
-  background-color: var(--primary-color);
-  border-color: var(--primary-color);
-}
-
-.checkmark:after {
-  content: '';
-  position: absolute;
-  display: none;
-}
-
-.checkbox-wrapper input:checked ~ .checkmark:after {
-  display: block;
-}
-
-.checkbox-wrapper .checkmark:after {
-  left: 0.25rem;
-  top: 0.125rem;
-  width: 0.25rem;
-  height: 0.5rem;
-  border: solid white;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
+  color: var(--text-color);
+  font-weight: 500;
 }
 
 .node-count {
-  margin-left: 0.5rem;
   color: var(--text-muted);
-  font-size: 0.8rem;
+  font-size: v.$fs-sm;
+  margin-left: v.$spacing-sm;
 }
 
 .tree-children {
   list-style-type: none;
-  padding-left: 1.5rem;
-  margin: 0;
+  padding-left: v.$spacing-md;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height v.$transition-base;
+
+  &.expanded {
+    max-height: 1000px; // Arbitrary large value
+  }
 }
 
-// Package grid layout - for PackageList component
-.package-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 1.5rem;
-  width: 100%;
-  box-sizing: border-box;
+.tree-node-leaf {
+  padding: v.$spacing-xs v.$spacing-sm;
+  cursor: pointer;
+  border-radius: v.$radius-md;
+  display: flex;
+  justify-content: space-between;
+  transition: background v.$transition-fast;
 
-  @media (max-width: 1024px) {
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1rem;
+  &:hover {
+    background: rgba(v.$nuros-accent-cyan, 0.1);
   }
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
+  &.selected {
+    background: linear-gradient(90deg, v.$nuros-accent-cyan, v.$nuros-accent-pink);
+    color: v.$nuros-navy;
+    font-weight: 600;
 
-  @media (max-width: 480px) {
-    gap: 0.75rem;
+    .node-count {
+      color: v.$nuros-navy;
+    }
   }
 }

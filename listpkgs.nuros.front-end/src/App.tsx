@@ -2,15 +2,23 @@
  * @file App.tsx
  * @brief Главный компонент приложения NurOS Search
  * @author NurOS Team
- * @version 1.2
+ * @version 2.4
  */
 
-import { createSignal, createEffect, Switch, Match } from 'solid-js';
-import SearchBar from './components/SearchBar';
-import PackageList from './components/PackageList';
-import Sidebar from './components/Sidebar';
-import usePackageData from './hooks/usePackageData';
-import './App.scss';
+import { createSignal, Switch, Match } from 'solid-js';
+import SearchBar from '~/components/SearchBar';
+import PackageList from '~/components/PackageList';
+import Sidebar from '~/components/Sidebar';
+import usePackageData from '~/hooks/usePackageData';
+
+// Type-safe debounce function
+function debounce<F extends (...args: Parameters<F>) => ReturnType<F>>(fn: F, delay: number) {
+  let timeoutId: number;
+  return (...args: Parameters<F>) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn(...args), delay);
+  };
+}
 
 interface Filters {
   architecture: string;
@@ -31,45 +39,23 @@ function App() {
     sources: [],
   });
   const [viewMode, setViewMode] = createSignal<'list' | 'grouped'>('list');
-  const [dots, setDots] = createSignal('.');
-  const [isDarkTheme, setIsDarkTheme] = createSignal(false);
 
-  createEffect(() => {
-    const savedTheme = localStorage.getItem('nuros-theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const isDark = savedTheme ? savedTheme === 'dark' : prefersDark;
-    setIsDarkTheme(isDark);
-    applyTheme(isDark);
-  });
-
-  const applyTheme = (isDark: boolean) => {
-    document.documentElement.classList.toggle('dark-theme', isDark);
-    localStorage.setItem('nuros-theme', isDark ? 'dark' : 'light');
-  };
-
-  const toggleTheme = () => {
-    setIsDarkTheme(prev => {
-      const newTheme = !prev;
-      applyTheme(newTheme);
-      return newTheme;
-    });
-  };
-
-  createEffect(() => {
-    if (loading()) {
-      const interval = setInterval(() => {
-        setDots(prev => (prev.length >= 3 ? '.' : prev + '.'));
-      }, 500);
-      return () => clearInterval(interval);
-    }
-  });
+  // Debounced search handler
+  const debouncedSetSearchTerm = debounce((query: string) => {
+    setSearchTerm(query);
+  }, 300);
 
   const handleSearch = (query: string) => {
-    setSearchTerm(query);
+    debouncedSetSearchTerm(query);
   };
 
-  const handleViewModeChange = (mode: 'list' | 'grouped') => {
-    setViewMode(mode);
+  // Easter egg handler
+  const handleStatsClick = () => {
+    const hasSeenAlert = sessionStorage.getItem('nuros-easter-egg-seen');
+    if (!hasSeenAlert) {
+      alert('You found a reference, to what you think for yourself ❄️');
+      sessionStorage.setItem('nuros-easter-egg-seen', 'true');
+    }
   };
 
   return (
@@ -78,8 +64,7 @@ function App() {
         <Match when={loading()}>
           <div class="loading-screen">
             <img src="/plymoth_adeki_logo.gif" alt="NurOS Logo" class="loading-logo" />
-            <div class="loading-text">Loading packages{dots()}</div>
-            <div class="packages-count">Found {packages().length} packages</div>
+            <div class="loading-text">Loading Packages...</div>
           </div>
         </Match>
         <Match when={error()}>
@@ -88,19 +73,10 @@ function App() {
         <Match when={!loading() && !error()}>
           <div class="app">
             <header class="app-header">
-              <a
-                href="https://www.nuros.org/"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="logo-link"
-                title="Visit NurOS Official Website"
-              >
-                <img src="/plymoth_adeki_logo.gif" alt="NurOS Logo" class="logo" />
-              </a>
-              <h1>NurOS Search</h1>
-              <p>Независимый Linux дистрибутив - поиск пакетов</p>
-              <p class="project-tagline">Скорость • Безопасность • Доступность</p>
-              <div class="package-stats">
+              <img src="/plymoth_adeki_logo.gif" alt="NurOS Logo" class="logo" />
+              <h1>NurOS Package Search</h1>
+              <p class="project-tagline">Speed • Security • Accessibility</p>
+              <div class="package-stats" onClick={handleStatsClick}>
                 Search more than <strong>{packages().length.toLocaleString()}</strong> packages
               </div>
             </header>
@@ -121,22 +97,20 @@ function App() {
 
               <main class="app-main">
                 <SearchBar onSearch={handleSearch} />
-
                 <div class="view-mode-container">
                   <button
                     class={`view-mode-btn ${viewMode() === 'list' ? 'active' : ''}`}
-                    onClick={() => handleViewModeChange('list')}
+                    onClick={() => setViewMode('list')}
                   >
-                    📋 List View
+                    List
                   </button>
                   <button
                     class={`view-mode-btn ${viewMode() === 'grouped' ? 'active' : ''}`}
-                    onClick={() => handleViewModeChange('grouped')}
+                    onClick={() => setViewMode('grouped')}
                   >
-                    📦 Grouped View
+                    Grouped
                   </button>
                 </div>
-
                 <PackageList
                   packages={packages()}
                   searchTerm={searchTerm()}
@@ -148,15 +122,6 @@ function App() {
           </div>
         </Match>
       </Switch>
-
-      <button
-        class="theme-toggle-btn"
-        onClick={toggleTheme}
-        title={isDarkTheme() ? 'Switch to light mode' : 'Switch to dark mode'}
-        aria-label={isDarkTheme() ? 'Switch to light mode' : 'Switch to dark mode'}
-      >
-        {isDarkTheme() ? '☀️' : '🌙'}
-      </button>
     </>
   );
 }

@@ -1,61 +1,54 @@
 // ============================================================================
-// COMPONENTS/PACKAGE-CARD.SCSS - Package card styles
+// COMPONENTS/PACKAGE-CARD.SCSS - NurOS-style package card
 // ============================================================================
 
-@import '../variables';
-@import '../animations';
+@use '../variables' as v;
+@use '../base' as b;
 
 .package-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: $spacing-lg;
-  animation: fadeIn $transition-base 0.2s both;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: v.$spacing-lg;
+  padding: v.$spacing-lg;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
+    padding: v.$spacing-md;
   }
 }
 
 .package-card {
-  border: 1px solid var(--border-color);
-  border-radius: $radius-xl;
-  padding: 1.75rem;
-  background: linear-gradient(135deg, var(--card-bg) 0%, rgba(37, 99, 235, 0.03) 100%);
-  color: var(--text-color);
-  box-shadow: $shadow-sm;
-  transition: all $transition-base;
+  @include b.glass-effect; // Apply glassmorphism
+  border-radius: v.$radius-lg;
+  padding: v.$spacing-lg;
   position: relative;
   overflow: hidden;
-  animation: scaleIn $transition-base;
+  transition:
+    transform v.$transition-base,
+    box-shadow v.$transition-base;
 
-  &::before {
+  // Glow effect on hover
+  &::after {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--primary-color), transparent);
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(v.$nuros-accent-cyan, 0.2) 0%, transparent 40%);
     opacity: 0;
-    transition: opacity $transition-base;
+    transition: opacity v.$transition-slow;
+    z-index: -1;
+    transform-origin: center;
   }
 
   &:hover {
-    box-shadow: $shadow-lg;
-    border-color: var(--primary-color);
-    transform: translateY(-4px);
-
-    &::before {
+    transform: translateY(-5px);
+    box-shadow: v.$shadow-glow;
+    &::after {
       opacity: 1;
+      animation: rotate 20s linear infinite;
     }
-  }
-
-  &:active {
-    transform: translateY(-2px);
-  }
-
-  @media (max-width: 768px) {
-    padding: 1.25rem;
   }
 }
 
@@ -63,132 +56,78 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: $spacing-md;
-  padding-bottom: 0.75rem;
-  border-bottom: 2px solid var(--border-color);
-  gap: $spacing-md;
-
-  @media (max-width: 480px) {
-    flex-direction: column;
-    margin-bottom: 0.75rem;
-  }
+  margin-bottom: v.$spacing-sm;
+  padding-bottom: v.$spacing-sm;
+  border-bottom: 1px solid var(--glass-border-color);
 }
 
 .package-name {
-  margin: 0;
-  font-size: $fs-xl;
+  font-size: v.$fs-lg;
+  font-weight: 600;
   color: var(--text-color);
-  font-weight: 700;
-  letter-spacing: -0.3px;
-
-  @media (max-width: 768px) {
-    font-size: 1.3rem;
-  }
 }
 
 .package-version {
-  color: var(--primary-color);
-  font-size: 0.9em;
-  margin-left: 0.5rem;
-  font-weight: 600;
-  background-color: rgba(37, 99, 235, 0.1);
-  padding: 0.25rem 0.75rem;
-  border-radius: $radius-md;
-  white-space: nowrap;
+  background: rgba(v.$nuros-accent-cyan, 0.1);
+  color: v.$nuros-accent-cyan;
+  padding: v.$spacing-xs v.$spacing-sm;
+  border-radius: v.$radius-md;
+  font-size: v.$fs-sm;
+  font-weight: 500;
 }
 
-.toggle-details-btn {
-  padding: $spacing-sm $spacing-md;
-  font-size: 0.85rem;
-  background: linear-gradient(135deg, var(--primary-color) 0%, rgba(37, 99, 235, 0.8) 100%);
-  color: white;
-  cursor: pointer;
-  border: none;
-  border-radius: $radius-md;
-  font-weight: 500;
-  transition: all $transition-base;
-  white-space: nowrap;
-
-  &:hover {
-    box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
-    transform: translateY(-2px);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-
-  @media (max-width: 768px) {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.8rem;
-  }
+.package-description {
+  margin: v.$spacing-md 0;
+  color: var(--text-muted);
+  font-size: v.$fs-base;
+  line-height: 1.6;
 }
 
 .package-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.25rem;
-  margin-bottom: $spacing-md;
+  gap: v.$spacing-md;
+  font-size: v.$fs-sm;
   color: var(--text-muted);
-  font-size: 0.9rem;
-
-  @media (max-width: 768px) {
-    gap: $spacing-md;
-    font-size: 0.85rem;
-  }
+  margin-top: v.$spacing-md;
+  padding-top: v.$spacing-md;
+  border-top: 1px solid var(--glass-border-color);
 }
 
-.package-maintainer {
-  color: var(--primary-color);
-  font-weight: 600;
-}
-
-.package-description {
-  margin: 1.25rem 0;
-  line-height: 1.6;
-  color: var(--text-color);
-
-  @media (max-width: 768px) {
-    margin: $spacing-md 0;
-    font-size: 0.95rem;
-  }
-}
-
-.package-links {
-  display: flex;
-  gap: 1.5rem;
-  margin-top: $spacing-md;
-  padding-top: $spacing-md;
-  border-top: 1px solid var(--border-color);
-}
-
+.package-maintainer,
 .package-license {
-  color: var(--text-muted);
-  font-size: 0.9rem;
+  strong {
+    color: var(--text-color);
+    font-weight: 500;
+  }
+  span {
+    color: v.$nuros-accent-pink;
+  }
 }
 
-.package-details {
-  margin-top: 1.5rem;
-  padding: $spacing-md;
-  background-color: var(--hover-bg);
-  border: 1px solid var(--border-color);
-  border-radius: $radius-md;
-  overflow-x: auto;
-  animation: slideInUp $transition-base;
-}
+.toggle-details-btn {
+  background: linear-gradient(45deg, v.$nuros-accent-cyan, v.$nuros-accent-pink);
+  color: v.$nuros-navy;
+  border: none;
+  border-radius: v.$radius-md;
+  padding: v.$spacing-sm v.$spacing-md;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform v.$transition-base,
+    box-shadow v.$transition-base;
 
-.json-display {
-  margin: 0;
-  font-size: 0.85rem;
-  color: var(--text-color);
-  white-space: pre-wrap;
-  word-break: break-all;
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(v.$nuros-accent-cyan, 0.5);
+  }
 }
 
 .no-results {
-  text-align: center;
-  padding: 3rem;
-  color: var(--text-muted);
-  font-size: $fs-lg;
+  @include b.glass-effect;
   grid-column: 1 / -1;
+  padding: v.$spacing-2xl;
+  text-align: center;
+  font-size: v.$fs-lg;
+  color: var(--text-muted);
 }
