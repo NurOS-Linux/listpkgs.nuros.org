@@ -27,7 +27,7 @@ jobs:
           LINT_RESULT=$(gh run list \
             --repo ${{ github.repository }} \
             --workflow "Lint Frontend" \
-            --status completed \
+            -s success \
             --limit 1 \
             --json conclusion \
             -q '.[0].conclusion // "unknown"')
@@ -67,8 +67,7 @@ jobs:
           UPDATE_RUN=$(gh run list \
             --repo ${{ github.repository }} \
             --workflow "Update NurOS Package List" \
-            --status completed \
-            --conclusion success \
+            -s success \
             --limit 1 \
             --json databaseId \
             -q '.[0].databaseId // ""')
