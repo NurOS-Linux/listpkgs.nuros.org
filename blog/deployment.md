@@ -2,7 +2,8 @@
 
 ## Overview
 
-The NurOS Package List uses GitHub Actions for continuous integration and deployment to GitHub Pages. This guide explains the deployment process.
+The NurOS Package List uses GitHub Actions for continuous integration and deployment to GitHub
+Pages. This guide explains the deployment process.
 
 ## Deployment Architecture
 
@@ -29,6 +30,7 @@ GitHub Repository
 **Schedule**: Every 6 hours (0:00, 6:00, 12:00, 18:00 UTC)
 
 **Steps**:
+
 1. Checkout repository
 2. Authenticate GitHub CLI
 3. Fetch metadata from NurOS-Packages organization
@@ -38,10 +40,12 @@ GitHub Repository
 7. Create deployment summary
 
 **Triggers**:
+
 - Scheduled cron job
 - Manual dispatch via workflow_dispatch
 
 **Artifacts**:
+
 - `packages.json` - Full package catalog
 - `packages.json.sha256` - Integrity verification
 
@@ -52,10 +56,12 @@ GitHub Repository
 **Trigger**: After successful `update-list.yml` run (or manual dispatch)
 
 **Prerequisites**:
+
 - Package list must be updated
 - Lint workflow must pass
 
 **Steps**:
+
 1. Checkout code
 2. Download package data artifact
 3. Verify source data exists
@@ -68,6 +74,7 @@ GitHub Repository
 10. Provide build summary
 
 **Build configuration** (`vite.config.ts`):
+
 ```typescript
 {
   command: 'build',
@@ -78,6 +85,7 @@ GitHub Repository
 ```
 
 **Artifacts**:
+
 - `frontend-dist` - Built application (HTML, JS, CSS)
 - Retention: 7 days
 
@@ -88,6 +96,7 @@ GitHub Repository
 **Trigger**: After successful `build_frontend.yml` run (or manual dispatch)
 
 **Steps**:
+
 1. Download build artifact
 2. Verify deployment contents
 3. Configure GitHub Pages
@@ -96,6 +105,7 @@ GitHub Repository
 6. Create deployment summary
 
 **Result**:
+
 - Live at `https://listpkgs.nuros.org`
 - GitHub Pages at `https://NurOS-Linux.github.io/listpkgs.nuros.org/`
 
@@ -111,13 +121,14 @@ GitHub Repository
    - Click "Run workflow"
 
 2. **GitHub CLI**:
+
    ```bash
    # Trigger update list
    gh workflow run update-list.yml -r main
-   
+
    # Trigger frontend build
    gh workflow run build_frontend.yml -r main
-   
+
    # Trigger deploy
    gh workflow run deploy_on_pages.yml -r main
    ```
@@ -134,25 +145,27 @@ GitHub Repository
 
 ### Required Secrets
 
-| Secret | Purpose | Where |
-|--------|---------|-------|
-| `GITHUB_TOKEN` | GitHub Actions authentication | Automatic (GitHub) |
-| (Optional) Custom domain | CNAME for custom domain | GitHub Pages settings |
+| Secret                   | Purpose                       | Where                 |
+| ------------------------ | ----------------------------- | --------------------- |
+| `GITHUB_TOKEN`           | GitHub Actions authentication | Automatic (GitHub)    |
+| (Optional) Custom domain | CNAME for custom domain       | GitHub Pages settings |
 
 ### Configuration Files
 
 #### `vite.config.ts`
+
 ```typescript
 export default {
   server: { port: 5173 },
   base: '/listpkgs.nuros.org/',
   build: {
-    outDir: 'dist'
-  }
-}
+    outDir: 'dist',
+  },
+};
 ```
 
 #### GitHub Pages Settings
+
 - **Source**: GitHub Actions
 - **Branch**: (automatic deployment)
 - **Custom domain**: listpkgs.nuros.org (via CNAME)
@@ -172,10 +185,11 @@ export default {
    - Check GitHub status page
 
 3. **Package List Updates**:
+
    ```bash
    # Check latest workflow run
    gh run list --workflow=update-list.yml --limit=5
-   
+
    # View detailed logs
    gh run view <run-id> --log
    ```
@@ -187,6 +201,7 @@ export default {
 **Problem**: Build step fails in `build_frontend.yml`
 
 **Solutions**:
+
 1. Check Node.js version is 22
 2. Verify `pnpm-lock.yaml` is committed
 3. Run `pnpm install --frozen-lockfile` locally
@@ -198,6 +213,7 @@ export default {
 **Problem**: Page not showing latest version
 
 **Solutions**:
+
 1. Hard refresh: Ctrl+Shift+R (Windows) or Cmd+Shift+R (Mac)
 2. Clear browser cache
 3. Check GitHub Pages settings
@@ -209,6 +225,7 @@ export default {
 **Problem**: Package list not updated
 
 **Solutions**:
+
 1. Check `update-list.yml` logs
 2. Verify GitHub token permission
 3. Ensure repositories in organization are accessible
@@ -220,6 +237,7 @@ export default {
 **Problem**: Getting 404 on `/listpkgs.nuros.org/` path
 
 **Solutions**:
+
 1. Check `vite.config.ts` base path setting
 2. Verify GitHub Pages source is GitHub Actions
 3. Check artifact upload step succeeded
@@ -228,16 +246,19 @@ export default {
 ## Performance & Optimization
 
 ### Build Performance
+
 - Typical build time: 2-3 minutes
 - Artifact size: ~500KB (compressed)
 - No build optimization needed currently
 
 ### Deployment Performance
+
 - Pages deployment: ~30 seconds
 - CDN integration: Automatic
 - Cache headers: Set by GitHub
 
 ### Caching Strategy
+
 - Static assets cached by browser (1 year)
 - HTML not cached (always fresh)
 - API responses cached in-memory
@@ -245,12 +266,14 @@ export default {
 ## Security
 
 ### Workflow Security
+
 - `GITHUB_TOKEN` limited to this workflow
 - No external secrets required
 - All operations within GitHub
 - Audit logs available
 
 ### Branch Protection
+
 ```yaml
 # Recommended: main branch protection
 - Require PR reviews
@@ -260,6 +283,7 @@ export default {
 ```
 
 ### Artifact Security
+
 - Artifacts auto-expire after 7 days
 - No sensitive data in artifacts
 - Workflow logs public by default
@@ -269,12 +293,14 @@ export default {
 If deployment breaks live site:
 
 1. **Quick Fix Option** (recommended):
+
    ```bash
    # Trigger previous successful workflow
    gh workflow run build_frontend.yml -r main
    ```
 
 2. **Revert Code**:
+
    ```bash
    # If code change caused issue
    git revert <commit-hash>
@@ -283,6 +309,7 @@ If deployment breaks live site:
    ```
 
 3. **Manual Rollback**:
+
    ```bash
    # Checkout previous working version
    git checkout <commit-hash> -- listpkgs.nuros.front-end/
@@ -298,11 +325,13 @@ If deployment breaks live site:
 ## Monitoring & Alerts
 
 ### GitHub Actions Notifications
+
 - Email notifications for workflow failures
 - Subscribe to repository notifications
 - Custom hooks via GitHub Apps
 
 ### Status Checks
+
 - GitHub status page: https://www.githubstatus.com/
 - Workflow status badges in README
 - Custom status checks possible
@@ -312,21 +341,25 @@ If deployment breaks live site:
 ### Custom Domain
 
 Already configured:
+
 ```
 CNAME file contains: listpkgs.nuros.org
 ```
 
 ### Custom SSL Certificate
+
 - Automatic via GitHub Pages
 - Updated automatically
 - Renewal automatic
 
 ### Custom Deployment Keys
+
 Currently not needed (using default GITHUB_TOKEN)
 
 ## Access Control
 
 ### Team Permissions
+
 ```yaml
 # Repository settings
 - Admin: Full access
@@ -336,12 +369,14 @@ Currently not needed (using default GITHUB_TOKEN)
 ```
 
 ### Workflow Permissions
+
 ```yaml
-contents: read      # Read repository
-pages: write        # Deploy pages
-id-token: write     # OIDC token
+contents: read # Read repository
+pages: write # Deploy pages
+id-token: write # OIDC token
 ```
 
 ---
 
-See [Architecture](./architecture.md) for system overview | [Contributing](./contributing.md) for development guide
+See [Architecture](./architecture.md) for system overview | [Contributing](./contributing.md) for
+development guide

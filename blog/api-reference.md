@@ -2,7 +2,8 @@
 
 ## Overview
 
-The NurOS Package List provides access to package data through the `packages.json` file, which is generated automatically and embedded in the frontend.
+The NurOS Package List provides access to package data through the `packages.json` file, which is
+generated automatically and embedded in the frontend.
 
 ## Data Access
 
@@ -23,6 +24,7 @@ The package data is available as a static JSON file:
 ### CORS
 
 CORS headers are enabled for cross-origin requests:
+
 ```
 Access-Control-Allow-Origin: *
 Access-Control-Allow-Methods: GET, HEAD, OPTIONS
@@ -63,7 +65,9 @@ Access-Control-Allow-Methods: GET, HEAD, OPTIONS
 ```json
 {
   "packages": [
-    { /* Package object */ }
+    {
+      /* Package object */
+    }
   ],
   "meta": {
     "version": "1.0",
@@ -79,6 +83,7 @@ Access-Control-Allow-Methods: GET, HEAD, OPTIONS
 ### JavaScript/Node.js
 
 #### Fetch all packages
+
 ```javascript
 const response = await fetch('https://listpkgs.nuros.org/repodata.json');
 const data = await response.json();
@@ -86,11 +91,12 @@ console.log(`Total packages: ${data.packages.length}`);
 ```
 
 #### Find package by name
+
 ```javascript
 const findPackage = async (name) => {
   const response = await fetch('https://listpkgs.nuros.org/repodata.json');
   const data = await response.json();
-  return data.packages.find(pkg => pkg.name === name);
+  return data.packages.find((pkg) => pkg.name === name);
 };
 
 const pkg = await findPackage('vim');
@@ -98,26 +104,29 @@ console.log(pkg);
 ```
 
 #### Filter by category
+
 ```javascript
 const getByCategory = async (category) => {
   const response = await fetch('https://listpkgs.nuros.org/repodata.json');
   const data = await response.json();
-  return data.packages.filter(pkg => pkg.category === category);
+  return data.packages.filter((pkg) => pkg.category === category);
 };
 
 const devTools = await getByCategory('development');
 ```
 
 #### Search packages
+
 ```javascript
 const searchPackages = async (query) => {
   const response = await fetch('https://listpkgs.nuros.org/repodata.json');
   const data = await response.json();
   const searchLower = query.toLowerCase();
-  
-  return data.packages.filter(pkg => 
-    pkg.name.toLowerCase().includes(searchLower) ||
-    pkg.description.toLowerCase().includes(searchLower)
+
+  return data.packages.filter(
+    (pkg) =>
+      pkg.name.toLowerCase().includes(searchLower) ||
+      pkg.description.toLowerCase().includes(searchLower)
   );
 };
 
@@ -143,7 +152,7 @@ def find_package(name):
 
 # Get by category
 def get_by_category(category):
-    return [pkg for pkg in data['packages'] 
+    return [pkg for pkg in data['packages']
             if pkg.get('category') == category]
 
 # Search
@@ -187,13 +196,13 @@ import { createSignal, onMount } from 'solid-js';
 
 export function PackageListComponent() {
   const [packages, setPackages] = createSignal([]);
-  
+
   onMount(async () => {
     const response = await fetch('/repodata.json');
     const data = await response.json();
     setPackages(data.packages);
   });
-  
+
   return (
     <div>
       <For each={packages()}>
@@ -206,35 +215,35 @@ export function PackageListComponent() {
 
 ## Field Reference
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `name` | string | ✓ | Package identifier |
-| `version` | semver | ✓ | Current version |
-| `release` | number | ✗ | Release number (NurOS) |
-| `description` | string | ✓ | Short description |
-| `home` | URL | ✗ | Project homepage |
-| `license` | string | ✗ | License (SPDX) |
-| `source` | string | ✓ | Repository name |
-| `maintainer` | string | ✗ | Maintainer name |
-| `maintainer_email` | email | ✗ | Contact email |
-| `category` | string | ✓ | Category/subsystem |
-| `tags` | array | ✗ | Feature tags |
-| `dependencies` | array | ✗ | Package dependencies |
-| `url` | URL | ✗ | Repository URL |
-| `checksum` | sha256 | ✗ | File checksum |
-| `size` | bytes | ✗ | Package size |
-| `created` | timestamp | ✗ | Creation date |
-| `updated` | timestamp | ✗ | Last update date |
+| Field              | Type      | Required | Description            |
+| ------------------ | --------- | -------- | ---------------------- |
+| `name`             | string    | ✓        | Package identifier     |
+| `version`          | semver    | ✓        | Current version        |
+| `release`          | number    | ✗        | Release number (NurOS) |
+| `description`      | string    | ✓        | Short description      |
+| `home`             | URL       | ✗        | Project homepage       |
+| `license`          | string    | ✗        | License (SPDX)         |
+| `source`           | string    | ✓        | Repository name        |
+| `maintainer`       | string    | ✗        | Maintainer name        |
+| `maintainer_email` | email     | ✗        | Contact email          |
+| `category`         | string    | ✓        | Category/subsystem     |
+| `tags`             | array     | ✗        | Feature tags           |
+| `dependencies`     | array     | ✗        | Package dependencies   |
+| `url`              | URL       | ✗        | Repository URL         |
+| `checksum`         | sha256    | ✗        | File checksum          |
+| `size`             | bytes     | ✗        | Package size           |
+| `created`          | timestamp | ✗        | Creation date          |
+| `updated`          | timestamp | ✗        | Last update date       |
 
 ## Caching
 
 ### Cache Headers
 
-| Header | Value |
-|--------|-------|
+| Header          | Value                  |
+| --------------- | ---------------------- |
 | `Cache-Control` | `public, max-age=3600` |
-| `ETag` | SHA-256 of content |
-| `Last-Modified` | Update timestamp |
+| `ETag`          | SHA-256 of content     |
+| `Last-Modified` | Update timestamp       |
 
 ### Best Practices
 
@@ -252,24 +261,22 @@ class PackageCache {
     this.ttl = ttl;
     this.timestamp = null;
   }
-  
+
   async fetch() {
     if (this.isValid()) {
       return this.data;
     }
-    
+
     const response = await fetch('https://listpkgs.nuros.org/repodata.json');
     this.data = await response.json();
     this.timestamp = Date.now();
     return this.data;
   }
-  
+
   isValid() {
-    return this.data && 
-           this.timestamp && 
-           (Date.now() - this.timestamp) < this.ttl;
+    return this.data && this.timestamp && Date.now() - this.timestamp < this.ttl;
   }
-  
+
   clear() {
     this.data = null;
     this.timestamp = null;
@@ -284,13 +291,13 @@ const packages = await cache.fetch();
 
 ### HTTP Status Codes
 
-| Status | Meaning | Action |
-|--------|---------|--------|
-| 200 | OK | Process response |
-| 304 | Not Modified | Use cached data |
-| 404 | Not Found | Check URL |
-| 500 | Server Error | Retry later |
-| 503 | Unavailable | Retry with backoff |
+| Status | Meaning      | Action             |
+| ------ | ------------ | ------------------ |
+| 200    | OK           | Process response   |
+| 304    | Not Modified | Use cached data    |
+| 404    | Not Found    | Check URL          |
+| 500    | Server Error | Retry later        |
+| 503    | Unavailable  | Retry with backoff |
 
 ### Error Handling Example
 
@@ -299,21 +306,21 @@ async function fetchPackagesWithRetry(maxRetries = 3) {
   for (let i = 0; i < maxRetries; i++) {
     try {
       const response = await fetch('https://listpkgs.nuros.org/repodata.json');
-      
+
       if (response.status === 404) {
         throw new Error('Package list not found');
       }
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
-      
+
       return await response.json();
     } catch (error) {
       if (i === maxRetries - 1) throw error;
-      
+
       const delay = Math.pow(2, i) * 1000; // Exponential backoff
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
 }
@@ -333,6 +340,7 @@ Currently no rate limiting is enforced. However, we recommend:
 ### SHA-256 Checksum
 
 A checksum file is available:
+
 ```
 https://listpkgs.nuros.org/repodata.json.sha256
 ```
@@ -357,6 +365,7 @@ sha256sum -c repodata.json.sha256
 Current version: **1.0**
 
 #### Future Changes (v2.0 planned)
+
 - Additional metadata fields
 - Package relationships (conflicts, replaces)
 - Binary compatibility information
@@ -371,4 +380,5 @@ Current version: **1.0**
 
 ---
 
-See [Architecture](./architecture.md) for system overview | [Frontend Guide](./frontend-guide.md) for UI integration details
+See [Architecture](./architecture.md) for system overview | [Frontend Guide](./frontend-guide.md)
+for UI integration details

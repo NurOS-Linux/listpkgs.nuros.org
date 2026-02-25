@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.vitepress/dist/
+.vitepress/cache/
+.DS_Store
+*.log
+*.swp
+.env
+.env.local
+.env.*.local
+pnpm-lock.yaml
+package-lock.json

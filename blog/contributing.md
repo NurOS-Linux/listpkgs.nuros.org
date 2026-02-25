@@ -2,7 +2,8 @@
 
 ## Welcome! 👋
 
-Thank you for your interest in contributing to the NurOS Package List project! This guide will help you get started.
+Thank you for your interest in contributing to the NurOS Package List project! This guide will help
+you get started.
 
 ## Code of Conduct
 
@@ -25,7 +26,7 @@ Found a bug? Let us know:
    - Environment (OS, browser, etc.)
    - Screenshots if applicable
 
-3. **Use bug template**: 
+3. **Use bug template**:
    - Go to Issues → Report bug
    - Fill in the provided template
 
@@ -147,6 +148,7 @@ git checkout -b fix/bug-name
 ```
 
 ### Naming Convention
+
 - Features: `feature/add-dark-mode`
 - Bugfixes: `fix/search-not-working`
 - Docs: `docs/update-readme`
@@ -199,6 +201,7 @@ git commit -m "feat: add dark mode toggle
 ```
 
 **Commit Message Format**:
+
 - `feat:` - New feature
 - `fix:` - Bug fix
 - `docs:` - Documentation
@@ -209,6 +212,7 @@ git commit -m "feat: add dark mode toggle
 - `chore:` - Maintenance
 
 **Be descriptive!**
+
 - First line: Brief summary (50 chars max)
 - Blank line
 - Detailed explanation (wrap at 72 chars)
@@ -268,21 +272,26 @@ git push origin feature/your-feature-name
 
 ```markdown
 ## Description
+
 Brief description of changes
 
 ## Type of Change
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Documentation update
 - [ ] Performance improvement
 
 ## How to Test
+
 Steps to verify the changes
 
 ## Screenshots (if UI change)
+
 Before/after screenshots
 
 ## Checklist
+
 - [ ] Code formatted with Prettier
 - [ ] Linted with ESLint
 - [ ] Tests pass locally
@@ -290,6 +299,7 @@ Before/after screenshots
 - [ ] Documentation updated
 
 ## Fixes
+
 Fixes #(issue number)
 ```
 
@@ -343,20 +353,24 @@ $primary-color: var(--primary-color);
 
 // Use BEM naming
 .package-card {
-  &__header { }
-  &__body { }
-  &--featured { }
-  &:hover { }
+  &__header {
+  }
+  &__body {
+  }
+  &--featured {
+  }
+  &:hover {
+  }
 }
 
 // Nest related rules
 .search-bar {
   display: flex;
-  
+
   &__input {
     flex: 1;
   }
-  
+
   &__button {
     margin-left: $spacing-md;
   }
@@ -370,7 +384,7 @@ $primary-color: var(--primary-color);
 
 ## Use ## for sections
 
-Use **bold** for emphasis, not __underscores__.
+Use **bold** for emphasis, not **underscores**.
 
 - Use dashes for lists
   - Nest with 2-space indent
@@ -378,8 +392,7 @@ Use **bold** for emphasis, not __underscores__.
 1. Number for ordered lists
 2. Keep numbers sequential
 
-Use `inline code` for variables
-Use code blocks for examples
+Use `inline code` for variables Use code blocks for examples
 
 > Use blockquotes for important notes
 ```
@@ -387,6 +400,7 @@ Use code blocks for examples
 ## Documentation Structure
 
 All documentation in `blog/`:
+
 - `index.md` - Main entry point
 - `getting-started.md` - Quick start guide
 - `architecture.md` - System design
@@ -401,6 +415,7 @@ All documentation in `blog/`:
 **Do not** open public issues for security vulnerabilities.
 
 Instead:
+
 1. Email security concerns to maintainers
 2. Provide detailed vulnerability description
 3. Suggest remediation if possible
@@ -416,6 +431,7 @@ Instead:
 ## Recognition
 
 Contributors are recognized:
+
 - ✅ Git commits show your name
 - ✅ GitHub shows your contribution graph
 - ✅ Major contributors listed in README

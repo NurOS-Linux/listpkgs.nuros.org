@@ -77,16 +77,19 @@ pnpm format
 ### Before Committing
 
 1. Format code:
+
    ```bash
    pnpm format
    ```
 
 2. Build locally to check for errors:
+
    ```bash
    pnpm docs:build
    ```
 
 3. Preview the build:
+
    ```bash
    pnpm docs:preview
    ```
@@ -113,6 +116,7 @@ Documentation is automatically deployed via GitHub Actions when changes are push
 ### Deployment Triggers
 
 Documentation rebuild is triggered when:
+
 - Files in `blog/` directory are modified
 - `.github/workflows/deploy-docs.yml` is modified
 - Manual workflow dispatch in GitHub Actions
@@ -128,11 +132,13 @@ Documentation rebuild is triggered when:
 ### Create a New Page
 
 1. Create a markdown file in `blog/`:
+
    ```
    blog/my-topic.md
    ```
 
 2. Add frontmatter (optional but recommended):
+
    ```markdown
    ---
    title: My Topic Title
@@ -145,16 +151,17 @@ Documentation rebuild is triggered when:
    ```
 
 3. Update navigation in `.vitepress/config.ts`:
+
    ```typescript
    nav: [
      // Add new link
      { text: 'My Topic', link: '/my-topic' },
-   ]
+   ];
 
    sidebar: [
      // Add to appropriate section
      { text: 'My Topic', link: '/my-topic' },
-   ]
+   ];
    ```
 
 4. Format and build:
@@ -183,11 +190,17 @@ Documentation rebuild is triggered when:
 - **Headers**: Use single `#` for page title only
 - **Lists**: Use dashes `-` for unordered lists
 - **Code**: Use triple backticks with language:
-  ```markdown
+
+  ````markdown
   ```typescript
   const example = 'code';
   ```
+  ````
+
   ```
+
+  ```
+
 - **Links**: Use relative paths when possible
 - **Images**: Store in public/ directory (if needed)
 
@@ -195,17 +208,11 @@ Documentation rebuild is triggered when:
 
 Include language identifier for syntax highlighting:
 
-\`\`\`typescript
-const greeting = 'Hello, NurOS!';
-\`\`\`
+\`\`\`typescript const greeting = 'Hello, NurOS!'; \`\`\`
 
-\`\`\`bash
-pnpm install
-\`\`\`
+\`\`\`bash pnpm install \`\`\`
 
-\`\`\`json
-{ "key": "value" }
-\`\`\`
+\`\`\`json { "key": "value" } \`\`\`
 
 ## Prettier Configuration
 

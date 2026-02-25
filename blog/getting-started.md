@@ -2,11 +2,13 @@
 
 ## Overview
 
-The NurOS Package Search System provides a web-based interface to browse and search packages available in the NurOS ecosystem. This guide will help you get started.
+The NurOS Package Search System provides a web-based interface to browse and search packages
+available in the NurOS ecosystem. This guide will help you get started.
 
 ## Accessing the Package Search
 
 You can access the package search at:
+
 - **Main Interface**: https://listpkgs.nuros.org
 - **GitHub Pages**: https://NurOS-Linux.github.io/listpkgs.nuros.org/
 
@@ -21,6 +23,7 @@ You can access the package search at:
 ### Filtering Results
 
 Available filters:
+
 - **Source/Repository**: Filter by package source
 - **View Mode**: Switch between list and grid views
 - **Categories**: Filter by package category
@@ -38,6 +41,7 @@ Each package card displays:
 ### Detailed View
 
 Click on any package to see:
+
 - Complete metadata
 - Dependencies and relationships
 - History and changelog
@@ -46,28 +50,31 @@ Click on any package to see:
 ## View Modes
 
 ### List View
+
 - Detailed information for each package
 - Best for reading full descriptions
 - Ideal for detailed searches
 
 ### Grid View
+
 - Compact card layout
 - Quick visual scanning
 - Good for browsing categories
 
 ### Grouped View
+
 - Packages grouped by category
 - Expandable groups
 - Organized overview
 
 ## Keyboard Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| `/` | Focus search bar |
-| `D` | Toggle dark/light mode |
-| `Enter` | Open selected package |
-| `Esc` | Clear search |
+| Shortcut | Action                 |
+| -------- | ---------------------- |
+| `/`      | Focus search bar       |
+| `D`      | Toggle dark/light mode |
+| `Enter`  | Open selected package  |
+| `Esc`    | Clear search           |
 
 ## Tips & Tricks
 
@@ -107,4 +114,5 @@ Click on any package to see:
 
 ---
 
-**Need Help?** See [FAQ](./faq.md) or visit the [GitHub Issues](https://github.com/NurOS-Linux/listpkgs.nuros.org/issues)
+**Need Help?** See [FAQ](./faq.md) or visit the
+[GitHub Issues](https://github.com/NurOS-Linux/listpkgs.nuros.org/issues)

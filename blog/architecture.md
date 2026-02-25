@@ -32,6 +32,7 @@ NurOS Repositories
 **Responsibility**: Scan repositories and aggregate package metadata
 
 **How it works**:
+
 - Runs every 6 hours via GitHub Actions
 - Iterates through all repos in NurOS-Packages organization
 - Reads `metadata.json` from each repository
@@ -39,10 +40,12 @@ NurOS Repositories
 - Uploads as artifact for next workflow
 
 **Output**:
+
 - `packages.json` - Complete package catalog
 - `packages.json.sha256` - Integrity checksum
 
 **Data structure** (each package):
+
 ```json
 {
   "name": "package-name",
@@ -60,11 +63,10 @@ NurOS Repositories
 
 ### 2. Frontend Application
 
-**Framework**: SolidJS + TypeScript
-**Build Tool**: Vite
-**Styling**: Modular SCSS
+**Framework**: SolidJS + TypeScript **Build Tool**: Vite **Styling**: Modular SCSS
 
 **Features**:
+
 - Real-time package search
 - Multiple view modes (list, grid, grouped)
 - Advanced filtering (source, category)
@@ -73,6 +75,7 @@ NurOS Repositories
 - Dark Reader compatibility
 
 **Architecture**:
+
 ```
 src/
 ├── App.tsx                 # Main app component
@@ -103,7 +106,7 @@ src/
 **Workflow sequence**:
 
 1. **Trigger**: Package list updated or manual dispatch
-2. **Build**: 
+2. **Build**:
    - Checkout code
    - Download latest package data
    - Install dependencies (`pnpm`)
@@ -156,21 +159,22 @@ Rendered in UI
 
 ## Technology Stack
 
-| Component | Technology | Version |
-|-----------|-----------|---------|
-| **Language** | TypeScript | 5.9.3 |
-| **Framework** | SolidJS | 1.9.10 |
-| **Build Tool** | Vite | 7.3.1 |
-| **Styling** | SCSS | Latest |
-| **Package Manager** | pnpm | 9.x |
-| **Runtime** | Node.js | 22 |
-| **Testing** | Playwright | 1.48.2 |
-| **Hosting** | GitHub Pages | - |
-| **CI/CD** | GitHub Actions | - |
+| Component           | Technology     | Version |
+| ------------------- | -------------- | ------- |
+| **Language**        | TypeScript     | 5.9.3   |
+| **Framework**       | SolidJS        | 1.9.10  |
+| **Build Tool**      | Vite           | 7.3.1   |
+| **Styling**         | SCSS           | Latest  |
+| **Package Manager** | pnpm           | 9.x     |
+| **Runtime**         | Node.js        | 22      |
+| **Testing**         | Playwright     | 1.48.2  |
+| **Hosting**         | GitHub Pages   | -       |
+| **CI/CD**           | GitHub Actions | -       |
 
 ## Performance Considerations
 
 ### Frontend
+
 - Code splitting with Vite
 - SCSS selectors optimized
 - Lazy loading for large lists
@@ -178,12 +182,14 @@ Rendered in UI
 - Minimal dependencies
 
 ### Data Updates
+
 - Scheduled updates (not on demand)
 - Efficient git operations
 - Artifact caching
 - Parallel workflows possible
 
 ### Deployment
+
 - 15-minute timeout on builds
 - Artifact retention: 7 days
 - GitHub Pages caching friendly
@@ -192,11 +198,13 @@ Rendered in UI
 ## Scalability
 
 **Current limits**:
+
 - Package list size: Supports thousands of packages
 - Search performance: Real-time up to ~5000 packages
 - Browser memory: Optimized for modern devices
 
 **Future improvements**:
+
 - Virtual scrolling for very large lists
 - Server-side search (if needed)
 - Pagination or infinite scroll

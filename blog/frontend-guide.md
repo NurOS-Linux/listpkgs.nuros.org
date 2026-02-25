@@ -2,7 +2,8 @@
 
 ## Overview
 
-The NurOS Package List frontend is a modern, responsive web application built with SolidJS. This guide covers features, UI components, and development tips.
+The NurOS Package List frontend is a modern, responsive web application built with SolidJS. This
+guide covers features, UI components, and development tips.
 
 ## User Interface
 
@@ -28,6 +29,7 @@ The NurOS Package List frontend is a modern, responsive web application built wi
 ### Components
 
 #### SearchBar
+
 - Real-time search as you type
 - Keyboard shortcut: `/` to focus
 - Clear button for quick reset
@@ -37,18 +39,21 @@ The NurOS Package List frontend is a modern, responsive web application built wi
 #### View Modes
 
 **List View**
+
 - Detailed information per row
 - Shows: name, version, maintainer, description
 - Best for detailed searches
 - Expandable cards for more info
 
 **Grid View**
+
 - Compact card layout
 - Shows: name, version, category
 - Visual browsing experience
 - Hover effects for interactivity
 
 **Grouped View**
+
 - Packages organized by category
 - Expandable/collapsible groups
 - Counts packages per group
@@ -57,12 +62,14 @@ The NurOS Package List frontend is a modern, responsive web application built wi
 #### Filters
 
 **Source Filter**
+
 - Filter by package repository
 - Multi-select capable
 - Shows package count per source
 - Quick category overview
 
 **Additional Filters** (expandable)
+
 - Category
 - Maintainer
 - Version range
@@ -71,6 +78,7 @@ The NurOS Package List frontend is a modern, responsive web application built wi
 #### Package Card
 
 **Information displayed**:
+
 - Package name (bold heading)
 - Version badge
 - Category tag
@@ -79,6 +87,7 @@ The NurOS Package List frontend is a modern, responsive web application built wi
 - Maintain button
 
 **Interactions**:
+
 - Hover animations
 - Click to view details
 - Copy button for name
@@ -87,12 +96,14 @@ The NurOS Package List frontend is a modern, responsive web application built wi
 #### Sidebar
 
 **Navigation**:
+
 - Package category tree
 - Source repository tree
 - Quick filter selections
 - Search result count
 
 **Features**:
+
 - Collapsible sections
 - Syntax highlighting
 - Keyboard navigation
@@ -101,6 +112,7 @@ The NurOS Package List frontend is a modern, responsive web application built wi
 #### JSON Display
 
 **View raw metadata**:
+
 - Complete package JSON
 - Pretty printed
 - Syntax highlighting
@@ -110,6 +122,7 @@ The NurOS Package List frontend is a modern, responsive web application built wi
 ### Dark Mode
 
 **Features**:
+
 - Auto-detect system preference
 - Manual toggle in header
 - Persistent across sessions
@@ -117,6 +130,7 @@ The NurOS Package List frontend is a modern, responsive web application built wi
 - All animations visible
 
 **Colors** (Dark Mode):
+
 - Background: #1a1a1a
 - Text: #e0e0e0
 - Primary: #3b82f6
@@ -141,7 +155,7 @@ src/styles/
 │   ├── package-card.scss
 │   ├── grouped-list.scss
 │   └── sidebar.scss
-└── layout/               
+└── layout/
     ├── app-layout.scss
     └── header.scss
 ```
@@ -149,6 +163,7 @@ src/styles/
 ### CSS Variables
 
 Access in components:
+
 ```scss
 $primary-color: var(--primary-color);
 $bg-color: var(--bg-color);
@@ -159,6 +174,7 @@ $transition: var(--transition-base);
 ### Animations
 
 Available animations:
+
 - `fadeIn / fadeOut` - Opacity transition
 - `slideInUp / slideInDown` - Vertical slide
 - `slideInLeft / slideInRight` - Horizontal slide
@@ -169,6 +185,7 @@ Available animations:
 - `bounce` - Bouncy entrance
 
 Usage:
+
 ```scss
 .element {
   animation: fadeIn 0.3s ease-out;
@@ -203,22 +220,24 @@ const packageData = usePackageData();
 
 ```typescript
 interface FilterState {
-  source?: string[];        // Repository filter
-  category?: string[];      // Category filter
-  maintainer?: string[];    // Maintainer filter
-  version?: VersionRange;   // Version range
+  source?: string[]; // Repository filter
+  category?: string[]; // Category filter
+  maintainer?: string[]; // Maintainer filter
+  version?: VersionRange; // Version range
 }
 ```
 
 ## Performance Tips
 
 ### For Users
+
 1. Use specific search terms
 2. Filter before searching for best results
 3. Dark mode slightly faster (less rendering)
 4. Cloud sync: Use browser cache for faster loads
 
 ### For Developers
+
 1. SCSS module structure reduces CSS size
 2. SolidJS fine-grained reactivity is efficient
 3. No virtual scrolling needed yet (optimized for <5000 packages)
@@ -227,18 +246,21 @@ interface FilterState {
 ## Accessibility
 
 ### Keyboard Navigation
+
 - Tab through all interactive elements
 - Enter/Space to activate buttons
 - Arrow keys in dropdowns
 - Escape to close modals
 
 ### Screen Readers
+
 - ARIA labels on all inputs
 - Semantic HTML structure
 - Role attributes where needed
 - Dynamic content updates announced
 
 ### Visual Accessibility
+
 - High contrast mode support
 - Large touch targets (44x44px minimum)
 - Color not only indicator
@@ -309,13 +331,13 @@ pnpm test:ui
 
 ## Troubleshooting UI Issues
 
-| Issue | Solution |
-|-------|----------|
-| Search not responsive | Check browser cache, try Ctrl+Shift+R |
-| Dark mode not working | Enable in header, check system preferences |
-| Cards cut off on mobile | Reduce browser zoom to 90% |
-| Sidebar overlapping | Use List view, reduce window width |
-| Text unreadable | Increase font size in browser settings |
+| Issue                   | Solution                                   |
+| ----------------------- | ------------------------------------------ |
+| Search not responsive   | Check browser cache, try Ctrl+Shift+R      |
+| Dark mode not working   | Enable in header, check system preferences |
+| Cards cut off on mobile | Reduce browser zoom to 90%                 |
+| Sidebar overlapping     | Use List view, reduce window width         |
+| Text unreadable         | Increase font size in browser settings     |
 
 ---
 

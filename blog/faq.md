@@ -4,11 +4,13 @@
 
 ### What is NurOS?
 
-NurOS is a Linux distribution with a curated package management system. The package search system helps users find and understand available packages.
+NurOS is a Linux distribution with a curated package management system. The package search system
+helps users find and understand available packages.
 
 ### How often is the package list updated?
 
 The package list updates automatically every 6 hours. Updates happen at:
+
 - 00:00 UTC
 - 06:00 UTC
 - 12:00 UTC
@@ -16,12 +18,12 @@ The package list updates automatically every 6 hours. Updates happen at:
 
 ### Where is the source code?
 
-Source code is available on GitHub:
-https://github.com/NurOS-Linux/listpkgs.nuros.org
+Source code is available on GitHub: <https://github.com/NurOS-Linux/listpkgs.nuros.org>
 
 ### Can I use the package data for my project?
 
 Yes! The data is available as JSON:
+
 ```
 https://listpkgs.nuros.org/repodata.json
 ```
@@ -63,6 +65,7 @@ See [Contributing Guide](./contributing.md) for adding new packages.
 Yes! Click the JSON icon in any package detail view to see raw metadata.
 
 Or fetch directly:
+
 ```bash
 curl https://listpkgs.nuros.org/repodata.json | jq
 ```
@@ -74,6 +77,7 @@ See [API Reference](./api-reference.md) for examples.
 ### Why is the search getting slow?
 
 If you have >5000 packages indexed:
+
 - Use filters to narrow results
 - Be more specific in searches
 - Try category filtering
@@ -83,6 +87,7 @@ Currently optimized for up to 5000 packages.
 ### Does dark mode work?
 
 Yes! Dark mode:
+
 - Auto-detects system preference
 - Can be toggled manually
 - Persists across sessions
@@ -91,6 +96,7 @@ Yes! Dark mode:
 ### Mobile support?
 
 Yes, fully responsive:
+
 - Works on phones and tablets
 - All features available
 - Touch-optimized buttons
@@ -99,6 +105,7 @@ Yes, fully responsive:
 ### Browser support?
 
 Supported browsers:
+
 - Chrome/Edge (latest 2 versions)
 - Firefox (latest 2 versions)
 - Safari (latest 2 versions)
@@ -156,6 +163,7 @@ See [API Reference](./api-reference.md) with Python, Node.js, curl examples.
 The `repodata.json` file is the API. It's static JSON served over HTTPS.
 
 No REST API endpoints currently. Features:
+
 - CORS enabled
 - Caching friendly
 - ETag support
@@ -164,6 +172,7 @@ No REST API endpoints currently. Features:
 ### How much data is in packages.json?
 
 Varies by number of repositories, typically:
+
 - **Size**: 500KB - 2MB (compressed)
 - **Packages**: 1000 - 5000+
 - **Update time**: <1 minute
@@ -171,6 +180,7 @@ Varies by number of repositories, typically:
 ### Can I cache the data?
 
 Yes! Recommended practices:
+
 - Cache for at least 1 hour
 - Respect `Cache-Control` headers
 - Use `ETag` for conditional requests
@@ -183,6 +193,7 @@ See [API Reference](./api-reference.md) for cache examples.
 ### Search results are empty
 
 **Try**:
+
 1. Check spelling (case-insensitive)
 2. Use simpler search term
 3. Clear any filters
@@ -192,6 +203,7 @@ See [API Reference](./api-reference.md) for cache examples.
 ### Package details show incomplete info
 
 **Causes**:
+
 - Repository not yet indexed
 - Metadata.json incomplete
 - Custom fields not displayed
@@ -201,6 +213,7 @@ See [API Reference](./api-reference.md) for cache examples.
 ### Dark mode colors look wrong
 
 **Fixes**:
+
 1. Try different browser
 2. Disable Dark Reader extension
 3. Check system dark mode setting
@@ -211,6 +224,7 @@ See [API Reference](./api-reference.md) for cache examples.
 **Issue**: URL is `/listpkgs.nuros.org` instead of root
 
 **Fixes**:
+
 1. Hard refresh browser
 2. Clear browser cache
 3. Try different browser
@@ -219,6 +233,7 @@ See [API Reference](./api-reference.md) for cache examples.
 ### Site shows blank page
 
 **Troubleshoot**:
+
 1. Open browser console (F12)
 2. Check for errors
 3. Check JavaScript is enabled
@@ -237,12 +252,14 @@ See [API Reference](./api-reference.md) for cache examples.
 ### Can I trigger deployment manually?
 
 Yes! In GitHub:
+
 1. Go to Actions tab
 2. Select workflow
 3. Click "Run workflow"
 4. Confirm
 
 Or with GitHub CLI:
+
 ```bash
 gh workflow run deploy_on_pages.yml
 ```
@@ -250,6 +267,7 @@ gh workflow run deploy_on_pages.yml
 ### How long does deployment take?
 
 Typical timeline:
+
 - Update list: 1-2 min
 - Build frontend: 2-3 min
 - Deploy to Pages: ~30 sec
@@ -258,12 +276,14 @@ Typical timeline:
 ### What if deployment fails?
 
 Check logs:
+
 1. Go to Actions tab
 2. Click failed workflow
 3. Scroll to failed step
 4. Read error message
 
 Common fixes:
+
 - Check pnpm-lock.yaml is committed
 - Verify package.json dependencies
 - Check Node.js version (22.x required)
@@ -273,6 +293,7 @@ Common fixes:
 ### How do I contribute?
 
 See [Contributing Guide](./contributing.md) for:
+
 1. Development setup
 2. Code style guidelines
 3. PR process
@@ -302,6 +323,7 @@ See package metadata template in contributing guide.
 ### How do I suggest features?
 
 Create GitHub issue with:
+
 1. Feature description
 2. Use case/why it's needed
 3. Example or mockup if possible
@@ -309,7 +331,7 @@ Create GitHub issue with:
 
 ---
 
-**Still have questions?** 
+**Still have questions?**
 
 - Check [Architecture](./architecture.md) and [API Reference](./api-reference.md)
 - Open a [GitHub Discussion](https://github.com/NurOS-Linux/listpkgs.nuros.org/discussions)
