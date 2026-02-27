@@ -3,7 +3,6 @@
 @brief Асинхронный модуль для обработки метаданных пакетов.
 """
 
-import asyncio
 import json
 import logging
 from typing import Any, Optional

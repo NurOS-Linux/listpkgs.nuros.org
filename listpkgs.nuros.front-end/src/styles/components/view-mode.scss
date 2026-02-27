@@ -1,57 +1,38 @@
 // ============================================================================
-// COMPONENTS/VIEW-MODE.SCSS - View mode selector styles
+// COMPONENTS/VIEW-MODE.SCSS - Juldyz Edition
 // ============================================================================
 
 @use '../variables' as v;
-@use '../animations';
+@use '../base' as b;
 
 .view-mode-container {
-  display: flex;
-  justify-content: center;
-  gap: v.$spacing-md;
-  margin: v.$spacing-lg 0;
-  animation: slideInDown v.$transition-base 0.2s both;
-
-  @media (width <= 768px) {
-    gap: v.$spacing-sm;
-    flex-wrap: wrap;
-  }
-}
-
-.view-mode-selector {
+  @include b.glass-effect;
+  border-radius: v.$radius-lg;
+  padding: v.$spacing-sm;
   display: flex;
   gap: v.$spacing-sm;
+  margin-bottom: v.$spacing-lg;
+  width: fit-content;
+  align-self: center;
 }
 
 .view-mode-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
   padding: v.$spacing-sm v.$spacing-md;
-  border: 1px solid var(--border-color);
-  background-color: var(--card-bg);
-  color: var(--text-color);
-  cursor: pointer;
   border-radius: v.$radius-md;
-  font-size: 0.9rem;
-  transition: var(--transition);
-  font-weight: 500;
-
-  &:hover {
-    background-color: var(--hover-bg);
-    border-color: var(--primary-color);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgb(37 99 235 / 20%);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
 
   &.active {
-    background: linear-gradient(135deg, var(--primary-color) 0%, rgb(37 99 235 / 80%) 100%);
-    border-color: var(--primary-color);
-    color: white;
-    font-weight: 600;
-    box-shadow: 0 4px 8px rgb(37 99 235 / 30%);
+    background: var(--color-accent);
+    color: #fff;
+    box-shadow: 0 0 10px rgba(v.$color-accent-blue, 0.5);
   }
 
-  animation: scaleIn v.$transition-base;
+  &:hover:not(.active) {
+    color: var(--color-text-primary);
+  }
 }

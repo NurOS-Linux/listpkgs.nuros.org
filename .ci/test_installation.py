@@ -6,8 +6,6 @@
 import json
 import logging
 import sys
-import tempfile
-import os
 from unittest.mock import patch
 
 import pytest
@@ -85,7 +83,7 @@ async def test_process_repo_logic():
 if __name__ == "__main__":
     print("="*50)
     print("Running local async tests for listpkgs-aggregator...")
-    print("Please ensure you have run 'uv pip install -e .ci/' with dev dependencies.")
+    print("Please ensure you have run 'uv pip install -e .ci[dev]' in an active venv.")
     print("="*50)
     # Запускаем pytest для этого файла
     sys.exit(pytest.main(["-v", __file__]))

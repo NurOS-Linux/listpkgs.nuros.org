@@ -1,49 +1,8 @@
 // ============================================================================
-// COMPONENTS/FILTERS.SCSS - Filter select styles
+// COMPONENTS/FILTERS.SCSS - Juldyz Edition (This file is now mostly redundant)
 // ============================================================================
 
-@use '../variables' as *;
-
-.filters-container {
-  animation: slideInDown $transition-base 0.15s both;
-}
-
-.filters {
-  display: flex;
-  gap: $spacing-md;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  animation: slideInDown $transition-base 0.1s both;
-
-  @media (width <= 768px) {
-    gap: 0.75rem;
-  }
-}
-
-.filter-select {
-  padding: 0.625rem 0.875rem;
-  border: 2px solid var(--border-color);
-  border-radius: $radius-md;
-  background-color: var(--background);
-  color: var(--text-color);
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all $transition-base;
-  cursor: pointer;
-  min-width: 140px;
-
-  &:hover {
-    border-color: var(--primary-color);
-  }
-
-  &:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgb(37 99 235 / 10%);
-  }
-
-  option {
-    background-color: var(--card-bg);
-    color: var(--text-color);
-  }
-}
+// This file is kept for potential future use, but the primary filter UI
+// is now handled by the sidebar and its styles in sidebar_styles.scss.
+// The .view-mode-container and its buttons have been moved to sidebar_styles.scss
+// to consolidate layout components.

@@ -44,10 +44,6 @@
   &:active {
     background-color: var(--color-accent);
     color: white;
-
-    .expand-icon {
-      color: white;
-    }
   }
 }
 
@@ -71,6 +67,10 @@
 // Corrected specificity order
 .package-group:hover .expand-icon {
   transform: scale(1.2);
+}
+
+.group-header:active .expand-icon {
+  color: white;
 }
 
 .package-count {
