@@ -1,5 +1,5 @@
 // ============================================================================
-// LAYOUT/HEADER.SCSS - NurOS-style header
+// LAYOUT/HEADER.SCSS - Juldyz Edition Header & Search
 // ============================================================================
 
 @use '../variables' as v;
@@ -9,140 +9,78 @@
   position: sticky;
   top: 0;
   z-index: v.$z-header;
-  padding: v.$spacing-md v.$spacing-xl;
-  text-align: center;
+
+  @include b.glass-effect;
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: v.$spacing-sm;
-
-  // Glassmorphism for the header
-  background: var(--header-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border-bottom: 1px solid var(--glass-border-color);
-
-  @media (max-width: 768px) {
-    padding: v.$spacing-sm v.$spacing-md;
-  }
-
-  h1 {
-    margin: 0;
-    font-size: v.$fs-xl;
-    color: var(--text-color);
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-  }
-
-  p {
-    margin: 0;
-    color: var(--text-muted);
-  }
+  gap: v.$spacing-md;
+  padding: v.$spacing-md;
 }
 
 .logo {
-  width: 60px; // Reduced for sticky header
-  height: 60px;
-  object-fit: contain;
+  width: 50px;
+  height: 50px;
 }
 
 .project-tagline {
-  font-size: v.$fs-sm;
-  color: var(--primary-color);
-  font-weight: 500;
-  letter-spacing: 0.05em;
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
 }
 
 .package-stats {
-  @include b.glass-effect; // Apply glassmorphism
-  padding: v.$spacing-sm v.$spacing-lg;
-  border-radius: v.$radius-lg;
-  font-weight: 500;
-  color: var(--text-color);
-  cursor: pointer; // Make it clickable for the easter egg
-  position: relative; // For the glow effect
-  overflow: hidden;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: var(--transition-smooth);
 
   strong {
-    color: var(--primary-color);
-    font-weight: 700;
-  }
-
-  // Glow effect on hover
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(
-      circle at center,
-      rgba(v.$nuros-accent-cyan, 0.3) 0%,
-      transparent 70%
-    );
-    opacity: 0;
-    transition: opacity v.$transition-base;
-    z-index: -1;
-  }
-
-  &:hover::before {
-    opacity: 1;
+    color: var(--color-text-primary);
+    font-weight: 600;
   }
 
   &:hover {
-    box-shadow: v.$shadow-glow;
-    transform: translateY(-2px);
+    color: var(--color-accent);
+    transform: scale(1.05);
   }
 }
 
-// Styles for the loading screen and error messages
-.loading-screen,
-.error {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  gap: v.$spacing-lg;
-}
-
-.loading-logo {
-  width: 130px;
-  height: 130px;
-}
-
-.loading-text {
-  font-size: v.$fs-lg;
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-.error {
-  color: #ff4d4d;
-}
-
-// Theme toggle button
-.theme-toggle-btn {
+.search-bar {
   @include b.glass-effect;
-  position: fixed;
-  bottom: v.$spacing-lg;
-  right: v.$spacing-lg;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 1px solid var(--glass-border-color);
-  color: var(--text-color);
-  font-size: 1.5rem;
-  cursor: pointer;
+  border-radius: v.$radius-lg;
+  padding: v.$spacing-sm;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: v.$z-fixed;
-  transition:
-    transform v.$transition-base,
-    box-shadow v.$transition-base;
+  width: 100%;
+  max-width: 600px;
+  margin-top: v.$spacing-md;
+}
+
+.search-input {
+  background: transparent;
+  border: none;
+  color: var(--color-text-primary);
+  font-size: v.$font-size-base;
+  padding: v.$spacing-sm v.$spacing-md;
+  flex-grow: 1;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.search-button {
+  background: var(--color-accent);
+  color: #fff;
+  border: none;
+  border-radius: v.$radius-md;
+  padding: v.$spacing-sm v.$spacing-lg;
+  font-weight: 600;
 
   &:hover {
-    transform: scale(1.1) rotate(15deg);
-    box-shadow: v.$shadow-glow;
+    filter: brightness(1.2);
   }
 }

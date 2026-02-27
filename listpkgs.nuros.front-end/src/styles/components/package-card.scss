@@ -1,5 +1,5 @@
 // ============================================================================
-// COMPONENTS/PACKAGE-CARD.SCSS - NurOS-style package card
+// COMPONENTS/PACKAGE-CARD.SCSS - Juldyz Edition
 // ============================================================================
 
 @use '../variables' as v;
@@ -7,48 +7,22 @@
 
 .package-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  // Rock-solid responsive grid
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: v.$spacing-lg;
   padding: v.$spacing-lg;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    padding: v.$spacing-md;
-  }
 }
 
 .package-card {
-  @include b.glass-effect; // Apply glassmorphism
+  @include b.glass-effect;
   border-radius: v.$radius-lg;
-  padding: v.$spacing-lg;
-  position: relative;
-  overflow: hidden;
-  transition:
-    transform v.$transition-base,
-    box-shadow v.$transition-base;
-
-  // Glow effect on hover
-  &::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(v.$nuros-accent-cyan, 0.2) 0%, transparent 40%);
-    opacity: 0;
-    transition: opacity v.$transition-slow;
-    z-index: -1;
-    transform-origin: center;
-  }
+  padding: v.$spacing-lg; // Increased padding for touch
+  display: flex;
+  flex-direction: column;
 
   &:hover {
-    transform: translateY(-5px);
     box-shadow: v.$shadow-glow;
-    &::after {
-      opacity: 1;
-      animation: rotate 20s linear infinite;
-    }
+    transform: translateY(-4px);
   }
 }
 
@@ -56,78 +30,57 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: v.$spacing-sm;
-  padding-bottom: v.$spacing-sm;
-  border-bottom: 1px solid var(--glass-border-color);
+  gap: v.$spacing-md;
+  padding-bottom: v.$spacing-md;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .package-name {
-  font-size: v.$fs-lg;
+  color: var(--color-text-primary);
   font-weight: 600;
-  color: var(--text-color);
 }
 
 .package-version {
-  background: rgba(v.$nuros-accent-cyan, 0.1);
-  color: v.$nuros-accent-cyan;
-  padding: v.$spacing-xs v.$spacing-sm;
+  background: rgba(v.$color-accent-blue, 0.1);
+  color: var(--color-accent);
+  padding: 0.25rem 0.5rem;
   border-radius: v.$radius-md;
-  font-size: v.$fs-sm;
+  font-size: 0.8rem;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .package-description {
   margin: v.$spacing-md 0;
-  color: var(--text-muted);
-  font-size: v.$fs-base;
-  line-height: 1.6;
+  color: var(--color-text-secondary);
+  flex-grow: 1; // Allows description to push footer down
 }
 
 .package-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: v.$spacing-md;
-  font-size: v.$fs-sm;
-  color: var(--text-muted);
-  margin-top: v.$spacing-md;
   padding-top: v.$spacing-md;
-  border-top: 1px solid var(--glass-border-color);
-}
-
-.package-maintainer,
-.package-license {
-  strong {
-    color: var(--text-color);
-    font-weight: 500;
-  }
-  span {
-    color: v.$nuros-accent-pink;
-  }
+  border-top: 1px solid var(--color-border);
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
 }
 
 .toggle-details-btn {
-  background: linear-gradient(45deg, v.$nuros-accent-cyan, v.$nuros-accent-pink);
-  color: v.$nuros-navy;
+  background-color: var(--color-accent);
+  color: #fff;
   border: none;
   border-radius: v.$radius-md;
   padding: v.$spacing-sm v.$spacing-md;
   font-weight: 600;
-  cursor: pointer;
-  transition:
-    transform v.$transition-base,
-    box-shadow v.$transition-base;
 
   &:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(v.$nuros-accent-cyan, 0.5);
+    filter: brightness(1.2);
   }
 }
 
 .no-results {
   @include b.glass-effect;
   grid-column: 1 / -1;
-  padding: v.$spacing-2xl;
+  padding: v.$spacing-xl;
   text-align: center;
-  font-size: v.$fs-lg;
-  color: var(--text-muted);
+  border-radius: v.$radius-lg;
+  color: var(--color-text-secondary);
 }

@@ -2,7 +2,7 @@
  * @file App.tsx
  * @brief Главный компонент приложения NurOS Search
  * @author NurOS Team
- * @version 2.4
+ * @version 3.0 (Juldyz Edition)
  */
 
 import { createSignal, Switch, Match } from 'solid-js';
@@ -40,16 +40,10 @@ function App() {
   });
   const [viewMode, setViewMode] = createSignal<'list' | 'grouped'>('list');
 
-  // Debounced search handler
   const debouncedSetSearchTerm = debounce((query: string) => {
     setSearchTerm(query);
   }, 300);
 
-  const handleSearch = (query: string) => {
-    debouncedSetSearchTerm(query);
-  };
-
-  // Easter egg handler
   const handleStatsClick = () => {
     const hasSeenAlert = sessionStorage.getItem('nuros-easter-egg-seen');
     if (!hasSeenAlert) {
@@ -79,6 +73,7 @@ function App() {
               <div class="package-stats" onClick={handleStatsClick}>
                 Search more than <strong>{packages().length.toLocaleString()}</strong> packages
               </div>
+              <SearchBar onSearch={debouncedSetSearchTerm} />
             </header>
 
             <div class="app-layout">
@@ -96,7 +91,6 @@ function App() {
               />
 
               <main class="app-main">
-                <SearchBar onSearch={handleSearch} />
                 <div class="view-mode-container">
                   <button
                     class={`view-mode-btn ${viewMode() === 'list' ? 'active' : ''}`}

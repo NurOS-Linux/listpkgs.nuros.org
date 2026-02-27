@@ -1,21 +1,16 @@
 # Use a modern Python image
 FROM python:3.12-slim
 
-# Install uv, the fast Python package installer
-RUN pip install uv
-
 # Set the working directory
 WORKDIR /app
 
-# Copy only the necessary files for dependency installation
-COPY .ci/requirements.in .ci/
+# Copy the entire .ci directory
+COPY .ci/ .ci/
 
-# Install dependencies using uv for speed
-RUN uv pip install --system -r .ci/requirements.in
+# Install the Python package and its dependencies defined in pyproject.toml
+# This makes the `listpkgs-aggregate` command available in the container's PATH
+RUN pip install ./ci
 
-# Copy the rest of the application code
-COPY . .
-
-# The command to generate the repodata.json file
-# The output path will be mounted via a volume in docker-compose
-CMD ["listpkgs-aggregate", "--output", "/app/listpkgs.nuros.front-end/public/repodata.json"]
+# Keep the container alive for development purposes
+# This allows us to `exec` into it and run commands manually
+CMD ["tail", "-f", "/dev/null"]

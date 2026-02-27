@@ -1,86 +1,59 @@
 // ============================================================================
-// VARIABLES.SCSS - Global style variables inspired by nuros.org
+// VARIABLES.SCSS - Juldyz Edition Design System
 // ============================================================================
 
-// NurOS Color Palette
-$nuros-navy: #0a0f1e;
-$nuros-deep-blue: #1a2035;
-$nuros-accent-cyan: #00f2fe;
-$nuros-accent-pink: #ff00c1;
-$nuros-light-text: #e0e5f0;
-$nuros-muted-text: #8a94a6;
-$nuros-border: rgba(0, 242, 254, 0.2);
+// --- Core Palette ---
+$color-background: #0d1117; // Deep, dark gray
+$color-glass-bg: rgba(22, 27, 34, 0.75); // Premium glass background
+$color-text-primary: #c9d1d9; // Soft white
+$color-text-secondary: #8b949e; // Muted gray
+$color-accent-blue: #00aaff; // Signature Nuros Blue
+$color-border: rgba(255, 255, 255, 0.1); // Professional, elegant border
 
-// Spacing
-$spacing-xs: 0.25rem;
+// --- Spacing & Sizing ---
 $spacing-sm: 0.5rem;
 $spacing-md: 1rem;
 $spacing-lg: 1.5rem;
 $spacing-xl: 2rem;
-$spacing-2xl: 3rem;
 
-// Border radius
-$radius-sm: 4px;
+// --- Borders ---
 $radius-md: 8px;
 $radius-lg: 12px;
-$radius-xl: 16px;
 
-// Font sizes
-$fs-xs: 0.75rem;
-$fs-sm: 0.875rem;
-$fs-base: 1rem;
-$fs-lg: 1.2rem;
-$fs-xl: 1.5rem;
-$fs-2xl: 2.5em;
+// --- Typography (Base sizes for clamp()) ---
+$font-size-base: 1rem; // 16px
+$font-size-lg: 1.25rem;
+$font-size-xl: 1.75rem;
+$font-size-xxl: 2.5rem;
 
-// Transitions
-$transition-fast: 0.2s ease-out;
-$transition-base: 0.3s ease;
-$transition-slow: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+// --- Transitions ---
+$transition-smooth: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 
-// Z-index scale
-$z-base: 1;
-$z-content: 10;
+// --- Effects ---
+$shadow-glow: 0 0 20px rgba($color-accent-blue, 0.4);
+$backdrop-blur: blur(12px);
+
+// --- Z-Index ---
 $z-header: 100;
 $z-fixed: 200;
-$z-modal: 300;
 
-// Box shadows for depth
-$shadow-md: 0 4px 15px rgba(0, 0, 0, 0.2);
-$shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.3);
-$shadow-glow:
-  0 0 20px rgba($nuros-accent-cyan, 0.3),
-  0 0 30px rgba($nuros-accent-pink, 0.2);
-
-// CSS Custom Properties for theming
+// ============================================================================
+// CSS Custom Properties (:root)
+// ============================================================================
 :root {
-  // Base colors
-  --background: #{$nuros-navy};
-  --text-color: #{$nuros-light-text};
-  --text-muted: #{$nuros-muted-text};
+  // Base
+  --color-background: #{$color-background};
+  --color-text-primary: #{$color-text-primary};
+  --color-text-secondary: #{$color-text-secondary};
+  --color-border: #{$color-border};
 
-  // Accent colors
-  --primary-color: #{$nuros-accent-cyan};
-  --secondary-color: #{$nuros-accent-pink};
+  // Accent
+  --color-accent: #{$color-accent-blue};
 
-  // Glassmorphism effect
-  --glass-bg: rgba(26, 32, 53, 0.6);
-  --glass-border-color: #{$nuros-border};
-  --glass-blur: blur(10px);
-  --glass-border-image: linear-gradient(
-    to bottom right,
-    #{$nuros-accent-cyan},
-    #{$nuros-accent-pink}
-  );
-
-  // Component-specific
-  --card-bg: var(--glass-bg);
-  --header-bg: rgba(10, 15, 30, 0.8);
-  --sidebar-bg: var(--glass-bg);
+  // Glass Effect
+  --glass-background: #{$color-glass-bg};
+  --glass-backdrop-filter: #{$backdrop-blur};
 
   // Transitions
-  --transition-all: all #{$transition-base};
+  --transition-smooth: all #{$transition-smooth};
 }
-
-// The dark theme is now the default, so no .dark-theme class is needed.
-// Light theme can be added later if required.

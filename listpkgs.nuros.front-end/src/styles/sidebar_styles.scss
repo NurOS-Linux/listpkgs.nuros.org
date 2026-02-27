@@ -1,5 +1,5 @@
 // ============================================================================
-// COMPONENTS/SIDEBAR.SCSS - NurOS-style sidebar
+// COMPONENTS/SIDEBAR.SCSS & VIEW-MODE - Juldyz Edition
 // ============================================================================
 
 @use './variables' as v;
@@ -12,7 +12,7 @@
   padding: v.$spacing-lg;
   height: fit-content;
   position: sticky;
-  top: 100px; // Adjust based on header height
+  top: 120px; // Sticky position below header
   flex-shrink: 0;
 
   @media (max-width: 1024px) {
@@ -24,95 +24,83 @@
 }
 
 .sidebar h3 {
-  margin-top: 0;
-  margin-bottom: v.$spacing-md;
-  color: var(--text-color);
-  font-size: v.$fs-lg;
-  border-bottom: 1px solid var(--glass-border-color);
-  padding-bottom: v.$spacing-sm;
+  margin: 0 0 v.$spacing-md 0;
+  padding-bottom: v.$spacing-md;
+  border-bottom: 1px solid var(--color-border);
+  font-weight: 600;
 }
 
 .tree-navigation ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+  list-style: none;
 }
 
-.tree-node-header {
-  display: flex;
-  align-items: center;
+.tree-node-header, .tree-node-leaf {
+  padding: v.$spacing-sm;
   cursor: pointer;
-  padding: v.$spacing-xs 0;
   border-radius: v.$radius-md;
-  transition: background v.$transition-fast;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: var(--transition-smooth);
 
   &:hover {
-    background: rgba(v.$nuros-accent-cyan, 0.1);
-  }
-}
-
-.tree-node-toggle {
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  padding: v.$spacing-xs;
-  transition:
-    transform v.$transition-fast,
-    color v.$transition-fast;
-
-  &.expanded {
-    transform: rotate(90deg);
-  }
-
-  &:hover {
-    color: var(--primary-color);
+    background: rgba(v.$color-accent-blue, 0.1);
   }
 }
 
 .tree-node-label {
-  flex-grow: 1;
-  color: var(--text-color);
   font-weight: 500;
 }
 
 .node-count {
-  color: var(--text-muted);
-  font-size: v.$fs-sm;
-  margin-left: v.$spacing-sm;
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+}
+
+.tree-node-leaf.selected {
+  background: var(--color-accent);
+  color: #fff;
+  font-weight: 600;
+
+  .node-count {
+    color: #fff;
+  }
 }
 
 .tree-children {
-  list-style-type: none;
   padding-left: v.$spacing-md;
-  overflow: hidden;
   max-height: 0;
-  transition: max-height v.$transition-base;
+  overflow: hidden;
+  transition: max-height 0.4s ease-in-out;
 
   &.expanded {
     max-height: 1000px; // Arbitrary large value
   }
 }
 
-.tree-node-leaf {
-  padding: v.$spacing-xs v.$spacing-sm;
-  cursor: pointer;
-  border-radius: v.$radius-md;
+// --- View Mode Buttons ---
+.view-mode-container {
+  @include b.glass-effect;
+  border-radius: v.$radius-lg;
+  padding: v.$spacing-sm;
   display: flex;
-  justify-content: space-between;
-  transition: background v.$transition-fast;
+  gap: v.$spacing-sm;
+  margin-bottom: v.$spacing-lg;
+  width: fit-content;
+  align-self: center;
+}
 
-  &:hover {
-    background: rgba(v.$nuros-accent-cyan, 0.1);
-  }
+.view-mode-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  padding: v.$spacing-sm v.$spacing-md;
+  border-radius: v.$radius-md;
+  font-weight: 600;
 
-  &.selected {
-    background: linear-gradient(90deg, v.$nuros-accent-cyan, v.$nuros-accent-pink);
-    color: v.$nuros-navy;
-    font-weight: 600;
-
-    .node-count {
-      color: v.$nuros-navy;
-    }
+  &.active {
+    background: var(--color-accent);
+    color: #fff;
+    box-shadow: 0 0 10px rgba(v.$color-accent-blue, 0.5);
   }
 }
