@@ -19,7 +19,7 @@
   margin: 0 auto;
   padding: v.$spacing-lg 0;
 
-  @media (max-width: 1024px) {
+  @media (width <= 1024px) {
     flex-direction: column;
     gap: v.$spacing-lg;
     padding: v.$spacing-md;
@@ -31,5 +31,5 @@
   display: flex;
   flex-direction: column;
   gap: v.$spacing-lg;
-  animation: slideInUp v.$transition-base 0.1s both;
+  animation: slide-in-up v.$transition-base 0.1s both;
 }

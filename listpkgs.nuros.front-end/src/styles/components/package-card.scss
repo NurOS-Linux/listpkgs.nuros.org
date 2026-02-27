@@ -7,6 +7,7 @@
 
 .package-list {
   display: grid;
+
   // Rock-solid responsive grid
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: v.$spacing-lg;
@@ -15,6 +16,7 @@
 
 .package-card {
   @include b.glass-effect;
+
   border-radius: v.$radius-lg;
   padding: v.$spacing-lg; // Increased padding for touch
   display: flex;
@@ -78,6 +80,7 @@
 
 .no-results {
   @include b.glass-effect;
+
   grid-column: 1 / -1;
   padding: v.$spacing-xl;
   text-align: center;

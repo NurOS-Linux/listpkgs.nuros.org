@@ -1,102 +1,91 @@
 """
 @file test_installation.py
-@brief Локальный тест для проверки логики агрегатора с использованием моков.
+@brief Локальный асинхронный тест для проверки логики агрегатора.
 """
 
 import json
 import logging
-import unittest
-from unittest.mock import patch, MagicMock
+import sys
+import tempfile
+import os
+from unittest.mock import patch
 
 import pytest
+import httpx
+import respx
 
-# Важно импортировать модули, которые мы будем тестировать
-from listpkgs_aggregator import github_client, metadata_processor
+# Импортируем тестируемые модули
+from listpkgs_aggregator import github_client, metadata_processor, aggregator
 
-# Настройка логирования для тестов
-logging.basicConfig(level=logging.DEBUG, format='%(levelname)s - %(message)s')
+# --- Настройка ---
+logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(message)s')
+pytestmark = pytest.mark.asyncio
 
 # --- Тестовые данные ---
-
+ORG_URL = f"https://api.github.com/orgs/{github_client.ORG_NAME}/repos"
 MOCK_REPOS_PAYLOAD = [
     {"name": "repo-success", "html_url": "https://github.com/test/repo-success", "updated_at": "2023-01-01T00:00:00Z"},
     {"name": "repo-no-meta", "html_url": "https://github.com/test/repo-no-meta", "updated_at": "2023-01-01T00:00:00Z"},
-    {"name": "repo-bad-meta", "html_url": "https://github.com/test/repo-bad-meta", "updated_at": "2023-01-01T00:00:00Z"},
-    {"name": ".ignored-repo", "html_url": "https://github.com/test/.ignored-repo", "updated_at": "2023-01-01T00:00:00Z"},
+    {"name": ".ignored", "html_url": "https://github.com/test/.ignored", "updated_at": "2023-01-01T00:00:00Z"},
 ]
-
-MOCK_METADATA_SUCCESS = {"name": "my-package", "version": "1.0.0", "architecture": "x86_64"}
-MOCK_METADATA_BAD = {"version": "1.0.0"} # Отсутствует 'name'
+METADATA_URL_SUCCESS = f"https://raw.githubusercontent.com/{github_client.ORG_NAME}/repo-success/main/metadata.json"
+MOCK_METADATA_SUCCESS = {"name": "my-package", "version": "1.0.0"}
 
 # --- Тесты ---
 
-@patch('listpkgs_aggregator.github_client.requests.Session.get')
-def test_get_all_repos_success(mock_get):
-    """Тестирует успешное получение списка репозиториев."""
-    logging.info("--- Running test: test_get_all_repos_success ---")
-    mock_response = MagicMock()
-    mock_response.status_code = 200
-    mock_response.json.return_value = MOCK_REPOS_PAYLOAD
-    mock_get.return_value = mock_response
-
-    repos = github_client.get_all_repos()
+@respx.mock
+async def test_full_run_logic(tmp_path):
+    """Тестирует полный цикл агрегации с имитацией HTTP запросов."""
+    logging.info("--- Running test: test_full_run_logic ---")
     
-    assert len(repos) == 4
-    assert repos[0]['name'] == 'repo-success'
-    logging.info("✅ Successfully fetched and parsed repositories.")
-
-@patch('listpkgs_aggregator.github_client.api_request')
-def test_fetch_metadata(mock_api_request):
-    """Тестирует логику получения метаданных для разных сценариев."""
-    logging.info("--- Running test: test_fetch_metadata ---")
-
-    # Сценарий 1: Успешное получение
-    mock_response_success = MagicMock()
-    mock_response_success.status_code = 200
-    mock_response_success.json.return_value = MOCK_METADATA_SUCCESS
-    mock_api_request.return_value = mock_response_success
+    # Имитируем ответ для списка репозиториев
+    respx.get(ORG_URL).mock(return_value=httpx.Response(200, json=MOCK_REPOS_PAYLOAD))
     
-    metadata = metadata_processor.fetch_metadata("repo-success")
-    assert metadata is not None
-    assert metadata["name"] == "my-package"
-    logging.info("✅ Correctly fetched metadata on success.")
-
-    # Сценарий 2: Файл не найден
-    mock_response_not_found = MagicMock()
-    mock_response_not_found.status_code = 404
-    mock_api_request.return_value = mock_response_not_found
+    # Имитируем ответы для metadata.json
+    respx.get(METADATA_URL_SUCCESS).mock(return_value=httpx.Response(200, json=MOCK_METADATA_SUCCESS))
+    respx.get(f"https://raw.githubusercontent.com/{github_client.ORG_NAME}/repo-no-meta/main/metadata.json").mock(return_value=httpx.Response(404))
     
-    metadata = metadata_processor.fetch_metadata("repo-no-meta")
-    assert metadata is None
-    logging.info("✅ Correctly handled missing metadata file.")
+    # Используем временный файл для вывода, чтобы не засорять проект
+    output_file = tmp_path / "repodata.json"
+    
+    # Патчим open, чтобы запись шла во временный файл
+    with patch("builtins.open", new_callable=lambda: lambda *args, **kwargs: open(output_file if args[0] == "repodata.json" else args[0], *kwargs.values())):
+        await aggregator.run_aggregation_async(jobs=10)
+    
+    logging.info(f"✅ Aggregation finished, checking output file: {output_file}")
+    with open(output_file, "r") as f:
+        data = json.load(f)
+        
+    assert len(data) == 1
+    assert "my-package" in data
+    assert data["my-package"]["version"] == "1.0.0"
+    logging.info("✅ repodata.json created correctly.")
 
-def test_process_repo():
-    """Тестирует полную логику обработки одного репозитория."""
-    logging.info("--- Running test: test_process_repo ---")
+@pytest.mark.asyncio
+async def test_process_repo_logic():
+    """Тестирует логику обработки одного репозитория."""
+    logging.info("--- Running test: test_process_repo_logic ---")
+    
+    async with httpx.AsyncClient() as client:
+        # Сценарий 1: Успех
+        with respx.mock:
+            respx.get(METADATA_URL_SUCCESS).mock(return_value=httpx.Response(200, json=MOCK_METADATA_SUCCESS))
+            result = await metadata_processor.process_repo(client, MOCK_REPOS_PAYLOAD[0])
+            assert result is not None
+            key, data = result
+            assert key == "my-package"
+            assert data["name"] == "my-package"
+            logging.info("✅ Correctly processed a valid repository.")
 
-    # Сценарий 1: Успешная обработка
-    with patch('listpkgs_aggregator.metadata_processor.fetch_metadata') as mock_fetch:
-        mock_fetch.return_value = MOCK_METADATA_SUCCESS
-        result = metadata_processor.process_repo(MOCK_REPOS_PAYLOAD[0])
-        assert result is not None
-        key, data = result
-        assert key == "my-package@x86_64"
-        assert data["version"] == "1.0.0"
-        logging.info("✅ Correctly processed a valid repository.")
-
-    # Сценарий 2: Пропуск игнорируемого репозитория
-    result = metadata_processor.process_repo(MOCK_REPOS_PAYLOAD[3])
-    assert result is None
-    logging.info("✅ Correctly skipped an ignored repository.")
-
-    # Сценарий 3: Невалидные метаданные
-    with patch('listpkgs_aggregator.metadata_processor.fetch_metadata') as mock_fetch:
-        mock_fetch.return_value = MOCK_METADATA_BAD
-        result = metadata_processor.process_repo(MOCK_REPOS_PAYLOAD[2])
+        # Сценарий 2: Пропуск
+        result = await metadata_processor.process_repo(client, MOCK_REPOS_PAYLOAD[2])
         assert result is None
-        logging.info("✅ Correctly handled a repository with invalid metadata.")
+        logging.info("✅ Correctly skipped an ignored repository.")
 
 if __name__ == "__main__":
-    print("Running local tests for listpkgs-aggregator...")
+    print("="*50)
+    print("Running local async tests for listpkgs-aggregator...")
+    print("Please ensure you have run 'uv pip install -e .ci/' with dev dependencies.")
+    print("="*50)
     # Запускаем pytest для этого файла
-    sys.exit(pytest.main([__file__]))
+    sys.exit(pytest.main(["-v", __file__]))

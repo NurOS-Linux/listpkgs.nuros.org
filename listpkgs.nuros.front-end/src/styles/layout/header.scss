@@ -11,11 +11,11 @@
   z-index: v.$z-header;
 
   @include b.glass-effect;
+
   border-radius: 0;
   border-left: none;
   border-right: none;
   border-top: none;
-
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -51,6 +51,7 @@
 
 .search-bar {
   @include b.glass-effect;
+
   border-radius: v.$radius-lg;
   padding: v.$spacing-sm;
   display: flex;

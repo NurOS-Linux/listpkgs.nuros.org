@@ -4,11 +4,11 @@
 
 // --- Core Palette ---
 $color-background: #0d1117; // Deep, dark gray
-$color-glass-bg: rgba(22, 27, 34, 0.75); // Premium glass background
+$color-glass-bg: rgb(22 27 34 / 75%); // Premium glass background
 $color-text-primary: #c9d1d9; // Soft white
 $color-text-secondary: #8b949e; // Muted gray
-$color-accent-blue: #00aaff; // Signature Nuros Blue
-$color-border: rgba(255, 255, 255, 0.1); // Professional, elegant border
+$color-accent-blue: #0af; // Signature Nuros Blue
+$color-border: rgb(255 255 255 / 10%); // Professional, elegant border
 
 // --- Spacing & Sizing ---
 $spacing-sm: 0.5rem;

@@ -7,6 +7,7 @@
 
 .sidebar {
   @include b.glass-effect;
+
   width: 280px;
   border-radius: v.$radius-lg;
   padding: v.$spacing-lg;
@@ -15,7 +16,7 @@
   top: 120px; // Sticky position below header
   flex-shrink: 0;
 
-  @media (max-width: 1024px) {
+  @media (width <= 1024px) {
     width: 100%;
     position: relative;
     top: auto;
@@ -81,6 +82,7 @@
 // --- View Mode Buttons ---
 .view-mode-container {
   @include b.glass-effect;
+
   border-radius: v.$radius-lg;
   padding: v.$spacing-sm;
   display: flex;

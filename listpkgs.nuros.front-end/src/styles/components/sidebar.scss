@@ -90,6 +90,7 @@
 // JSON viewer styles
 .json-display-prism {
   @include b.glass-effect;
+
   margin-top: v.$spacing-lg;
   padding: v.$spacing-md;
   border-radius: v.$radius-md;
@@ -104,18 +105,23 @@
   .token.punctuation {
     color: v.$nuros-accent-pink;
   }
+
   .token.property {
     color: v.$nuros-accent-cyan;
   }
+
   .token.string {
     color: #95ff95;
   }
+
   .token.number {
     color: #ffc795;
   }
+
   .token.boolean {
     color: #ff9595;
   }
+
   .token.null {
     color: #c795ff;
   }
