@@ -24,7 +24,9 @@
   animation: slide-in-up v.$transition-smooth;
 
   &:hover {
-    box-shadow: var(--shadow-lg), 0 0 20px rgba(var(--color-accent-rgb), 0.15);
+    box-shadow:
+      var(--shadow-lg),
+      0 0 20px rgba(var(--color-accent-rgb), 0.15);
     border-color: var(--color-accent);
     transform: translateY(-2px);
   }

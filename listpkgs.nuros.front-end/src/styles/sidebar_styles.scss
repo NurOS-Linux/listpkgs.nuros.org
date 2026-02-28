@@ -35,7 +35,8 @@
   list-style: none;
 }
 
-.tree-node-header, .tree-node-leaf {
+.tree-node-header,
+.tree-node-leaf {
   padding: v.$spacing-sm;
   cursor: pointer;
   border-radius: v.$radius-md;

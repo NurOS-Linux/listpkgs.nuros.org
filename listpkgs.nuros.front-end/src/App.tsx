@@ -39,11 +39,9 @@ function App() {
     sources: [],
   });
   const [viewMode, setViewMode] = createSignal<'list' | 'grouped'>('list');
-  
+
   // Initialize theme from localStorage or system preference
-  const savedTheme = typeof window !== 'undefined' 
-    ? localStorage.getItem('theme') 
-    : 'dark';
+  const savedTheme = typeof window !== 'undefined' ? localStorage.getItem('theme') : 'dark';
   const [darkTheme, setDarkTheme] = createSignal(savedTheme !== 'light');
 
   // Apply theme on mount and when it changes
@@ -93,7 +91,41 @@ function App() {
         <Match when={!loading() && !error()}>
           <div class="app">
             <header class="app-header">
-              <a href="https://www.nuros.org/" target="_blank" rel="noopener noreferrer" class="logo-link" title="Visit NurOS.org">
+              <nav class="header-nav">
+                <a
+                  href="https://docs.nuros.org/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="header-nav-link"
+                >
+                  📚 Документация
+                </a>
+                <span class="header-nav-divider">•</span>
+                <a
+                  href="https://github.com/NurOS-Linux/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="header-nav-link"
+                >
+                  🐙 NurOS-Linux
+                </a>
+                <span class="header-nav-divider">•</span>
+                <a
+                  href="https://github.com/NurOS-Packages/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="header-nav-link"
+                >
+                  📦 NurOS-Packages
+                </a>
+              </nav>
+              <a
+                href="https://www.nuros.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="logo-link"
+                title="Visit NurOS.org"
+              >
                 <img src={logoSrc} alt="NurOS Logo" class="logo" />
               </a>
               <h1>NurOS Package Search</h1>

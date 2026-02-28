@@ -69,7 +69,10 @@ export const filterByArchitecture = (packages: Package[], architecture: string):
     return packages;
   }
 
-  const architectures = architecture.split(',').map(a => a.trim()).filter(Boolean);
+  const architectures = architecture
+    .split(',')
+    .map(a => a.trim())
+    .filter(Boolean);
 
   return packages.filter(pkg => {
     const pkgArch = pkg.architecture || 'unknown';
@@ -125,12 +128,15 @@ export const filterByCategory = (packages: Package[], packageType: string): Pack
     return packages;
   }
 
-  const categories = packageType.split(',').map(c => c.trim()).filter(Boolean);
+  const categories = packageType
+    .split(',')
+    .map(c => c.trim())
+    .filter(Boolean);
 
   return packages.filter(pkg => {
     const pkgCategory = getCategoryForPackage(pkg);
-    return categories.some(cat =>
-      pkgCategory.includes(cat.toLowerCase()) || cat.toLowerCase().includes(pkgCategory)
+    return categories.some(
+      cat => pkgCategory.includes(cat.toLowerCase()) || cat.toLowerCase().includes(pkgCategory)
     );
   });
 };
