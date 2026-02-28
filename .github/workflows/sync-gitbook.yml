@@ -35,6 +35,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup GitBook Sync Status
+        run: |
+          echo "🔄 GitBook - Updating content on GitBook..."
+          echo "📚 Syncing documentation..."
+
       - name: Format markdown files
         run: |
           if command -v prettier &> /dev/null; then
@@ -53,7 +58,7 @@ jobs:
             fi
           done
           echo "✅ All required files present"
-          
+
           echo "📄 Documentation files:"
           ls -la blog/*.md blog/*.json blog/*.css 2>/dev/null || true
 
@@ -80,7 +85,7 @@ jobs:
           echo "=========================================="
           echo "✅ Documentation ready for GitBook sync"
           echo "=========================================="
-          
+
           # List files that will be synced
           echo ""
           echo "📚 Files to sync:"
