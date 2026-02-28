@@ -1,5 +1,5 @@
 // ============================================================================
-// COMPONENTS/VIEW-MODE.SCSS - Juldyz Edition
+// COMPONENTS/VIEW-MODE.SCSS - NurOS Edition
 // ============================================================================
 
 @use '../variables' as v;
@@ -7,6 +7,7 @@
 
 .view-mode-container {
   @include b.glass-effect;
+
   border-radius: v.$radius-lg;
   padding: v.$spacing-sm;
   display: flex;
@@ -14,6 +15,7 @@
   margin-bottom: v.$spacing-lg;
   width: fit-content;
   align-self: center;
+  border: 1px solid var(--color-border);
 }
 
 .view-mode-btn {
@@ -25,14 +27,15 @@
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition-smooth);
+  font-size: v.$fs-sm;
 
   &.active {
     background: var(--color-accent);
     color: #fff;
-    box-shadow: 0 0 10px rgba(v.$color-accent-blue, 0.5);
   }
 
   &:hover:not(.active) {
     color: var(--color-text-primary);
+    background: rgba(var(--color-accent-rgb), 0.08);
   }
 }

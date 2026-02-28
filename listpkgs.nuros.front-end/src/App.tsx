@@ -2,7 +2,7 @@
  * @file App.tsx
  * @brief Главный компонент приложения NurOS Search
  * @author NurOS Team
- * @version 3.0 (Juldyz Edition)
+ * @version 3.2
  */
 
 import { createSignal, Switch, Match } from 'solid-js';
@@ -39,6 +39,22 @@ function App() {
     sources: [],
   });
   const [viewMode, setViewMode] = createSignal<'list' | 'grouped'>('list');
+  
+  // Initialize theme from localStorage or system preference
+  const savedTheme = typeof window !== 'undefined' 
+    ? localStorage.getItem('theme') 
+    : 'dark';
+  const [darkTheme, setDarkTheme] = createSignal(savedTheme !== 'light');
+
+  // Apply theme on mount and when it changes
+  const applyTheme = (isDark: boolean) => {
+    const theme = isDark ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  };
+
+  // Initialize theme on mount
+  applyTheme(darkTheme());
 
   const debouncedSetSearchTerm = debounce((query: string) => {
     setSearchTerm(query);
@@ -52,12 +68,22 @@ function App() {
     }
   };
 
+  const toggleTheme = () => {
+    const newTheme = !darkTheme();
+    setDarkTheme(newTheme);
+    applyTheme(newTheme);
+  };
+
+  // Get base path for assets
+  const basePath = import.meta.env.BASE_URL;
+  const logoSrc = `${basePath}plymoth_adeki_logo.gif`;
+
   return (
     <>
       <Switch>
         <Match when={loading()}>
           <div class="loading-screen">
-            <img src="/plymoth_adeki_logo.gif" alt="NurOS Logo" class="loading-logo" />
+            <img src={logoSrc} alt="NurOS Logo" class="loading-logo" />
             <div class="loading-text">Loading Packages...</div>
           </div>
         </Match>
@@ -67,13 +93,14 @@ function App() {
         <Match when={!loading() && !error()}>
           <div class="app">
             <header class="app-header">
-              <img src="/plymoth_adeki_logo.gif" alt="NurOS Logo" class="logo" />
+              <a href="https://www.nuros.org/" target="_blank" rel="noopener noreferrer" class="logo-link" title="Visit NurOS.org">
+                <img src={logoSrc} alt="NurOS Logo" class="logo" />
+              </a>
               <h1>NurOS Package Search</h1>
               <p class="project-tagline">Speed • Security • Accessibility</p>
               <div class="package-stats" onClick={handleStatsClick}>
                 Search more than <strong>{packages().length.toLocaleString()}</strong> packages
               </div>
-              <SearchBar onSearch={debouncedSetSearchTerm} />
             </header>
 
             <div class="app-layout">
@@ -91,6 +118,7 @@ function App() {
               />
 
               <main class="app-main">
+                <SearchBar onSearch={debouncedSetSearchTerm} />
                 <div class="view-mode-container">
                   <button
                     class={`view-mode-btn ${viewMode() === 'list' ? 'active' : ''}`}
@@ -113,6 +141,10 @@ function App() {
                 />
               </main>
             </div>
+
+            <button class="theme-toggle-fixed" onClick={toggleTheme} title="Toggle theme">
+              {darkTheme() ? '☀️' : '🌙'}
+            </button>
           </div>
         </Match>
       </Switch>

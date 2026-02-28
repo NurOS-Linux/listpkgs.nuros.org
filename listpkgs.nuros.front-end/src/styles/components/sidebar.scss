@@ -5,10 +5,35 @@
 @use '../variables' as v;
 @use '../base' as b;
 
-.tree-navigation ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+.sidebar {
+  @include b.glass-effect;
+
+  border-radius: v.$radius-lg;
+  padding: v.$spacing-md;
+  width: 100%;
+  max-width: 280px;
+  max-height: calc(100vh - 280px);
+  overflow-y: auto;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+.sidebar-title {
+  font-size: v.$fs-lg;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 v.$spacing-md 0;
+  padding-bottom: v.$spacing-sm;
+  border-bottom: 1px solid var(--color-border);
+}
+
+// Tree Navigation
+.tree-navigation {
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
 }
 
 .tree-node {
@@ -18,111 +43,141 @@
 .tree-node-header {
   display: flex;
   align-items: center;
-  padding: v.$spacing-xs;
+  padding: v.$spacing-xs v.$spacing-sm;
   border-radius: v.$radius-md;
   cursor: pointer;
-  transition: background v.$transition-fast;
+  transition: var(--transition-smooth);
 
   &:hover {
-    background: rgba(v.$nuros-accent-cyan, 0.05);
+    background: rgba(var(--color-accent-rgb), 0.08);
+  }
+
+  &.selected {
+    background: rgba(var(--color-accent-rgb), 0.15);
   }
 }
 
 .tree-node-toggle {
   background: none;
   border: none;
-  color: var(--text-muted);
+  color: var(--color-text-secondary);
   padding: v.$spacing-xs;
-  transition: transform v.$transition-fast;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+
+  &:hover {
+    color: var(--color-accent);
+  }
 
   &.expanded {
     transform: rotate(90deg);
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
   }
 }
 
 .tree-node-label {
   flex-grow: 1;
   font-weight: 500;
+  color: var(--color-text-primary);
+  font-size: v.$fs-sm;
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-xs;
 }
 
 .node-count {
-  color: var(--text-muted);
+  color: var(--color-text-secondary);
   font-size: v.$fs-sm;
+  background: rgba(var(--color-accent-rgb), 0.1);
+  padding: 0.1rem 0.4rem;
+  border-radius: v.$radius-sm;
+  font-weight: 500;
 }
 
 .tree-children {
-  list-style-type: none;
+  list-style: none;
   padding-left: v.$spacing-lg;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height v.$transition-base ease-in-out;
+  margin-top: v.$spacing-xs;
+}
 
-  &.expanded {
-    max-height: 1000px; // Arbitrary large value
+// Checkbox styling
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-sm;
+  flex-grow: 1;
+}
+
+.checkbox-wrapper input[type="checkbox"] {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-border);
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  position: relative;
+
+  &:checked {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  &:checked::after {
+    content: '✓';
+    position: absolute;
+    color: #fff;
+    font-size: 12px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  &:hover {
+    border-color: var(--color-accent);
   }
 }
 
+// Selected state for tree nodes
 .tree-node-leaf {
   padding: v.$spacing-xs v.$spacing-sm;
   cursor: pointer;
   border-radius: v.$radius-md;
   display: flex;
   justify-content: space-between;
-  transition:
-    background v.$transition-fast,
-    color v.$transition-fast;
+  align-items: center;
+  transition: var(--transition-smooth);
 
   &:hover {
-    background: rgba(v.$nuros-accent-cyan, 0.1);
+    background: rgba(var(--color-accent-rgb), 0.1);
   }
 
   &.selected {
-    background: linear-gradient(90deg, v.$nuros-accent-cyan, v.$nuros-accent-pink);
-    color: v.$nuros-navy;
+    background: var(--color-accent);
+    color: #fff;
     font-weight: 600;
 
     .node-count {
-      color: v.$nuros-navy;
+      color: #fff;
+      background: rgb(255 255 255 / 20%);
     }
   }
 }
 
-// JSON viewer styles
-.json-display-prism {
-  @include b.glass-effect;
-
-  margin-top: v.$spacing-lg;
-  padding: v.$spacing-md;
-  border-radius: v.$radius-md;
-  font-size: v.$fs-sm;
-  overflow-x: auto;
-
-  pre {
-    margin: 0;
-    font-family: 'Fira Code', 'Courier New', monospace;
-  }
-
-  .token.punctuation {
-    color: v.$nuros-accent-pink;
-  }
-
-  .token.property {
-    color: v.$nuros-accent-cyan;
-  }
-
-  .token.string {
-    color: #95ff95;
-  }
-
-  .token.number {
-    color: #ffc795;
-  }
-
-  .token.boolean {
-    color: #ff9595;
-  }
-
-  .token.null {
-    color: #c795ff;
+// Responsive
+@media (width <= 768px) {
+  .sidebar {
+    max-width: 100%;
+    min-width: auto;
   }
 }

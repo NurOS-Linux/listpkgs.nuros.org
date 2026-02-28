@@ -1,24 +1,66 @@
 // ============================================================================
-// VARIABLES.SCSS - Juldyz Edition Design System
+// VARIABLES.SCSS - NurOS Design System
 // ============================================================================
 
-// --- Core Palette ---
-$color-background: #0d1117; // Deep, dark gray
-$color-glass-bg: rgb(22 27 34 / 75%); // Premium glass background
-$color-text-primary: #c9d1d9; // Soft white
-$color-text-secondary: #8b949e; // Muted gray
-$color-accent-blue: #0af; // Signature Nuros Blue
-$color-border: rgb(255 255 255 / 10%); // Professional, elegant border
+// ============================================================================
+// DARK THEME (Default)
+// ============================================================================
+
+// --- Core Palette - Dark ---
+$color-background-dark: #0a0e1a; // Deep navy black
+$color-surface-dark: #0f172a; // Surface dark
+$color-surface-light-dark: #1e293b; // Surface light dark
+$color-glass-bg-dark: rgb(15 23 42 / 75%); // Premium glass background
+$color-text-primary-dark: #f1f5f9; // Bright white
+$color-text-secondary-dark: #94a3b8; // Muted gray
+$color-accent-blue-dark: #00f5ff; // Nuros Cyan - primary accent
+$color-accent-pink-dark: #ff6b9d; // Secondary accent
+$color-border-dark: rgb(255 255 255 / 8%); // Subtle border
+
+// --- Additional Palette - Dark ---
+$nuros-accent-cyan: #00f5ff;
+$nuros-accent-pink: #ff6b9d;
+$nuros-accent-purple: #a855f7;
+$nuros-navy: #0a0e1a;
+
+// ============================================================================
+// LIGHT THEME
+// ============================================================================
+
+// --- Core Palette - Light ---
+$color-background-light: #f8fafc; // Light gray background
+$color-surface-light: #ffffff; // White surface
+$color-surface-alt-light: #f1f5f9; // Alternate surface
+$color-glass-bg-light: rgb(255 255 255 / 80%); // Light glass background
+$color-text-primary-light: #0f172a; // Dark navy text
+$color-text-secondary-light: #64748b; // Muted gray text
+$color-accent-blue-light: #0066ff; // Blue accent for light theme
+$color-accent-pink-light: #ff6b9d; // Pink accent (same)
+$color-border-light: rgb(0 0 0 / 8%); // Subtle dark border
+
+// --- Additional Palette - Light ---
+$nuros-accent-cyan-light: #0066ff;
+$nuros-accent-pink-light: #ff6b9d;
+$nuros-accent-purple-light: #7c3aed;
+$nuros-white: #ffffff;
+
+// ============================================================================
+// SHARED VARIABLES
+// ============================================================================
 
 // --- Spacing & Sizing ---
+$spacing-xs: 0.25rem;
 $spacing-sm: 0.5rem;
 $spacing-md: 1rem;
 $spacing-lg: 1.5rem;
 $spacing-xl: 2rem;
+$spacing-2xl: 3rem;
 
 // --- Borders ---
-$radius-md: 8px;
-$radius-lg: 12px;
+$radius-sm: 6px;
+$radius-md: 10px;
+$radius-lg: 16px;
+$radius-xl: 24px;
 
 // --- Typography (Base sizes for clamp()) ---
 $font-size-base: 1rem; // 16px
@@ -26,34 +68,94 @@ $font-size-lg: 1.25rem;
 $font-size-xl: 1.75rem;
 $font-size-xxl: 2.5rem;
 
-// --- Transitions ---
-$transition-smooth: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+// Font size shortcuts
+$fs-sm: 0.875rem;
+$fs-md: 1rem;
+$fs-lg: 1.25rem;
+$fs-xl: 1.5rem;
+$fs-xxl: 2rem;
 
-// --- Effects ---
-$shadow-glow: 0 0 20px rgba($color-accent-blue, 0.4);
-$backdrop-blur: blur(12px);
+// --- Transitions ---
+$transition-fast: 0.15s ease;
+$transition-base: 0.3s ease;
+$transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-bounce: 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+// --- Effects - Dark Theme ---
+$shadow-glow: 0 0 30px rgba($color-accent-blue-dark, 0.3);
+$shadow-sm-dark: 0 1px 2px rgb(0 0 0 / 50%);
+$shadow-md-dark: 0 4px 8px rgb(0 0 0 / 60%);
+$shadow-lg-dark: 0 10px 24px rgb(0 0 0 / 70%);
+$shadow-xl-dark: 0 20px 48px rgb(0 0 0 / 80%);
+
+// --- Effects - Light Theme ---
+$shadow-sm-light: 0 1px 3px rgb(0 0 0 / 10%);
+$shadow-md-light: 0 4px 12px rgb(0 0 0 / 12%);
+$shadow-lg-light: 0 10px 24px rgb(0 0 0 / 15%);
+$shadow-xl-light: 0 20px 48px rgb(0 0 0 / 20%);
+
+$backdrop-blur: blur(16px);
 
 // --- Z-Index ---
 $z-header: 100;
 $z-fixed: 200;
+$z-modal: 300;
 
 // ============================================================================
-// CSS Custom Properties (:root)
+// CSS Custom Properties - DARK THEME (Default)
 // ============================================================================
 :root {
   // Base
-  --color-background: #{$color-background};
-  --color-text-primary: #{$color-text-primary};
-  --color-text-secondary: #{$color-text-secondary};
-  --color-border: #{$color-border};
+  --color-background: #{$color-background-dark};
+  --color-surface: #{$color-surface-dark};
+  --color-surface-alt: #{$color-surface-light-dark};
+  --color-text-primary: #{$color-text-primary-dark};
+  --color-text-secondary: #{$color-text-secondary-dark};
+  --color-border: #{$color-border-dark};
 
   // Accent
-  --color-accent: #{$color-accent-blue};
+  --color-accent: #{$color-accent-blue-dark};
+  --color-accent-secondary: #{$color-accent-pink-dark};
+  --color-accent-rgb: 0, 245, 255; // RGB values for rgba()
 
   // Glass Effect
-  --glass-background: #{$color-glass-bg};
+  --glass-background: #{$color-glass-bg-dark};
   --glass-backdrop-filter: #{$backdrop-blur};
+
+  // Shadows
+  --shadow-sm: #{$shadow-sm-dark};
+  --shadow-md: #{$shadow-md-dark};
+  --shadow-lg: #{$shadow-lg-dark};
+  --shadow-xl: #{$shadow-xl-dark};
 
   // Transitions
   --transition-smooth: all #{$transition-smooth};
+}
+
+// ============================================================================
+// CSS Custom Properties - LIGHT THEME
+// ============================================================================
+[data-theme="light"] {
+  // Base
+  --color-background: #{$color-background-light};
+  --color-surface: #{$color-surface-light};
+  --color-surface-alt: #{$color-surface-alt-light};
+  --color-text-primary: #{$color-text-primary-light};
+  --color-text-secondary: #{$color-text-secondary-light};
+  --color-border: #{$color-border-light};
+
+  // Accent
+  --color-accent: #{$color-accent-blue-light};
+  --color-accent-secondary: #{$color-accent-pink-light};
+  --color-accent-rgb: 0, 102, 255; // RGB values for rgba()
+
+  // Glass Effect
+  --glass-background: #{$color-glass-bg-light};
+  --glass-backdrop-filter: #{$backdrop-blur};
+
+  // Shadows
+  --shadow-sm: #{$shadow-sm-light};
+  --shadow-md: #{$shadow-md-light};
+  --shadow-lg: #{$shadow-lg-light};
+  --shadow-xl: #{$shadow-xl-light};
 }

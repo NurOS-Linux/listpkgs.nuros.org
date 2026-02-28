@@ -1,7 +1,7 @@
 import { createSignal, createEffect, For } from 'solid-js';
 import PackageCard from './PackageCard';
 import { type Package } from './PackageCard';
-import { groupPackagesByFirstLetter } from '../utils/sorting';
+import { groupPackagesByFirstLetter } from '~/utils/search';
 
 interface PackageGroup {
   letter: string;

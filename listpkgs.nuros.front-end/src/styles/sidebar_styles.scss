@@ -45,7 +45,7 @@
   transition: var(--transition-smooth);
 
   &:hover {
-    background: rgba(v.$color-accent-blue, 0.1);
+    background: rgba(var(--color-accent-rgb), 0.1);
   }
 }
 
@@ -103,6 +103,6 @@
   &.active {
     background: var(--color-accent);
     color: #fff;
-    box-shadow: 0 0 10px rgba(v.$color-accent-blue, 0.5);
+    box-shadow: 0 0 10px rgba(var(--color-accent-rgb), 0.5);
   }
 }

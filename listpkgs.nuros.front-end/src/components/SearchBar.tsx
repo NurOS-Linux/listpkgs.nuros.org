@@ -12,10 +12,9 @@ const SearchBar = (props: SearchBarProps) => {
     props.onSearch(value);
   };
 
-  const handleKeyPress = (e: KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      props.onSearch(searchQuery());
-    }
+  const handleClear = () => {
+    setSearchQuery('');
+    props.onSearch('');
   };
 
   return (
@@ -24,14 +23,15 @@ const SearchBar = (props: SearchBarProps) => {
         <input
           type="text"
           class="search-input"
-          placeholder="Search packages by name or description..."
+          placeholder="Search packages by name, description, or key..."
           value={searchQuery()}
           onInput={e => handleSearchChange(e.currentTarget.value)}
-          onKeyUp={handleKeyPress}
         />
-        <button class="search-button" onClick={() => props.onSearch(searchQuery())}>
-          Search
-        </button>
+        {searchQuery() && (
+          <button class="search-clear-btn" onClick={handleClear} type="button">
+            ✕
+          </button>
+        )}
       </div>
     </div>
   );

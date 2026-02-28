@@ -8,6 +8,7 @@
 import { createSignal } from 'solid-js';
 import { Switch, Match } from 'solid-js';
 import JsonDisplay from './JsonDisplay';
+import { type Package as SearchPackage } from '~/utils/search';
 
 /**
  * @interface Package
@@ -25,7 +26,7 @@ import JsonDisplay from './JsonDisplay';
  * @property {string} [_source_repo] - Репозиторий источника
  * @property {string} [_last_updated] - Дата последнего обновления
  */
-interface Package {
+interface Package extends SearchPackage {
   name: string;
   version: string;
   type?: string;

@@ -4,11 +4,20 @@
     "selector-class-pattern": null,
     "scss/dollar-variable-pattern": null,
     "scss/at-mixin-pattern": null,
-    "at-rule-no-unknown": [
+    "scss/at-rule-no-unknown": [
       true,
       {
-        "ignoreAtRules": ["use", "mixin", "include", "extend"]
+        "ignoreAtRules": ["use", "mixin", "include", "extend", "content", "each", "if"]
       }
-    ]
-  }
+    ],
+    "no-descending-specificity": null,
+    "selector-pseudo-class-no-unknown": [
+      true,
+      {
+        "ignorePseudoClasses": ["global", "export"]
+      }
+    ],
+    "property-no-vendor-prefix": null
+  },
+  "ignoreFiles": []
 }

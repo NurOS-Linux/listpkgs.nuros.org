@@ -2,28 +2,12 @@
  * @file Sidebar.tsx
  * @brief Компонент боковой панели с фильтрами и навигацией
  * @author NurOS Team
- * @version 1.1
+ * @version 2.0
  */
 
 import { createSignal, createEffect } from 'solid-js';
 import TreeNavigation from './TreeNavigation';
-
-interface Package {
-  key: string;
-  name: string;
-  version: string;
-  type?: string;
-  architecture?: string | null;
-  description?: string;
-  maintainer?: string;
-  license?: string | null;
-  homepage?: string;
-  dependencies: string[];
-  conflicts: string[];
-  _source_repo: string;
-  _last_updated?: string;
-  [key: string]: unknown;
-}
+import { type Package, getCategoryForPackage } from '~/utils/search';
 
 interface TreeNode {
   id: string;
@@ -62,29 +46,23 @@ const Sidebar = (props: SidebarProps) => {
     const sourceMap = new Map<string, number>();
 
     packages.forEach(pkg => {
+      // Architectures
       const arch = pkg.architecture || 'unknown';
       archMap.set(arch, (archMap.get(arch) || 0) + 1);
 
-      let category = 'other';
-      if (pkg.type === 'system' || pkg.name.includes('kernel') || pkg.name.includes('core')) {
-        category = 'core';
-      } else if (pkg.type === 'application' || pkg.type === 'desktop') {
-        category = 'applications';
-      } else if (pkg.type === 'library') {
-        category = 'libraries';
-      } else if (pkg.type === 'development') {
-        category = 'development';
-      } else if (pkg.type === 'misc') {
-        category = 'miscellaneous';
-      }
+      // Categories - используем функцию из search.ts
+      const category = getCategoryForPackage(pkg);
       categoryMap.set(category, (categoryMap.get(category) || 0) + 1);
 
+      // Maintainers
       const maintainer = pkg.maintainer || 'unknown';
       maintainerMap.set(maintainer, (maintainerMap.get(maintainer) || 0) + 1);
 
+      // Licenses
       const license = pkg.license || 'unknown';
       licenseMap.set(license, (licenseMap.get(license) || 0) + 1);
 
+      // Sources
       const source = pkg._source_repo || 'unknown';
       sourceMap.set(source, (sourceMap.get(source) || 0) + 1);
     });
@@ -94,51 +72,61 @@ const Sidebar = (props: SidebarProps) => {
         id: 'architectures',
         label: 'Architectures',
         sortField: 'label',
-        children: Array.from(archMap.entries()).map(([arch, count]) => ({
-          id: `arch-${arch}`,
-          label: arch,
-          count: count,
-        })),
+        children: Array.from(archMap.entries())
+          .sort((a, b) => a[0].localeCompare(b[0]))
+          .map(([arch, count]) => ({
+            id: `arch-${arch}`,
+            label: arch,
+            count,
+          })),
       },
       {
         id: 'categories',
         label: 'Categories',
         sortField: 'label',
-        children: Array.from(categoryMap.entries()).map(([category, count]) => ({
-          id: `cat-${category}`,
-          label: category.charAt(0).toUpperCase() + category.slice(1),
-          count: count,
-        })),
+        children: Array.from(categoryMap.entries())
+          .sort((a, b) => a[0].localeCompare(b[0]))
+          .map(([category, count]) => ({
+            id: `cat-${category}`,
+            label: category.charAt(0).toUpperCase() + category.slice(1),
+            count,
+          })),
       },
       {
         id: 'sources',
         label: 'Sources',
         sortField: 'label',
-        children: Array.from(sourceMap.entries()).map(([source, count]) => ({
-          id: `source-${source}`,
-          label: source,
-          count: count,
-        })),
+        children: Array.from(sourceMap.entries())
+          .sort((a, b) => a[0].localeCompare(b[0]))
+          .map(([source, count]) => ({
+            id: `source-${source}`,
+            label: source,
+            count,
+          })),
       },
       {
         id: 'maintainers',
         label: 'Maintainers',
         sortField: 'label',
-        children: Array.from(maintainerMap.entries()).map(([maintainer, count]) => ({
-          id: `maintainer-${maintainer}`,
-          label: maintainer,
-          count: count,
-        })),
+        children: Array.from(maintainerMap.entries())
+          .sort((a, b) => a[0].localeCompare(b[0]))
+          .map(([maintainer, count]) => ({
+            id: `maintainer-${maintainer}`,
+            label: maintainer,
+            count,
+          })),
       },
       {
         id: 'licenses',
         label: 'Licenses',
         sortField: 'label',
-        children: Array.from(licenseMap.entries()).map(([license, count]) => ({
-          id: `license-${license}`,
-          label: license,
-          count: count,
-        })),
+        children: Array.from(licenseMap.entries())
+          .sort((a, b) => a[0].localeCompare(b[0]))
+          .map(([license, count]) => ({
+            id: `license-${license}`,
+            label: license,
+            count,
+          })),
       },
     ];
 
@@ -186,7 +174,7 @@ const Sidebar = (props: SidebarProps) => {
 
   return (
     <aside class="sidebar">
-      <h3>Filters</h3>
+      <h3 class="sidebar-title">Filters</h3>
       <TreeNavigation nodes={treeNodes()} onSelect={handleNodeSelect} />
     </aside>
   );
