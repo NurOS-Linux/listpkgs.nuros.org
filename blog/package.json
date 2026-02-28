@@ -1,0 +1,12 @@
+{
+  "name": "listpkgs-docs",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Documentation for listpkgs.nuros.org",
+  "scripts": {
+    "format": "prettier --write \"**/*.md\""
+  },
+  "devDependencies": {
+    "prettier": "^3.0.0"
+  }
+}

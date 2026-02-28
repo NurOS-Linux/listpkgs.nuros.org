@@ -1,0 +1,43 @@
+version: '3.8'
+
+# This Docker Compose file is optimized for local development.
+# It creates two services: one for the Python backend environment
+# and one for the Node.js frontend environment.
+
+services:
+  # The 'backend' service provides a Python environment with all dependencies installed.
+  # It doesn't run any commands on start-up; it just keeps the container alive.
+  # You can execute commands in it manually (e.g., `docker-compose exec backend listpkgs-aggregate`).
+  backend:
+    build:
+      context: .
+      dockerfile: ./docker/backend.Dockerfile
+    volumes:
+      # Mount the entire project directory to reflect code changes instantly.
+      - .:/app
+    environment:
+      # Pass the GitHub token from a .env file if the script needs it.
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+
+  # The 'frontend' service provides a Node.js environment for the web app.
+  # This is the primary service that your IDE (via .devcontainer) will connect to.
+  frontend:
+    build:
+      context: .
+      dockerfile: ./docker/frontend.Dockerfile
+    volumes:
+      # Mount the entire project directory. This allows `pnpm` to see both the
+      # 'listpkgs.nuros.front-end' and 'blog' workspaces.
+      - .:/app
+      # Use a named volume for node_modules to persist them and speed up subsequent starts.
+      # This also prevents the host's node_modules (if any) from overwriting the container's.
+      - node_modules:/app/node_modules
+    ports:
+      # Map the Vite dev server port to the host machine.
+      - "5173:5173"
+    # Keep the container alive so the dev server can be run inside it.
+    command: tail -f /dev/null
+
+volumes:
+  # Define the named volume for node_modules.
+  node_modules:

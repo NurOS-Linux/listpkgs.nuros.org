@@ -1,0 +1,41 @@
+// ============================================================================
+// COMPONENTS/VIEW-MODE.SCSS - NurOS Edition
+// ============================================================================
+
+@use '../variables' as v;
+@use '../base' as b;
+
+.view-mode-container {
+  @include b.glass-effect;
+
+  border-radius: v.$radius-lg;
+  padding: v.$spacing-sm;
+  display: flex;
+  gap: v.$spacing-sm;
+  margin-bottom: v.$spacing-lg;
+  width: fit-content;
+  align-self: center;
+  border: 1px solid var(--color-border);
+}
+
+.view-mode-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  padding: v.$spacing-sm v.$spacing-md;
+  border-radius: v.$radius-md;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  font-size: v.$fs-sm;
+
+  &.active {
+    background: var(--color-accent);
+    color: #fff;
+  }
+
+  &:hover:not(.active) {
+    color: var(--color-text-primary);
+    background: rgba(var(--color-accent-rgb), 0.08);
+  }
+}

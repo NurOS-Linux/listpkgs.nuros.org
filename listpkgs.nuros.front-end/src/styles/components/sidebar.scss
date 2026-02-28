@@ -1,0 +1,183 @@
+// ============================================================================
+// COMPONENTS/SIDEBAR.SCSS - NurOS-style sidebar and tree navigation
+// ============================================================================
+
+@use '../variables' as v;
+@use '../base' as b;
+
+.sidebar {
+  @include b.glass-effect;
+
+  border-radius: v.$radius-lg;
+  padding: v.$spacing-md;
+  width: 100%;
+  max-width: 280px;
+  max-height: calc(100vh - 280px);
+  overflow-y: auto;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+.sidebar-title {
+  font-size: v.$fs-lg;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 v.$spacing-md 0;
+  padding-bottom: v.$spacing-sm;
+  border-bottom: 1px solid var(--color-border);
+}
+
+// Tree Navigation
+.tree-navigation {
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+.tree-node {
+  margin-bottom: v.$spacing-xs;
+}
+
+.tree-node-header {
+  display: flex;
+  align-items: center;
+  padding: v.$spacing-xs v.$spacing-sm;
+  border-radius: v.$radius-md;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+
+  &:hover {
+    background: rgba(var(--color-accent-rgb), 0.08);
+  }
+
+  &.selected {
+    background: rgba(var(--color-accent-rgb), 0.15);
+  }
+}
+
+.tree-node-toggle {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  padding: v.$spacing-xs;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+
+  &:hover {
+    color: var(--color-accent);
+  }
+
+  &.expanded {
+    transform: rotate(90deg);
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+}
+
+.tree-node-label {
+  flex-grow: 1;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  font-size: v.$fs-sm;
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-xs;
+}
+
+.node-count {
+  color: var(--color-text-secondary);
+  font-size: v.$fs-sm;
+  background: rgba(var(--color-accent-rgb), 0.1);
+  padding: 0.1rem 0.4rem;
+  border-radius: v.$radius-sm;
+  font-weight: 500;
+}
+
+.tree-children {
+  list-style: none;
+  padding-left: v.$spacing-lg;
+  margin-top: v.$spacing-xs;
+}
+
+// Checkbox styling
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-sm;
+  flex-grow: 1;
+}
+
+.checkbox-wrapper input[type='checkbox'] {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-border);
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  position: relative;
+
+  &:checked {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  &:checked::after {
+    content: '✓';
+    position: absolute;
+    color: #fff;
+    font-size: 12px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  &:hover {
+    border-color: var(--color-accent);
+  }
+}
+
+// Selected state for tree nodes
+.tree-node-leaf {
+  padding: v.$spacing-xs v.$spacing-sm;
+  cursor: pointer;
+  border-radius: v.$radius-md;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: var(--transition-smooth);
+
+  &:hover {
+    background: rgba(var(--color-accent-rgb), 0.1);
+  }
+
+  &.selected {
+    background: var(--color-accent);
+    color: #fff;
+    font-weight: 600;
+
+    .node-count {
+      color: #fff;
+      background: rgb(255 255 255 / 20%);
+    }
+  }
+}
+
+// Responsive
+@media (width <= 768px) {
+  .sidebar {
+    max-width: 100%;
+    min-width: auto;
+  }
+}

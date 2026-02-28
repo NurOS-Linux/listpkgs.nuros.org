@@ -1,0 +1,78 @@
+name: Deploy to GitHub Pages
+
+on:
+  workflow_run:
+    workflows: ["Build Frontend"]
+    types:
+      - completed
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'workflow_dispatch') ||
+      (github.event.workflow_run.conclusion == 'success')
+    
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Fetch frontend artifact
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          workflow: build_frontend.yml
+          name: frontend-dist
+          path: dist
+          if_no_artifact_found: fail
+          check_artifacts: true
+          
+      - name: Verify deployment contents
+        run: |
+          echo "✅ Artifact extracted to dist/"
+          echo "📋 Contents:"
+          ls -lh dist/ | head -20
+          
+          if [ ! -f "dist/index.html" ]; then
+            echo "❌ ERROR: index.html not found!"
+            exit 1
+          fi
+          
+          if [ ! -f "dist/repodata.json" ]; then
+            echo "⚠️  WARNING: repodata.json not found - site will have empty package list"
+          fi
+          
+          echo "✅ Deployment verified"
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload to GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Create deployment summary
+        if: always()
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" << EOF
+          ## 🚀 GitHub Pages Deployment
+          
+          - **Status**: ${{ job.status }}
+          - **URL**: ${{ steps.deployment.outputs.page_url }}
+          - **Triggered by**: \`${{ github.event_name }}\`
+          EOF

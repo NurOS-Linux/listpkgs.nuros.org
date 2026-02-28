@@ -1,0 +1,93 @@
+// ============================================================================
+// STYLES ARCHITECTURE DOCUMENTATION
+// ============================================================================
+
+/**
+ * OVERVIEW
+ * --------
+ * The application uses a fully modularized SCSS structure organized by
+ * component/functionality. All styles are compiled from SCSS modules 
+ * into a single stylesheet bundled with the application.
+ *
+ * STRUCTURE
+ * ---------
+ * src/styles/
+ * ├── index.scss                 # Main entry point - imports all modules
+ * ├── variables.scss             # Global CSS custom properties & SCSS vars
+ * ├── base.scss                  # Reset & base element styles
+ * ├── animations.scss            # All keyframe animations
+ * ├── components/
+ * │   ├── search-bar.scss        # Search bar & input styles
+ * │   ├── filters.scss           # Filter select styles
+ * │   ├── view-mode.scss         # View mode button styles
+ * │   ├── package-card.scss      # Package card styles
+ * │   ├── grouped-list.scss      # Grouped list styles
+ * │   └── sidebar.scss           # Sidebar & tree navigation
+ * └── layout/
+ *     ├── app-layout.scss        # Main grid layout
+ *     └── header.scss            # Header & loading screens
+ *
+ * IMPORT FLOW
+ * -----------
+ * index.tsx → styles/index.scss → [all modules above]
+ *
+ * App.tsx → App.scss → styles/index.scss → [all modules]
+ *
+ * STYLING GUIDELINES
+ * ------------------
+ * 1. Use CSS Custom Properties (--primary-color, etc.) for dynamic theming
+ * 2. Import base styles and animations in every component file
+ * 3. Use $variables from variables.scss for spacing, sizes, etc.
+ * 4. Keep media queries in the same file as the component
+ * 5. Use BEM naming convention for class names
+ * 6. All animations defined in animations.scss, imported where needed
+ *
+ * THEME SUPPORT
+ * -------------
+ * Light theme:  :root { --primary-color: #2563eb; ... }
+ * Dark theme:   :root.dark-theme { --primary-color: #3b82f6; ... }
+ *
+ * Dark Reader compatibility ensured through:
+ * - color-scheme: light/dark
+ * - Gradient overlays with !important flags
+ * - Explicit background-color declarations
+ *
+ * VARIABLE REFERENCE
+ * ------------------
+ * Colors:
+ *   $light-primary-color: #2563eb
+ *   $dark-primary-color: #3b82f6
+ *   $spacing-xs through $spacing-2xl: padding/margin units
+ *   $fs-xs through $fs-2xl: font sizes
+ *   $radius-sm through $radius-xl: border radius values
+ *   $shadow-sm through $shadow-xl: box-shadow values
+ *   $transition-fast to $transition-slow: animation durations
+ *
+ * MIGRATION FROM index.css
+ * -------------------------
+ * Legacy index.css (926 lines) has been removed. All styles migrated to:
+ * - Modular SCSS files organized by component
+ * - Variables extracted to variables.scss
+ * - Animations extracted to animations.scss
+ * - Base styles in base.scss
+ * 
+ * Single source of truth: src/styles/index.scss
+ *
+ * ADDING NEW COMPONENTS
+ * ---------------------
+ * 1. Create src/styles/components/new-component.scss
+ * 2. Add @import '../variables'; and @import '../animations'; at top
+ * 3. Use SCSS variables and mixins
+ * 4. Import the new file in src/styles/index.scss
+ *
+ * BUILD PROCESS
+ * --------------
+ * SCSS files are compiled to CSS during build with Vite
+ * Development: HMR updates styles in real-time
+ * Production: Styles minified and optimized
+ *
+ * TESTING
+ * -------
+ * Run: pnpm format  # Format all SCSS files with Prettier
+ * Run: pnpm lint    # Check for any style issues
+ */

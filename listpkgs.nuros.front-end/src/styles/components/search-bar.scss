@@ -1,0 +1,95 @@
+// ============================================================================
+// COMPONENTS/SEARCH-BAR.SCSS - NurOS-style search bar
+// ============================================================================
+
+@use '../variables' as v;
+@use '../base' as b;
+
+.search-bar {
+  @include b.glass-effect;
+
+  border-radius: v.$radius-lg;
+  padding: v.$spacing-sm;
+  margin-bottom: v.$spacing-lg;
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-sm;
+  width: 100%;
+  max-width: 600px;
+}
+
+.search-input-container {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--color-text-primary);
+  font-size: v.$font-size-base;
+  padding: v.$spacing-sm v.$spacing-md;
+  border-radius: v.$radius-md;
+  transition: var(--transition-smooth);
+
+  &::placeholder {
+    color: var(--color-text-secondary);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    background: rgba(var(--color-accent-rgb), 0.05);
+    box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.1);
+  }
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: v.$spacing-sm;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(var(--color-accent-rgb), 0.15);
+  color: var(--color-accent);
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  font-size: 0.9rem;
+  padding: 0;
+
+  &:hover {
+    background: var(--color-accent);
+    color: #fff;
+    transform: translateY(-50%) scale(1.1);
+  }
+}
+
+.search-button {
+  background: var(--color-accent);
+  color: #fff;
+  border: none;
+  border-radius: v.$radius-md;
+  padding: v.$spacing-sm v.$spacing-lg;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  white-space: nowrap;
+
+  &:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}

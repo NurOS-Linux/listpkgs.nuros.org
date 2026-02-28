@@ -1,0 +1,41 @@
+{
+  "title": "NurOS Package List",
+  "description": "Documentation for the NurOS Package Search System",
+  "language": "en",
+  "root": "./",
+  "structure": {
+    "langs": "LANGS.md"
+  },
+  "plugins": ["search", "lunr"],
+  "pluginsConfig": {
+    "search": {
+      "maxResults": 15,
+      "minLength": 3
+    }
+  },
+  "styles": ["styles.css"],
+  "links": {
+    "sidebar": {
+      "View on GitHub": "https://github.com/NurOS-Linux/listpkgs.nuros.org"
+    },
+    "sharing": {
+      "github": true,
+      "facebook": false,
+      "twitter": false,
+      "google": false,
+      "weibo": false,
+      "all": false
+    }
+  },
+  "pdf": {
+    "pageNumbers": true,
+    "fontSize": 12,
+    "paperSize": "a4",
+    "margin": {
+      "right": 62,
+      "left": 62,
+      "top": 36,
+      "bottom": 36
+    }
+  }
+}

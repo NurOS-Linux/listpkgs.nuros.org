@@ -1,0 +1,109 @@
+// ============================================================================
+// COMPONENTS/SIDEBAR.SCSS & VIEW-MODE - Juldyz Edition
+// ============================================================================
+
+@use './variables' as v;
+@use './base' as b;
+
+.sidebar {
+  @include b.glass-effect;
+
+  width: 280px;
+  border-radius: v.$radius-lg;
+  padding: v.$spacing-lg;
+  height: fit-content;
+  position: sticky;
+  top: 120px; // Sticky position below header
+  flex-shrink: 0;
+
+  @media (width <= 1024px) {
+    width: 100%;
+    position: relative;
+    top: auto;
+    margin-bottom: v.$spacing-lg;
+  }
+}
+
+.sidebar h3 {
+  margin: 0 0 v.$spacing-md 0;
+  padding-bottom: v.$spacing-md;
+  border-bottom: 1px solid var(--color-border);
+  font-weight: 600;
+}
+
+.tree-navigation ul {
+  list-style: none;
+}
+
+.tree-node-header,
+.tree-node-leaf {
+  padding: v.$spacing-sm;
+  cursor: pointer;
+  border-radius: v.$radius-md;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: var(--transition-smooth);
+
+  &:hover {
+    background: rgba(var(--color-accent-rgb), 0.1);
+  }
+}
+
+.tree-node-label {
+  font-weight: 500;
+}
+
+.node-count {
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+}
+
+.tree-node-leaf.selected {
+  background: var(--color-accent);
+  color: #fff;
+  font-weight: 600;
+
+  .node-count {
+    color: #fff;
+  }
+}
+
+.tree-children {
+  padding-left: v.$spacing-md;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-in-out;
+
+  &.expanded {
+    max-height: 1000px; // Arbitrary large value
+  }
+}
+
+// --- View Mode Buttons ---
+.view-mode-container {
+  @include b.glass-effect;
+
+  border-radius: v.$radius-lg;
+  padding: v.$spacing-sm;
+  display: flex;
+  gap: v.$spacing-sm;
+  margin-bottom: v.$spacing-lg;
+  width: fit-content;
+  align-self: center;
+}
+
+.view-mode-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  padding: v.$spacing-sm v.$spacing-md;
+  border-radius: v.$radius-md;
+  font-weight: 600;
+
+  &.active {
+    background: var(--color-accent);
+    color: #fff;
+    box-shadow: 0 0 10px rgba(var(--color-accent-rgb), 0.5);
+  }
+}

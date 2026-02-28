@@ -1,33 +1,110 @@
-# NurOS Packages Aggregator
+# NurOS Package Search System
 
-This repository contains tools for aggregating package metadata from the [NurOS-Packages](https://github.com/NurOS-Packages) organization.
+This repository contains the package search and cataloging system for the NurOS ecosystem.
 
-## Architecture
+## Project Structure
 
-- `.ci/main.py` - entry point for CI/CD
-- `.ci/listpkgs_aggregator/aggregator.py` - main aggregation logic
-- `.ci/pyproject.toml` - dependency management and building
-- `.github/workflows/update-list.yaml` - GitHub Actions workflow
+- `.github/workflows/` - GitHub Actions automation files
+  - `update-list.yml` - updates package list every 6 hours
+  - `build_frontend.yml` - builds frontend after package list update
+  - `deploy_on_pages.yml` - deploys built frontend to GitHub Pages
+  - `sync-gitbook.yml` - syncs documentation to GitBook
+- `listpkgs.nuros.front-end/` - frontend application source code
+- `blog/` - GitBook documentation source files
+- `packages.json` - metadata file for all NurOS packages (auto-generated)
+- `CNAME` - custom domain file for GitHub Pages (frontend)
 
-## How it works
+## How It Works
 
-1. The aggregation script retrieves all repositories from the NurOS-Packages organization
-2. For each repository, it attempts to get `metadata.json` from the `main` branch
-3. Validates required fields (`name`, `version`)
-4. Generates unique package keys and creates `packages.json`
-5. Results are published to GitHub Pages in the `gh-pages` branch
+1. Every 6 hours, `update-list.yml` runs to:
+   - Scan all repositories in NurOS-Packages organization
+   - Collect metadata from `metadata.json` files
+   - Generate a single `packages.json` file
 
-## Running locally
+2. After successful list update, `build_frontend.yml` runs to:
+   - Install frontend dependencies
+   - Build frontend using Vite
+   - Include up-to-date data from `packages.json`
+   - Upload result as artifact
 
-```bash
-# Install dependencies
-pip install .ci/
+3. After successful build, `deploy_on_pages.yml` runs to:
+   - Download built frontend artifact
+   - Deploy to GitHub Pages via GitHub Actions
 
-# Run aggregation
-listpkgs-aggregate
-```
+> **Note:** The `gh-pages` branch is no longer used. Deployment happens directly through GitHub Actions using artifacts.
 
-## CI/CD
+## Frontend
 
-GitHub Actions automatically runs aggregation every 6 hours and on manual trigger.
-Results are published to GitHub Pages.
+The frontend is built with SolidJS and provides:
+
+- Package search by name and description
+- Filtering by various criteria
+- Package grouping
+- Detailed information display
+- Full JSON representation view
+
+See [README](listpkgs.nuros.front-end/README.md) in the frontend folder for more details.
+
+## Documentation
+
+Documentation is now hosted on **GitBook** for a better reading experience and separate domain.
+
+### 📚 Documentation Site
+
+- **GitBook**: Setup required - see [GITBOOK_SETUP.md](blog/GITBOOK_SETUP.md)
+- **Includes**:
+  - Getting Started Guide
+  - System Architecture Overview
+  - Frontend User Guide
+  - API Reference & Integration Examples
+  - Deployment & CI/CD Guide
+  - Contributing Guidelines
+  - FAQ
+
+### Documentation Development
+
+Documentation is in the `blog/` directory and uses:
+- **GitBook** for hosting and rendering
+- **GitHub Actions** for automatic sync on push to `main`
+- **Prettier** for markdown formatting
+
+#### Quick Setup
+
+1. Go to [GitBook](https://app.gitbook.com/)
+2. Create a Space
+3. Connect this repository (`NurOS-Linux/listpkgs.nuros.org`)
+4. Set source folder to `blog/`
+5. Enable auto-sync
+
+See [blog/GITBOOK_SETUP.md](blog/GITBOOK_SETUP.md) for detailed instructions.
+
+#### Documentation Files
+
+| File | Description |
+|------|-------------|
+| `blog/README.md` | Documentation home page |
+| `blog/SUMMARY.md` | Table of contents (GitBook navigation) |
+| `blog/book.json` | GitBook configuration |
+| `blog/getting-started.md` | Quick start guide |
+| `blog/architecture.md` | System architecture |
+| `blog/frontend-guide.md` | Frontend user guide |
+| `blog/api-reference.md` | API documentation |
+| `blog/deployment.md` | Deployment guide |
+| `blog/contributing.md` | Contributing guidelines |
+| `blog/faq.md` | Frequently asked questions |
+
+## Contributing
+
+To contribute:
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the remote branch
+5. Create a pull request
+
+For documentation changes, simply edit files in `blog/` and they will auto-sync to GitBook.
+
+## License
+
+MIT

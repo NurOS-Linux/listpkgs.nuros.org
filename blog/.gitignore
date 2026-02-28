@@ -1,0 +1,12 @@
+# GitBook ignores (GitBook manages build internally)
+_book/
+.gitbook/
+
+# General ignores
+.DS_Store
+*.log
+*.swp
+.env.local
+.env.*.local
+# Node JS
+node_modules

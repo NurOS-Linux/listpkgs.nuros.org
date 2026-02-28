@@ -1,0 +1,185 @@
+// ============================================================================
+// LAYOUT/APP-LAYOUT.SCSS - NurOS main application layout
+// ============================================================================
+
+@use '../variables' as v;
+@use '../base' as b;
+@use '../animations';
+
+.app {
+  width: 100%;
+  min-height: 100vh;
+  padding: 0;
+  box-sizing: border-box;
+  background: var(--color-background);
+}
+
+.app-layout {
+  display: flex;
+  gap: v.$spacing-xl;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: v.$spacing-lg v.$spacing-xl;
+
+  @media (width <= 1024px) {
+    flex-direction: column;
+    gap: v.$spacing-lg;
+    padding: v.$spacing-md;
+  }
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: v.$spacing-lg;
+  animation: slide-in-up v.$transition-base 0.1s both;
+  min-width: 0;
+}
+
+// Loading screen
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: v.$spacing-lg;
+  background: var(--color-background);
+}
+
+.loading-logo {
+  width: 120px;
+  height: 120px;
+  animation: pulse-glow 2s ease-in-out infinite;
+
+  @keyframes pulse-glow {
+    0%,
+    100% {
+      filter: drop-shadow(0 0 20px rgba(var(--color-accent-rgb), 0.4));
+      transform: scale(1);
+    }
+
+    50% {
+      filter: drop-shadow(0 0 40px rgba(var(--color-accent-rgb), 0.6));
+      transform: scale(1.05);
+    }
+  }
+}
+
+.loading-text {
+  color: var(--color-text-secondary);
+  font-size: v.$fs-lg;
+  animation: fade-in-out 1.5s ease-in-out infinite;
+
+  @keyframes fade-in-out {
+    0%,
+    100% {
+      opacity: 0.5;
+    }
+
+    50% {
+      opacity: 1;
+    }
+  }
+}
+
+// Error state
+.error {
+  padding: v.$spacing-2xl;
+  text-align: center;
+  color: var(--color-accent-pink);
+  font-size: v.$fs-lg;
+  background: rgb(255 107 157 / 10%);
+  border-radius: v.$radius-lg;
+  margin: v.$spacing-xl;
+  border: 1px solid rgb(255 107 157 / 30%);
+}
+
+// Fixed theme toggle button
+.theme-toggle-fixed {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  background: var(--glass-background);
+  backdrop-filter: var(--glass-backdrop-filter);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  z-index: v.$z-fixed;
+  box-shadow: var(--shadow-lg);
+
+  &:hover {
+    background: var(--color-accent);
+    color: #fff;
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(var(--color-accent-rgb), 0.5);
+  }
+}
+
+// Search bar in main
+.app-main .search-bar {
+  @include b.glass-effect;
+
+  border-radius: v.$radius-md;
+  padding: v.$spacing-sm;
+  display: flex;
+  width: 100%;
+  max-width: 500px;
+  border: 1px solid var(--color-border);
+  margin: 0 auto v.$spacing-md;
+  justify-content: center;
+}
+
+.app-main .search-input-container {
+  display: flex;
+  flex: 1;
+  max-width: 100%;
+  justify-content: center;
+}
+
+.app-main .search-input {
+  background: transparent;
+  border: none;
+  color: var(--color-text-primary);
+  font-size: v.$font-size-base;
+  padding: v.$spacing-sm v.$spacing-md;
+  flex-grow: 1;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::placeholder {
+    color: var(--color-text-secondary);
+  }
+}
+
+.app-main .search-clear-btn {
+  background: rgba(var(--color-accent-rgb), 0.15);
+  color: var(--color-accent);
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  font-size: 0.9rem;
+  padding: 0;
+
+  &:hover {
+    background: var(--color-accent);
+    color: #fff;
+  }
+}

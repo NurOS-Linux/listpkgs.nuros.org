@@ -1,0 +1,47 @@
+// ============================================================================
+// INDEX.SCSS - Main stylesheet entry point
+// ============================================================================
+// Using @use for modern Sass module system.
+
+// 1. Variables and config
+@use './variables';
+
+// 2. Base styles and reset
+@use './base';
+
+// 3. Animations/keyframes
+@use './animations';
+
+// 4. Components
+@use './components/search-bar';
+@use './components/filters';
+@use './components/view-mode';
+@use './components/package-card';
+@use './components/grouped-list';
+@use './components/sidebar';
+
+// 5. Layout
+@use './layout/app-layout';
+@use './layout/header';
+
+// Dark Reader CSS filters - ensures light theme is preserved
+html {
+  color-scheme: light !important;
+}
+
+html.dark-theme {
+  color-scheme: dark !important;
+}
+
+// Prevent Dark Reader from too aggressively invading color scheme
+:root {
+  --darkreader-neutral-background: #f8fafc;
+  --darkreader-neutral-text: #1e293b;
+  --darkreader-border: #cbd5e1;
+}
+
+:root.dark-theme {
+  --darkreader-neutral-background: #020617;
+  --darkreader-neutral-text: #f1f5f9;
+  --darkreader-border: #334155;
+}

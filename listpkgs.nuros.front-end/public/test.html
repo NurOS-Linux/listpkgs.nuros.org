@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Package Loading</title>
+</head>
+<body>
+    <h1>Test Package Loading</h1>
+    <div id="status">Loading packages...</div>
+    <div id="packages"></div>
+
+    <script>
+        async function loadPackages() {
+            try {
+                const response = await fetch('./packages.json');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const packages = await response.json();
+                document.getElementById('status').textContent = 'Packages loaded successfully!';
+                
+                // Display package names
+                const packagesDiv = document.getElementById('packages');
+                const packageNames = Object.keys(packages);
+                packagesDiv.innerHTML = '<h2>Package Names:</h2><ul>' + 
+                    packageNames.map(name => `<li>${name}</li>`).join('') + 
+                    '</ul>';
+                
+                console.log('Loaded packages:', packages);
+            } catch (error) {
+                console.error('Error loading packages:', error);
+                document.getElementById('status').textContent = 'Error loading packages: ' + error.message;
+            }
+        }
+
+        // Load packages when page loads
+        window.onload = loadPackages;
+    </script>
+</body>
+</html>
